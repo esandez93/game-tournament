@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './Home.scss';
 
-import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
 import { LoginContext } from '../../context';
@@ -15,13 +14,6 @@ class Home extends Component {
     ) : <Redirect to='/login' />
   }
 }
-
-Home.propTypes = {
-
-};
-Home.defaultProps = {
-
-};
 
 export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>

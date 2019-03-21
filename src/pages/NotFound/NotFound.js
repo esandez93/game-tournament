@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './NotFound.scss';
 
-import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
 import { LoginContext } from '../../context';
@@ -15,13 +14,6 @@ class NotFound extends Component {
       </div>
   }
 }
-
-NotFound.propTypes = {
-
-};
-NotFound.defaultProps = {
-
-};
 
 export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>

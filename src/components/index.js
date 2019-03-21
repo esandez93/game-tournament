@@ -1,5 +1,7 @@
 import Button from './Button';
+import Loading from './Loading';
 
 export {
-  Button
+  Button,
+  Loading
 };
