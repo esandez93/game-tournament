@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import './App.scss';
-
 import {
   Switch,
   Route
 } from 'react-router-dom';
+import { withTranslation } from 'react-i18next';
 
 import {
   Home,
@@ -17,9 +17,7 @@ import {
   LoginContext
 } from './context';
 import * as languages from './locale';
-import {
-  light as lightTheme
-} from './themes';
+import * as themes from './themes';
 
 const MultiProvider = (props) => {
   return (
@@ -33,38 +31,45 @@ const MultiProvider = (props) => {
   );
 };
 
+const localeExists = (locale) => languages[locale] ? true : false;
+const themeExists = (theme) => themes[theme] ? true : false;
+
 class App extends Component {
-  changeLocale = (locale) => {
-    this.setState({ localeContext: { locale: locale } });
+  // Helper function to deep merge the context values
+  mergeState = (key, value) => {
+    this.setState({ [key]: Object.assign({}, this.state[key], value) });
   }
-  translate = (key) => {
-    const split = key.split('.');
-    let temp = languages[this.state.localeContext.locale];
 
-    for (let i = 0; i < split.length; i++) {
-      temp = temp[split[i]];
+  changeLocale = (locale) => {
+    if (localeExists(locale)) {
+      this.props.i18n.changeLanguage(locale)
+      this.mergeState('localeContext', { locale: locale });
     }
-
-    return temp;
   }
 
   changeTheme = (theme) => {
-    this.setState({ themeContext: { theme: theme } });
+    if (themeExists(theme)) {
+      this.mergeState('themeContext', {
+        name: theme,
+        theme: themes[theme]
+      });
+    }
   }
 
   login = () => {
-    this.setState({ loginContext: { logged: true } });
+    this.mergeState('loginContext', { logged: true });
   }
 
   state = {
     themeContext: {
-      theme: lightTheme,
+      name: 'light',
+      theme: themes.light,
       changeTheme: this.changeTheme
     },
     localeContext: {
       locale: 'en',
       changeLocale: this.changeLocale,
-      translate: this.translate
+      translate: this.props.t
     },
     loginContext: {
       logged: false,
@@ -73,7 +78,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.translate('a');
+    
   }
 
   render() {
@@ -89,7 +94,7 @@ class App extends Component {
         localeContext={localeContext}
         loginContext={loginContext}
       >
-        <div className="App">
+        <div className="App" style={themeContext.theme}>
           <Switch>
             <Route exact path="/" component={Home}/>
             <Route exact path="/login" component={Login}/>
@@ -101,4 +106,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withTranslation()(App);
