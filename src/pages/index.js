@@ -34,6 +34,11 @@ const Login = Loadable({
   loading: Loading,
   modules: [ 'Login' ]
 });
+const ThemeTest = Loadable({
+  loader: () => import(/* webpackChunkName: "ThemeTest" */ './ThemeTest'),
+  loading: Loading,
+  modules: [ 'ThemeTest' ]
+});
 const NotFound = Loadable({
   loader: () => import(/* webpackChunkName: "NotFound" */ './NotFound'),
   loading: Loading,
@@ -43,5 +48,6 @@ const NotFound = Loadable({
 export {
   Home,
   Login,
+  ThemeTest,
   NotFound
 };
