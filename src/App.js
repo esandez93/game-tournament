@@ -7,24 +7,31 @@ import {
 import { withTranslation } from 'react-i18next';
 
 import {
-  Home,
-  Login,
-  NotFound
-} from './pages';
-import {
   ThemeContext,
   LocaleContext,
-  LoginContext
+  LoginContext,
+  NetworkContext
 } from './context';
 import * as languages from './locale';
 import * as themes from './themes';
+import {
+  Home,
+  Login,
+  NotFound,
+  ThemeTest
+} from './pages';
+import {
+  OfflineBadge
+} from './components';
 
 const MultiProvider = (props) => {
   return (
     <ThemeContext.Provider value={props.themeContext}>
       <LocaleContext.Provider value={props.localeContext}>
         <LoginContext.Provider value={props.loginContext}>
-          {props.children}
+          <NetworkContext.Provider value={props.networkContext}>
+            {props.children}
+          </NetworkContext.Provider>
         </LoginContext.Provider>
       </LocaleContext.Provider>
     </ThemeContext.Provider>
@@ -74,7 +81,26 @@ class App extends Component {
     loginContext: {
       logged: false,
       login: this.login
+    },
+    networkContext: {
+      offline: false
     }
+  }
+
+  constructor(props) {
+    super(props);
+    
+    window.addEventListener('online', this.setOfflineStatus);
+    window.addEventListener('offline', this.setOfflineStatus);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('online', this.setOfflineStatus);
+    window.removeEventListener('offline', this.setOfflineStatus);
+  }
+
+  setOfflineStatus = () => {
+    this.mergeState('networkContext', { offline: !navigator.onLine });
   }
 
   componentDidMount() {
@@ -85,7 +111,8 @@ class App extends Component {
     const {
       themeContext,
       localeContext,
-      loginContext
+      loginContext,
+      networkContext
     } = this.state;
 
     return (
@@ -93,11 +120,17 @@ class App extends Component {
         themeContext={themeContext}
         localeContext={localeContext}
         loginContext={loginContext}
+        networkContext={networkContext}
       >
-        <div className="App" style={themeContext.theme}>
+        <div className="App" style={{
+          backgroundColor: themeContext.theme.palette.background.default,
+          color: themeContext.theme.palette.text.primary
+        }}>
+          {!networkContext.offline && <OfflineBadge />}
           <Switch>
             <Route exact path="/" component={Home}/>
             <Route exact path="/login" component={Login}/>
+            <Route exact path="/theme-test" component={ThemeTest}/>
             <Route component={NotFound}/>
           </Switch>
         </div>
