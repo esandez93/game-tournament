@@ -6,13 +6,16 @@ import classNames from 'classnames';
 import styled, { css } from 'styled-components';
 
 import { Icon } from '../';
-import { withTheme } from '../../hoc';
+import { withTheme } from '@/hoc';
 import {
   hexToRGB,
   getContrastText
-} from '../../utils/color-manipulation';
+} from '@/utils/color-manipulation';
 
 const BaseBadge = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 20px;
   border-radius: 3px;
   padding: 0.5rem 1rem;
 
@@ -31,8 +34,8 @@ const BaseBadge = styled.div`
 class OfflineBadge extends Component {
   render() {
     const {
-      theme,
       className,
+      theme,
       ...props
     } = this.props;
 
@@ -50,7 +53,7 @@ class OfflineBadge extends Component {
 }
 
 OfflineBadge.propTypes = {
-
+  
 };
 OfflineBadge.defaultProps = {
 

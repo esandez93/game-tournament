@@ -5,11 +5,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styled, { css } from 'styled-components';
 
-import { withTheme } from '../../hoc';
-import { getContrastText } from '../../utils/color-manipulation';
+import { withTheme } from '@/hoc';
+import { getContrastText } from '@/utils/color-manipulation';
 import {
   Offline
-} from '../../icons';
+} from '@/icons';
 
 const BaseIcon = styled.div`
   ${({ theme }) => {

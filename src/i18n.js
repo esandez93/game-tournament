@@ -4,7 +4,7 @@ import { initReactI18next } from 'react-i18next';
 import {
   es,
   en
-} from './locale';
+} from '@/locale';
 
 // the translations
 const resources = {

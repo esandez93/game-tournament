@@ -11,18 +11,18 @@ import {
   LocaleContext,
   LoginContext,
   NetworkContext
-} from './context';
-import * as languages from './locale';
-import * as themes from './themes';
+} from '@/context';
+import * as languages from '@/locale';
+import * as themes from '@/themes';
 import {
   Home,
   Login,
   NotFound,
   ThemeTest
-} from './pages';
+} from '@/pages';
 import {
   OfflineBadge
-} from './components';
+} from '@/components';
 
 const MultiProvider = (props) => {
   return (

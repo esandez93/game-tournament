@@ -1,5 +1,5 @@
 import Loadable from 'react-loadable';
-import { Loading } from '../components';
+import { Loading } from '@/components';
 
 /*
 Loadable important things [ https://github.com/jamiebuilds/react-loadable ]

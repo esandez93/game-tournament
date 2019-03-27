@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './ThemeTest.scss';
 
-import { ThemeContext } from '../../context';
-import { Button } from '../../components';
+import { ThemeContext } from '@/context';
+import { Button } from '@/components';
 
 class ThemeTest extends Component {
   render() {

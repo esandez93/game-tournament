@@ -3,7 +3,7 @@ import './NotFound.scss';
 
 import { Redirect } from 'react-router-dom';
 
-import { LoginContext } from '../../context';
+import { LoginContext } from '@/context';
 
 class NotFound extends Component {
   render() {

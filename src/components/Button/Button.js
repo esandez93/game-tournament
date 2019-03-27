@@ -5,11 +5,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styled, { css } from 'styled-components';
 
-import { withTheme } from '../../hoc';
+import { withTheme } from '@/hoc';
 import {
   hexToRGB,
   getContrastText
-} from '../../utils/color-manipulation';
+} from '@/utils/color-manipulation';
 
 const BaseButton = styled.button`
   cursor: pointer;
@@ -30,6 +30,10 @@ const BaseButton = styled.button`
             color: ${getContrastText(theme.palette.grey[500])};
             background-color: ${theme.palette.grey[500]}
           }
+
+          :active {
+            background-color: ${theme.palette.grey[700]};
+          }
         `;
       } else if (variant === "text") {
         return css`
@@ -38,6 +42,10 @@ const BaseButton = styled.button`
 
         :hover {
           background-color: rgba(${hexToRGB(theme.palette.grey[500])}, 0.1);
+        }
+
+        :active {
+          background-color: rgba(${hexToRGB(theme.palette.grey[700])}, 0.25);
         }
       `;
       }
@@ -51,6 +59,10 @@ const BaseButton = styled.button`
             background-color: ${theme.palette[color].dark};
             color: ${getContrastText(theme.palette[color].dark)};
           }
+
+          :active {
+            background-color: ${theme.palette[color].light};
+          }
         `;
       } else if (variant === "text") { // Colored default
         return css`
@@ -59,6 +71,10 @@ const BaseButton = styled.button`
   
           :hover {
             background-color: rgba(${hexToRGB(theme.palette[color].main)}, 0.1);
+          }
+
+          :active {
+            background-color: rgba(${hexToRGB(theme.palette[color].dark)}, 0.25);
           }
         `;
       }
@@ -96,7 +112,10 @@ class Button extends Component {
   }
 }
 Button.propTypes = {
-  onClick: PropTypes.func
+  color: PropTypes.string,
+  variant: PropTypes.string
+};
+Button.defaultProps = {
 };
 
 export default withTheme(Button);
