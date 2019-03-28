@@ -2,6 +2,12 @@ const {rewireWorkboxInject, defaultInjectConfig} = require('react-app-rewire-wor
 const path = require('path');
 
 module.exports = function override(config, env) {
+  // Enable absolute path imports using @
+  config.resolve = {
+    ...config.resolve,
+    alias: { '@': path.resolve(__dirname, 'src') },
+  };
+
   if (env === 'production') {
     console.log('Production build - Adding Workbox for PWAs');
     // Extend the default injection config with required swSrc

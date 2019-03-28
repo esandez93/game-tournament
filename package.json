@@ -5,23 +5,17 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.0",
     "@babel/register": "^7.4.0",
-    "cookie-parser": "^1.4.4",
     "deepmerge": "^3.2.0",
-    "express": "^4.16.4",
-    "forcedomain": "^1.0.1",
     "i18next": "^15.0.7",
-    "ignore-styles": "^5.0.1",
-    "md5-file": "^4.0.0",
-    "morgan": "^1.9.1",
     "node-sass": "^4.11.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
-    "react-helmet": "^5.2.0",
     "react-i18next": "^10.5.2",
     "react-loadable": "^5.5.0",
     "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.8",
+    "source-map-explorer": "^1.8.0",
     "styled-components": "^4.2.0"
   },
   "scripts": {
@@ -29,6 +23,7 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
   },
@@ -41,6 +36,11 @@
     "not ie <= 11",
     "not op_mini all"
   ],
+  "jest": {
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
+  },
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
@@ -54,6 +54,9 @@
     "@storybook/addons": "^5.0.3",
     "@storybook/react": "^5.0.3",
     "babel-loader": "^8.0.5",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.11.2",
+    "enzyme-to-json": "^3.3.5",
     "react-app-rewire-workbox": "^2.0.1",
     "react-app-rewired": "^2.1.1",
     "storybook-addon-smart-knobs": "^4.1.0",
