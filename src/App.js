@@ -27,10 +27,11 @@ import {
   OfflineBadge,
   SideMenu
 } from '@/components';
+import { login } from '@/api/users';
 
 const DEV_MODE = process.env.NODE_ENV === 'development';
 
-const MOCK_USER = {
+/* const MOCK_USER = {
   id: 0,
   username: 'esandez',
   name: 'Eric Sández',
@@ -40,7 +41,7 @@ const MOCK_USER = {
   preferences: {
     theme: 'defaultDark'
   }
-}
+}; */
 
 const MultiProvider = (props) => {
   return (
@@ -83,14 +84,22 @@ class App extends Component {
     }
   }
 
-  login = () => {
-    this.mergeState('loginContext', { logged: true });
+  doLogin = () => {
+    login().then(
+      (user) => {
+        this.mergeState('loginContext', {
+          logged: true,
+          user
+        });
+      },
+      console.error
+    );
   }
 
   state = {
     themeContext: {
-      name: 'defaultDark',
-      theme: themes.defaultDark,
+      name: 'defaultLight',
+      theme: themes.defaultLight,
       changeTheme: this.changeTheme
     },
     localeContext: {
@@ -100,7 +109,8 @@ class App extends Component {
     },
     loginContext: {
       logged: DEV_MODE ? true : false,
-      login: DEV_MODE ? MOCK_USER : this.login
+      login: this.doLogin,
+      user: {}
     },
     networkContext: {
       offline: false
@@ -124,7 +134,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-
+    this.doLogin();
   }
 
   render() {
@@ -147,7 +157,7 @@ class App extends Component {
           color: themeContext.theme.palette.text.primary
         }}>
           {networkContext.offline && <OfflineBadge />}
-          <Route component={SideMenu}/>
+          {loginContext.logged && <Route component={SideMenu}/>}
           <Switch>
             <Route exact path="/" component={Home}/>
             <Route exact path="/login" component={Login}/>

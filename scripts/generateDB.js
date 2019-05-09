@@ -10,7 +10,15 @@ import jsf from 'json-schema-faker';
 import fs from 'fs';
 import chalk from 'chalk';
 import schema from '../schema';
-var path = require('path');
+import path from 'path';
+
+jsf.extend('faker', () => {
+  let faker = require('faker');
+
+  // Here goes any faker custom extension
+
+  return faker;
+});
 
 jsf.resolve(schema).then((db) => {
   fs.writeFile(`${process.cwd()}/db.json`, JSON.stringify(db), function (err) {

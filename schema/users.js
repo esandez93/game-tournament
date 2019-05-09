@@ -1,10 +1,12 @@
+import preferences from './preferences';
+
 const user = {
   "type": "object",
   "properties": {
     "id": {
-      "type": "number",
+      "type": "string",
       "unique": true,
-      "minimum": 1
+      "faker": "random.uuid"
     },
     "username": {
       "type": "string",
@@ -15,6 +17,10 @@ const user = {
       "faker": {
         "fake": "{{name.firstName}} {{name.lastName}}"
       }
+    },
+    "avatar": {
+      "type": "string",
+      "faker": "image.avatar"
     },
     "email": {
       "type": "string",
@@ -27,9 +33,10 @@ const user = {
     "group": {
       "type": "string",
       "faker": "name.jobTitle"
-    }
+    },
+    "preferences": preferences
   },
-  "required": ["id", "username", "name", "email"]
+  "required": ["id", "username", "name", "avatar", "email", "company", "group", "preferences"]
 };
 
 export default {

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './SideMenu.scss';
+import styles from './styles';
 
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -20,43 +21,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 
 import { LoginContext } from '@/context';
 
-const drawerWidth = 240;
-
-const useStyles = makeStyles(theme => ({
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-  },
-  drawerOpen: {
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerClose: {
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: theme.spacing(7) + 1,
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(8) + 1,
-    },
-  },
-  header: {
-    display: 'flex',
-    padding: theme.spacing(1),
-  },
-  avatar: {
-    cursor: 'pointer',
-    height: theme.spacing(6),
-    width: theme.spacing(6),
-    marginRight: theme.spacing(2)
-  }
-}));
+const useStyles = makeStyles(styles);
 
 const menu = [{
   icon: PersonIcon,
@@ -87,7 +52,8 @@ const menu = [{
 function SideMenu (props) {
   const classes = useStyles();
   // const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [currentSection, setCurrentSection] = useState(null);
 
   function toggleOpen () {
     setOpen(!open);
@@ -96,6 +62,11 @@ function SideMenu (props) {
   function navigate (url) {
     props.history.push(url);
   }
+
+  useEffect(() => {
+    console.log(props.location.pathname.split('/'))
+    setCurrentSection(props.location.pathname.split('/')[1]);
+  }, [ props.location.pathname ]);
 
   return (
     <Drawer
@@ -124,7 +95,10 @@ function SideMenu (props) {
       <Divider />
       <List>
         {menu.map((item, index) => (
-          <ListItem button disabled={item.disabled} key={index} onClick={() => navigate(item.url)}>
+          <ListItem  button disabled={item.disabled} key={index}
+            selected={item.text.toLowerCase() === currentSection}
+            onClick={() => navigate(item.url)}
+          >
             <ListItemIcon><item.icon /></ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>
@@ -145,9 +119,9 @@ SideMenu.defaultProps = {
 export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>
     {(login) => <SideMenu
-      name={login.login.name}
-      username={login.login.username}
-      avatar={login.login.preferences.avatar}
+      name={login.user.name}
+      username={login.user.username}
+      avatar={login.user.avatar}
       ref={ref}
       {...props}
     />}
