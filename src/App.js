@@ -38,7 +38,7 @@ const DEV_MODE = process.env.NODE_ENV === 'development';
   email: 'esandez93@gmail.com',
   company: 'Scytl',
   group: 'frontend',
-  preferences: {
+  settings: {
     theme: 'defaultDark'
   }
 }; */
@@ -89,8 +89,10 @@ class App extends Component {
       (user) => {
         this.mergeState('loginContext', {
           logged: true,
-          user
+          user: user[0]
         });
+        this.changeLocale(user[0].settings.locale);
+        this.changeTheme(user[0].settings.theme);
       },
       console.error
     );
@@ -103,7 +105,7 @@ class App extends Component {
       changeTheme: this.changeTheme
     },
     localeContext: {
-      locale: 'en',
+      locale: 'es',
       changeLocale: this.changeLocale,
       translate: this.props.t
     },

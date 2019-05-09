@@ -1,3 +1,9 @@
 export default {
-  test: 'prueba'
+  sections: {
+    profile: "Perfil",
+    ranking: "Ranking",
+    history: "Historial",
+    users: "Usuarios",
+    settings: "Configuración"
+  }
 };

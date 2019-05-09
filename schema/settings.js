@@ -4,7 +4,11 @@ export default {
     "theme": {
       "type": "string",
       "pattern": "defaultDark|defaultLight"
+    },
+    "locale": {
+      "type": "string",
+      "pattern": "es|en"
     }
   },
-  "required": ["theme"]
+  "required": ["theme", "locale"]
 };

@@ -16,7 +16,7 @@ function getRanking() {
 }
 
 function login(user, password) {
-  return doRequest(`${url}/${endpoint}/b60aa4ef-13ef-4eae-85d3-43e817039283`);
+  return doRequest(`${url}/${endpoint}?_limit=1`);
 }
 
 export {

@@ -19,41 +19,41 @@ import StorageIcon from '@material-ui/icons/Storage';
 import GroupIcon from '@material-ui/icons/Group';
 import SettingsIcon from '@material-ui/icons/Settings';
 
-import { LoginContext } from '@/context';
+import { LoginContext, LocaleContext } from '@/context';
 
 const useStyles = makeStyles(styles);
-
-const menu = [{
-  icon: PersonIcon,
-  text: 'Profile',
-  url: '/profile',
-  disabled: true
-}, {
-  icon: ShowChartIcon,
-  text: 'Ranking',
-  url: '/ranking'
-}, {
-  icon: StorageIcon,
-  text: 'History',
-  url: '/history',
-  disabled: true
-}, {
-  icon: GroupIcon,
-  text: 'Users',
-  url: '/users',
-  disabled: true
-}, {
-  icon: SettingsIcon,
-  text: 'Settings',
-  url: '/settings',
-  disabled: true
-}]
 
 function SideMenu (props) {
   const classes = useStyles();
   // const theme = useTheme();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(window.innerWidth > 1080);
   const [currentSection, setCurrentSection] = useState(null);
+
+  const menu = [{
+    icon: PersonIcon,
+    text: props.translate('sections.profile'),
+    url: '/profile',
+    disabled: true
+  }, {
+    icon: ShowChartIcon,
+    text: props.translate('sections.ranking'),
+    url: '/ranking'
+  }, {
+    icon: StorageIcon,
+    text: props.translate('sections.history'),
+    url: '/history',
+    disabled: true
+  }, {
+    icon: GroupIcon,
+    text: props.translate('sections.users'),
+    url: '/users',
+    disabled: true
+  }, {
+    icon: SettingsIcon,
+    text: props.translate('sections.settings'),
+    url: '/settings',
+    disabled: true
+  }]
 
   function toggleOpen () {
     setOpen(!open);
@@ -64,7 +64,6 @@ function SideMenu (props) {
   }
 
   useEffect(() => {
-    console.log(props.location.pathname.split('/'))
     setCurrentSection(props.location.pathname.split('/')[1]);
   }, [ props.location.pathname ]);
 
@@ -118,12 +117,19 @@ SideMenu.defaultProps = {
 
 export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>
-    {(login) => <SideMenu
-      name={login.user.name}
-      username={login.user.username}
-      avatar={login.user.avatar}
-      ref={ref}
-      {...props}
-    />}
+    {(login) =>
+      <LocaleContext.Consumer>
+        {(locale) =>
+          <SideMenu
+            name={login.user.name}
+            username={login.user.username}
+            avatar={login.user.avatar}
+            translate={locale.translate}
+            ref={ref}
+            {...props}
+          />
+        }
+      </LocaleContext.Consumer>
+    }
   </LoginContext.Consumer>
 ));

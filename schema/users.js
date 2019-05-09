@@ -1,4 +1,4 @@
-import preferences from './preferences';
+import settings from './settings';
 
 const user = {
   "type": "object",
@@ -34,9 +34,9 @@ const user = {
       "type": "string",
       "faker": "name.jobTitle"
     },
-    "preferences": preferences
+    "settings": settings
   },
-  "required": ["id", "username", "name", "avatar", "email", "company", "group", "preferences"]
+  "required": ["id", "username", "name", "avatar", "email", "company", "group", "settings"]
 };
 
 export default {
