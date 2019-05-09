@@ -1,11 +1,15 @@
 import Button from './Button';
+import Icon from './Icon';
 import Loading from './Loading';
 import OfflineBadge from './OfflineBadge';
-import Icon from './Icon';
+import SideMenu from './SideMenu';
+import Snackbar from './Snackbar';
 
 export {
   Button,
+  Icon,
   Loading,
   OfflineBadge,
-  Icon
+  SideMenu,
+  Snackbar
 };

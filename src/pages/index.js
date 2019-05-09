@@ -1,5 +1,20 @@
+import React from 'react';
 import Loadable from 'react-loadable';
+import { Redirect } from 'react-router-dom';
+import clsx from 'clsx';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+
 import { Loading } from '@/components';
+import { LoginContext } from '@/context';
+
+const useStyles = makeStyles(theme => ({
+  page: {
+    paddingTop: theme.spacing(6),
+    paddingRight: theme.spacing(4),
+    paddingLeft: theme.spacing(4),
+    paddingBottom: theme.spacing(4)
+  }
+}));
 
 /*
 Loadable important things [ https://github.com/jamiebuilds/react-loadable ]
@@ -24,30 +39,51 @@ Loadable important things [ https://github.com/jamiebuilds/react-loadable ]
   });
 */
 
-const Home = Loadable({
-  loader: () => import(/* webpackChunkName: "Home" */ './Home'),
-  loading: Loading,
-  modules: [ 'Home' ]
-});
-const Login = Loadable({
-  loader: () => import(/* webpackChunkName: "Login" */ './Login'),
-  loading: Loading,
-  modules: [ 'Login' ]
-});
-const ThemeTest = Loadable({
-  loader: () => import(/* webpackChunkName: "ThemeTest" */ './ThemeTest'),
-  loading: Loading,
-  modules: [ 'ThemeTest' ]
-});
-const NotFound = Loadable({
-  loader: () => import(/* webpackChunkName: "NotFound" */ './NotFound'),
-  loading: Loading,
-  modules: [ 'NotFound' ]
-});
+function Page (props) {
+  const classes = useStyles();
+  const {
+    component: Component,
+    name,
+    ...other
+  } = props;
+
+  return (
+    <LoginContext.Consumer>
+      {(login) => {
+        if (login.logged && name === 'Login') {
+          return <Redirect to='/' />
+        } else if (login.logged || name === 'Login') {
+          return <Component className={clsx('Page', classes.page)} {...other} />
+        } else {
+          return <Redirect to='/login' />
+        }
+      }}
+    </LoginContext.Consumer>
+  );
+}
+
+function getLoadable(name, loader) {
+  return Loadable({
+    loader,
+    loading: Loading,
+    modules: [ name ],
+    render(loaded, props) {
+      const Component = loaded.namedExport ? loaded.namedExport : loaded.default;
+      return <Page component={Component} name={name} {...props} />
+    }
+  });
+}
+
+const Home = getLoadable('Home', () => import(/* webpackChunkName: "Home" */ './Home'));
+const Login = getLoadable('Login', () => import(/* webpackChunkName: "Login" */ './Login'));
+const ThemeTest = getLoadable('ThemeTest', () => import(/* webpackChunkName: "ThemeTest" */ './ThemeTest'));
+const NotFound = getLoadable('NotFound', () => import(/* webpackChunkName: "NotFound" */ './NotFound'));
+const Ranking = getLoadable('Ranking', () => import(/* webpackChunkName: "Ranking" */ './Ranking'));
 
 export {
   Home,
   Login,
   ThemeTest,
-  NotFound
+  NotFound,
+  Ranking
 };

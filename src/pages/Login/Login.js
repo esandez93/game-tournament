@@ -1,22 +1,16 @@
 import React, { Component } from 'react';
 import './Login.scss';
 
-import { Redirect } from 'react-router-dom';
-
-import { LoginContext } from '@/context';
+import clsx from 'clsx';
 
 class Login extends Component {
   render() {
-    return this.props.logged ?
-      <Redirect to='/' /> :
-      <div className="Login">
+    return (
+      <div className={clsx('Login', this.props.className)}>
         Login Page
       </div>
+    );
   }
 }
 
-export default React.forwardRef((props, ref) => (
-  <LoginContext.Consumer>
-    {(login) => <Login {...props} logged={login.logged} ref={ref} />}
-  </LoginContext.Consumer>
-));
+export default Login;

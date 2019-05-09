@@ -1,62 +1,49 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import './OfflineBadge.scss';
 
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import styled, { css } from 'styled-components';
+import clsx from 'clsx';
 
-import { Icon } from '../';
-import { withTheme } from '@/hoc';
+import OfflineIcon from '@material-ui/icons/CloudOff';
+import { makeStyles } from '@material-ui/core/styles';
+
 import {
-  hexToRGB,
-  getContrastText
-} from '@/utils/color-manipulation';
+  Snackbar
+} from '../';
 
-const BaseBadge = styled.div`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  border-radius: 3px;
-  padding: 0.5rem 1rem;
-
-  ${({ theme }) => {
-    const rgbError = hexToRGB(theme.palette.error.main);
-    const contrastText = getContrastText(theme.palette.error.main);
-
-    return css`
-      background-color: rgba(${rgbError}, 0.75);
-      color: ${contrastText};
-      fill: ${contrastText};
-    `;
-  }}
-`;
-
-class OfflineBadge extends Component {
-  render() {
-    const {
-      className,
-      theme,
-      ...props
-    } = this.props;
-
-    return (
-      <BaseBadge
-        className={classNames('OfflineBadge', className)}
-        theme={theme}
-        {...props}
-      >
-        <Icon name="offline" />
-        <span>Offline</span>
-      </BaseBadge>
-    );
+const useStyles = makeStyles(theme => ({
+  root: {
+    minWidth: 0
   }
+}));
+
+function OfflineBadge (props) {
+  const [open, setOpen] = useState(true);
+
+  const {
+    className,
+    ...other
+  } = props;
+
+  const classes = useStyles();
+
+  return (
+    <Snackbar
+      className={clsx('OfflineBadge', className)}
+      variant="error"
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={open}
+      icon={OfflineIcon}
+      message="Offline"
+      contentProps={{classes}}
+      {...other}
+    />
+  );
 }
 
 OfflineBadge.propTypes = {
-  
 };
 OfflineBadge.defaultProps = {
-
 };
 
-export default withTheme(OfflineBadge);
+export default OfflineBadge;

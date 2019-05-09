@@ -5,6 +5,8 @@ import {
   Route
 } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
+import deepmerge from 'deepmerge';
+import { ThemeProvider } from '@material-ui/styles';
 
 import {
   ThemeContext,
@@ -18,22 +20,40 @@ import {
   Home,
   Login,
   NotFound,
+  Ranking,
   ThemeTest
 } from '@/pages';
 import {
-  OfflineBadge
+  OfflineBadge,
+  SideMenu
 } from '@/components';
+
+const DEV_MODE = process.env.NODE_ENV === 'development';
+
+const MOCK_USER = {
+  id: 0,
+  username: 'esandez',
+  name: 'Eric Sández',
+  email: 'esandez93@gmail.com',
+  company: 'Scytl',
+  group: 'frontend',
+  preferences: {
+    theme: 'defaultDark'
+  }
+}
 
 const MultiProvider = (props) => {
   return (
     <ThemeContext.Provider value={props.themeContext}>
-      <LocaleContext.Provider value={props.localeContext}>
-        <LoginContext.Provider value={props.loginContext}>
-          <NetworkContext.Provider value={props.networkContext}>
-            {props.children}
-          </NetworkContext.Provider>
-        </LoginContext.Provider>
-      </LocaleContext.Provider>
+      <ThemeProvider theme={props.themeContext.theme}>
+        <LocaleContext.Provider value={props.localeContext}>
+          <LoginContext.Provider value={props.loginContext}>
+            <NetworkContext.Provider value={props.networkContext}>
+              {props.children}
+            </NetworkContext.Provider>
+          </LoginContext.Provider>
+        </LocaleContext.Provider>
+      </ThemeProvider>
     </ThemeContext.Provider>
   );
 };
@@ -44,7 +64,7 @@ const themeExists = (theme) => themes[theme] ? true : false;
 class App extends Component {
   // Helper function to deep merge the context values
   mergeState = (key, value) => {
-    this.setState({ [key]: Object.assign({}, this.state[key], value) });
+    this.setState({ [key]: deepmerge(this.state[key], value) });
   }
 
   changeLocale = (locale) => {
@@ -69,8 +89,8 @@ class App extends Component {
 
   state = {
     themeContext: {
-      name: 'light',
-      theme: themes.light,
+      name: 'defaultDark',
+      theme: themes.defaultDark,
       changeTheme: this.changeTheme
     },
     localeContext: {
@@ -79,8 +99,8 @@ class App extends Component {
       translate: this.props.t
     },
     loginContext: {
-      logged: false,
-      login: this.login
+      logged: DEV_MODE ? true : false,
+      login: DEV_MODE ? MOCK_USER : this.login
     },
     networkContext: {
       offline: false
@@ -89,7 +109,7 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    
+
     window.addEventListener('online', this.setOfflineStatus);
     window.addEventListener('offline', this.setOfflineStatus);
   }
@@ -104,7 +124,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    
+
   }
 
   render() {
@@ -126,10 +146,12 @@ class App extends Component {
           backgroundColor: themeContext.theme.palette.background.default,
           color: themeContext.theme.palette.text.primary
         }}>
-          {!networkContext.offline && <OfflineBadge />}
+          {networkContext.offline && <OfflineBadge />}
+          <Route component={SideMenu}/>
           <Switch>
             <Route exact path="/" component={Home}/>
             <Route exact path="/login" component={Login}/>
+            <Route exact path="/ranking" component={Ranking}/>
             <Route exact path="/theme-test" component={ThemeTest}/>
             <Route component={NotFound}/>
           </Switch>

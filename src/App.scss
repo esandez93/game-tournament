@@ -1,7 +1,10 @@
 .App {
-  display: inline-block;
+  display: flex;
   min-width: 100vw;
   min-height: 100vh;
   box-sizing: border-box;
-  text-align: center;
+
+  .Page {
+    flex: 1;
+  }
 }

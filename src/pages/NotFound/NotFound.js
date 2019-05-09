@@ -1,22 +1,16 @@
 import React, { Component } from 'react';
 import './NotFound.scss';
 
-import { Redirect } from 'react-router-dom';
-
-import { LoginContext } from '@/context';
+import clsx from 'clsx';
 
 class NotFound extends Component {
   render() {
-    return this.props.logged ?
-      <Redirect to='/' /> :
-      <div className="NotFound">
+    return (
+      <div className={clsx('NotFound', this.props.className)}>
         NotFound Page
       </div>
+    );
   }
 }
 
-export default React.forwardRef((props, ref) => (
-  <LoginContext.Consumer>
-    {(login) => <NotFound {...props} logged={login.logged} ref={ref} />}
-  </LoginContext.Consumer>
-));
+export default NotFound;

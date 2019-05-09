@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './ThemeTest.scss';
 
+import clsx from 'clsx';
+
 import { ThemeContext } from '@/context';
 import { Button } from '@/components';
 
@@ -12,10 +14,9 @@ class ThemeTest extends Component {
     } = this.props;
 
     return (
-      <div className="ThemeTest">
-        <h1 style={{
-
-        }}>ThemeTest Page</h1>
+      <div className={clsx('ThemeTest', this.props.className)}>
+        <h1>ThemeTest Page</h1>
+        <h3>Current theme: { themeName }</h3>
 
         <Button>Default</Button>
         <Button color="primary">Primary</Button>
@@ -25,7 +26,11 @@ class ThemeTest extends Component {
         <Button color="primary" variant="text">Primary Text</Button>
         <Button color="secondary" variant="text">Secondary Text</Button><br />
 
-        <button onClick={() => changeTheme(themeName === 'light' ? 'dark' : 'light')}>ToggleTheme</button>
+        <Button variant="outlined">Default Outlined</Button>
+        <Button color="primary" variant="outlined">Primary Outlined</Button>
+        <Button color="secondary" variant="outlined">Secondary Outlined</Button><br />
+
+        <button onClick={() => changeTheme(themeName === 'defaultLight' ? 'defaultDark' : 'defaultLight')}>ToggleTheme</button>
       </div>
     )
   }
