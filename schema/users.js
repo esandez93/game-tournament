@@ -39,9 +39,14 @@ const user = {
   "required": ["id", "username", "name", "avatar", "email", "company", "group", "settings"]
 };
 
-export default {
+const users = {
   "type": "array",
   "minItems": 3,
   "maxItems": 10,
   "items": user
+};
+
+export {
+  user,
+  users
 }

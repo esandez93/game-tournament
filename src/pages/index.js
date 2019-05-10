@@ -74,6 +74,7 @@ function getLoadable(name, loader) {
   });
 }
 
+const History = getLoadable('History', () => import(/* webpackChunkName: "History" */ './History'));
 const Home = getLoadable('Home', () => import(/* webpackChunkName: "Home" */ './Home'));
 const Login = getLoadable('Login', () => import(/* webpackChunkName: "Login" */ './Login'));
 const ThemeTest = getLoadable('ThemeTest', () => import(/* webpackChunkName: "ThemeTest" */ './ThemeTest'));
@@ -81,6 +82,7 @@ const NotFound = getLoadable('NotFound', () => import(/* webpackChunkName: "NotF
 const Ranking = getLoadable('Ranking', () => import(/* webpackChunkName: "Ranking" */ './Ranking'));
 
 export {
+  History,
   Home,
   Login,
   ThemeTest,

@@ -17,6 +17,7 @@ import {
 import * as languages from '@/locale';
 import * as themes from '@/themes';
 import {
+  History,
   Home,
   Login,
   NotFound,
@@ -30,18 +31,6 @@ import {
 import { login } from '@/api/users';
 
 const DEV_MODE = process.env.NODE_ENV === 'development';
-
-/* const MOCK_USER = {
-  id: 0,
-  username: 'esandez',
-  name: 'Eric Sández',
-  email: 'esandez93@gmail.com',
-  company: 'Scytl',
-  group: 'frontend',
-  settings: {
-    theme: 'defaultDark'
-  }
-}; */
 
 const MultiProvider = (props) => {
   return (
@@ -162,6 +151,7 @@ class App extends Component {
           {loginContext.logged && <Route component={SideMenu}/>}
           <Switch>
             <Route exact path="/" component={Home}/>
+            <Route exact path="/history" component={History}/>
             <Route exact path="/login" component={Login}/>
             <Route exact path="/ranking" component={Ranking}/>
             <Route exact path="/theme-test" component={ThemeTest}/>

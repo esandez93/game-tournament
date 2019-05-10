@@ -10,7 +10,6 @@ import jsf from 'json-schema-faker';
 import fs from 'fs';
 import chalk from 'chalk';
 import schema from '../schema';
-import path from 'path';
 
 jsf.extend('faker', () => {
   let faker = require('faker');

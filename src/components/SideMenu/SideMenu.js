@@ -41,8 +41,7 @@ function SideMenu (props) {
   }, {
     icon: StorageIcon,
     text: props.translate('sections.history'),
-    url: '/history',
-    disabled: true
+    url: '/history'
   }, {
     icon: GroupIcon,
     text: props.translate('sections.users'),

@@ -1,5 +1,9 @@
-import users from './users';
+import { users } from './users';
+import { matches } from './matches';
+import { characters } from './characters';
 
 export default {
-  users
+  users,
+  matches,
+  characters
 }
