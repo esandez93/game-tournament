@@ -25,7 +25,7 @@ function CharacterAvatar (props) {
       position: 'absolute',
       width: theme.spacing(4),
       height: theme.spacing(4),
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
       backgroundImage: `
         linear-gradient(
           to top left,

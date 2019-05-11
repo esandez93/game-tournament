@@ -42,6 +42,10 @@ const match = {
     "date": {
       "type": "string",
       "faker": "date.recent"
+    },
+    "result": {
+      "type": "number",
+      "pattern": "1|2"
     }
   },
   "required": [ "id", "player1", "player2", "blindPick", "date" ]
