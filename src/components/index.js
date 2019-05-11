@@ -1,3 +1,4 @@
+import Avatar from './Avatar';
 import Button from './Button';
 import Icon from './Icon';
 import Loading from './Loading';
@@ -6,6 +7,7 @@ import SideMenu from './SideMenu';
 import Snackbar from './Snackbar';
 
 export {
+  Avatar,
   Button,
   Icon,
   Loading,

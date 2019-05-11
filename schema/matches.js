@@ -1,13 +1,20 @@
 import { user } from './users';
 import { character } from './characters';
 
+let teamCharacter = character;
+teamCharacter.properties.alive = {
+  "type": "boolean",
+  "faker": "random.boolean"
+};
+teamCharacter.required.push('alive');
+
 const team = {
   "type": "array",
   "minItems": 1,
   "maxItems": 4,
   "uniqueItems": true,
-  "items": character
-}
+  "items": teamCharacter
+};
 
 const player = {
   "type": "object",

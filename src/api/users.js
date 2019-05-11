@@ -16,7 +16,7 @@ function getRanking() {
 }
 
 function login(user, password) {
-  return doRequest(`${url}/${endpoint}?_limit=1`);
+  return doRequest(`${url}/${endpoint}`, { _limit: 1 });
 }
 
 export {

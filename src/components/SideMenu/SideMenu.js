@@ -5,7 +5,7 @@ import styles from './styles';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles/*, useTheme*/ } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Avatar from '@material-ui/core/Avatar';

@@ -2,7 +2,7 @@ import React from 'react';
 import Loadable from 'react-loadable';
 import { Redirect } from 'react-router-dom';
 import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 import { Loading } from '@/components';
 import { LoginContext } from '@/context';

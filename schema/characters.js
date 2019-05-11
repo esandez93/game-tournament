@@ -1,3 +1,5 @@
+const names = [ 'Jin', 'Hwoarang', 'Yoshimitsu', 'Eddy', 'Lei', 'Law', 'Xiaoyu', 'Paul', 'King', 'Nina' ]
+
 const character = {
   "type": "object",
   "properties": {
@@ -8,11 +10,7 @@ const character = {
     },
     "name": {
       "type": "string",
-      "pattern": "Jin|Hwoarang|Yoshimitsu|Eddie|Lei|Law|Xiaoyu|Paul|King|Nina"
-    },
-    "avatar": {
-      "type": "string",
-      "faker": "image.avatar"
+      "pattern": names.join('|')
     }
   },
   "required": [ "id", "name", "avatar" ]

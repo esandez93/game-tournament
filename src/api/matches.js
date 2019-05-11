@@ -3,8 +3,8 @@ import { doRequest } from '@/utils';
 
 const endpoint = 'matches';
 
-function getMatches(query) {
-  return doRequest(`${url}/${endpoint}?${query}`);
+function getMatches(params) {
+  return doRequest(`${url}/${endpoint}`, params);
 }
 
 function getMatchById(id) {
