@@ -7,6 +7,7 @@ import {
 import { withTranslation } from 'react-i18next';
 import deepmerge from 'deepmerge';
 import { ThemeProvider } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 import {
   ThemeContext,
@@ -17,9 +18,9 @@ import {
 import * as languages from '@/locale';
 import * as themes from '@/themes';
 import {
-  History,
   Home,
   Login,
+  Matches,
   NotFound,
   Ranking,
   ThemeTest
@@ -31,6 +32,38 @@ import {
 import { login } from '@/api/users';
 
 const DEV_MODE = process.env.NODE_ENV === 'development';
+
+function DevConfig (props) {
+  const classes = makeStyles((theme) => ({
+    root: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      padding: theme.spacing(1) / 2,
+      backgroundColor: theme.palette.error.dark,
+      border: `2px solid ${theme.palette.text.secondary}`
+    }
+  }))();
+
+  const {
+    themeContext,
+    localeContext
+  } = props;
+
+  function toggleLocale () {
+    localeContext.changeLocale(localeContext.locale === 'es' ? 'en' : 'es');
+  }
+  function toggleTheme () {
+    themeContext.changeTheme(themeContext.name === 'defaultLight' ? 'defaultDark' : 'defaultLight');
+  }
+
+  return (
+    <div className={classes.root}>
+      <button onClick={toggleLocale}>Locale</button>
+      <button onClick={toggleTheme}>Theme</button>
+    </div>
+  );
+}
 
 const MultiProvider = (props) => {
   return (
@@ -148,10 +181,11 @@ class App extends Component {
           color: themeContext.theme.palette.text.primary
         }}>
           {networkContext.offline && <OfflineBadge />}
+          {DEV_MODE && <DevConfig themeContext={themeContext} localeContext={localeContext} />}
           {loginContext.logged && <Route component={SideMenu}/>}
           <Switch>
             <Route exact path="/" component={Home}/>
-            <Route exact path="/history" component={History}/>
+            <Route exact path="/matches" component={Matches}/>
             <Route exact path="/login" component={Login}/>
             <Route exact path="/ranking" component={Ranking}/>
             <Route exact path="/theme-test" component={ThemeTest}/>

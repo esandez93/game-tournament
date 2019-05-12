@@ -5,7 +5,7 @@ import styles from './styles';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
-import { makeStyles/*, useTheme*/ } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Avatar from '@material-ui/core/Avatar';
@@ -18,6 +18,7 @@ import ShowChartIcon from '@material-ui/icons/ShowChart';
 import StorageIcon from '@material-ui/icons/Storage';
 import GroupIcon from '@material-ui/icons/Group';
 import SettingsIcon from '@material-ui/icons/Settings';
+import Typography from '@material-ui/core/Typography';
 
 import { LoginContext, LocaleContext } from '@/context';
 
@@ -25,7 +26,6 @@ const useStyles = makeStyles(styles);
 
 function SideMenu (props) {
   const classes = useStyles();
-  // const theme = useTheme();
   const [open, setOpen] = useState(window.innerWidth > 1080);
   const [currentSection, setCurrentSection] = useState(null);
 
@@ -40,8 +40,8 @@ function SideMenu (props) {
     url: '/ranking'
   }, {
     icon: StorageIcon,
-    text: props.translate('sections.history'),
-    url: '/history'
+    text: props.translate('sections.matches'),
+    url: '/matches'
   }, {
     icon: GroupIcon,
     text: props.translate('sections.users'),
@@ -52,7 +52,7 @@ function SideMenu (props) {
     text: props.translate('sections.settings'),
     url: '/settings',
     disabled: true
-  }]
+  }];
 
   function toggleOpen () {
     setOpen(!open);
@@ -86,15 +86,15 @@ function SideMenu (props) {
           <PersonIcon />
         </Avatar>
         <div>
-          <div>{props.username}</div>
-          <div>{props.name}</div>
+          <Typography variant="body1">{props.username}</Typography>
+          <Typography className={classes.secondaryText} variant="body2">{props.name}</Typography>
         </div>
       </div>
       <Divider />
       <List>
         {menu.map((item, index) => (
           <ListItem  button disabled={item.disabled} key={index}
-            selected={item.text.toLowerCase() === currentSection}
+            selected={item.url.slice(1).toLowerCase() === currentSection}
             onClick={() => navigate(item.url)}
           >
             <ListItemIcon><item.icon /></ListItemIcon>

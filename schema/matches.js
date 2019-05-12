@@ -48,7 +48,7 @@ const match = {
       "pattern": "1|2"
     }
   },
-  "required": [ "id", "player1", "player2", "blindPick", "date" ]
+  "required": [ "id", "player1", "player2", "blindPick", "date", "result" ]
 };
 
 const matches = {

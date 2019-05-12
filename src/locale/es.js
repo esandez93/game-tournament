@@ -2,8 +2,11 @@ export default {
   sections: {
     profile: "Perfil",
     ranking: "Ranking",
-    history: "Historial",
+    matches: "Partidas",
     users: "Usuarios",
     settings: "Configuración"
+  },
+  matches: {
+    newMatch: "Nueva partida"
   }
 };

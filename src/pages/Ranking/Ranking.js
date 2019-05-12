@@ -37,8 +37,6 @@ function Ranking (props) {
 
   return (
     <div className={clsx('Ranking', props.className)}>
-      Ranking Page
-
       <List className={classes.list}>
         {ranking.map((user, index) => (
           <Fragment key={user.id}>

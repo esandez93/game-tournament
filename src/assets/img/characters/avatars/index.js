@@ -9,8 +9,6 @@ import paul from './paul.png';
 import xiaoyu from './xiaoyu.png';
 import yoshimitsu from './yoshimitsu.png';
 
-console.log(eddy)
-
 export default {
   eddy,
   hwoarang,

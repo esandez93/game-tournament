@@ -3,18 +3,11 @@ import Loadable from 'react-loadable';
 import { Redirect } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 
 import { Loading } from '@/components';
-import { LoginContext } from '@/context';
-
-const useStyles = makeStyles(theme => ({
-  page: {
-    paddingTop: theme.spacing(6),
-    paddingRight: theme.spacing(4),
-    paddingLeft: theme.spacing(4),
-    paddingBottom: theme.spacing(4)
-  }
-}));
+import { LoginContext, LocaleContext } from '@/context';
+import { cleanString } from '@/utils';
 
 /*
 Loadable important things [ https://github.com/jamiebuilds/react-loadable ]
@@ -39,6 +32,29 @@ Loadable important things [ https://github.com/jamiebuilds/react-loadable ]
   });
 */
 
+const useStyles = makeStyles(theme => ({
+  root: {
+    flex: 1,
+    paddingTop: theme.spacing(1),
+    paddingRight: theme.spacing(4),
+    paddingLeft: theme.spacing(4),
+    paddingBottom: theme.spacing(1)
+  },
+  header: {
+  },
+  page: {
+    paddingTop: theme.spacing(2)
+  }
+}));
+
+function Header (props) {
+  return (
+    <div className={clsx('Header', props.className)}>
+      <Typography variant="h4">{props.title}</Typography>
+    </div>
+  );
+}
+
 function Page (props) {
   const classes = useStyles();
   const {
@@ -49,15 +65,24 @@ function Page (props) {
 
   return (
     <LoginContext.Consumer>
-      {(login) => {
-        if (login.logged && name === 'Login') {
-          return <Redirect to='/' />
-        } else if (login.logged || name === 'Login') {
-          return <Component className={clsx('Page', classes.page)} {...other} />
-        } else {
-          return <Redirect to='/login' />
-        }
-      }}
+      {(login) => (
+        <LocaleContext.Consumer>
+          {(locale) => {
+            if (login.logged && name === 'Login') {
+              return <Redirect to='/' />
+            } else if (login.logged || name === 'Login') {
+              return (
+                <div className={classes.root}>
+                  <Header className={clsx(classes.header)} title={locale.translate(`sections.${cleanString(props.name.toLowerCase())}`)} />
+                  <Component className={clsx('Page', classes.page)} {...other} />
+                </div>
+              );
+            } else {
+              return <Redirect to='/login' />
+            }
+          }}
+        </LocaleContext.Consumer>
+      )}
     </LoginContext.Consumer>
   );
 }
@@ -74,7 +99,7 @@ function getLoadable(name, loader) {
   });
 }
 
-const History = getLoadable('History', () => import(/* webpackChunkName: "History" */ './History'));
+const Matches = getLoadable('Matches', () => import(/* webpackChunkName: "Matches" */ './Matches'));
 const Home = getLoadable('Home', () => import(/* webpackChunkName: "Home" */ './Home'));
 const Login = getLoadable('Login', () => import(/* webpackChunkName: "Login" */ './Login'));
 const ThemeTest = getLoadable('ThemeTest', () => import(/* webpackChunkName: "ThemeTest" */ './ThemeTest'));
@@ -82,10 +107,10 @@ const NotFound = getLoadable('NotFound', () => import(/* webpackChunkName: "NotF
 const Ranking = getLoadable('Ranking', () => import(/* webpackChunkName: "Ranking" */ './Ranking'));
 
 export {
-  History,
   Home,
   Login,
-  ThemeTest,
   NotFound,
+  Matches,
+  ThemeTest,
   Ranking
 };

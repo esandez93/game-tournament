@@ -28,6 +28,9 @@ export default theme => ({
     display: 'flex',
     padding: theme.spacing(1),
   },
+  secondaryText: {
+    color: theme.palette.text.secondary
+  },
   avatar: {
     cursor: 'pointer',
     height: theme.spacing(6),

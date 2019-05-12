@@ -1,33 +1,19 @@
 export default theme => ({
-  list: {
-    width: '100%',
-    paddingTop: 0
-  },
-  listFragment: {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: theme.palette.background.paper,
-  },
-  listItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
   upperSide: {
     display: 'flex',
     justifyContent: 'space-between',
   },
   downSide: {
+    height: `${theme.spacing(4) + 2}px`,
     boxSizing: 'border-box',
     display: 'flex',
     justifyContent: 'space-between',
-    paddingRight: theme.spacing(2),
-    paddingLeft: theme.spacing(2)
   },
   avatar: {
     height: theme.spacing(6),
-    width: theme.spacing(6),
+    width: theme.spacing(6)
+  },
+  userInfo: {
     marginRight: theme.spacing(2),
     marginLeft: theme.spacing(2)
   },
@@ -49,13 +35,32 @@ export default theme => ({
     textAlign: 'right',
     float: 'right'
   },
+  secondaryColor: {
+    color: theme.palette.text.secondary
+  },
+  flex: {
+    display: 'flex'
+  },
+  spaceBetween: {
+    justifyContent: 'space-between',
+  },
+  win: {
+    color: 'rgb(40, 175, 65)'
+  },
+  lose: {
+    color: theme.palette.error.main,
+  },
+  centerVertical: {
+    display: 'flex',
+    alignItems: 'center'
+  },
   versus: {
     fontSize: '56px',
     position: 'absolute',
     display: 'block',
     textAlign: 'center',
     width: '80%',
-    color: theme.palette.error.main,
+    color: theme.palette.error.dark,
     backgroundColor: theme.palette.background.paper,
     top: '50%',
   },
@@ -63,7 +68,8 @@ export default theme => ({
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1)
   },
-  customDivider: {
-    height: theme.spacing(2)
+  newMatch: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   }
 });
