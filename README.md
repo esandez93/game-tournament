@@ -31,6 +31,7 @@
 
 - Unassigned:
     * Do the fucking backend
+    * Make it work as a PWA
     * Metrics [VERY IMPORTANT]
     * Chat ?
     * Duels
