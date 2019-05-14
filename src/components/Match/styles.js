@@ -4,7 +4,6 @@ export default theme => ({
     justifyContent: 'space-between',
   },
   downSide: {
-    height: `${theme.spacing(4) + 2}px`,
     boxSizing: 'border-box',
     display: 'flex',
     justifyContent: 'space-between',
@@ -24,6 +23,7 @@ export default theme => ({
   },
   leftSide: {
     display: 'flex',
+    flexWrap: 'wrap',
     width: '35%',
   },
   center: {
@@ -35,6 +35,7 @@ export default theme => ({
   },
   rightSide: {
     display: 'flex',
+    flexWrap: 'wrap',
     justifyContent: 'flex-end',
     width: '35%',
     textAlign: 'right',

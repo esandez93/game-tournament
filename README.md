@@ -1,6 +1,7 @@
 ### TODOs
 - Match creation:
     * Set wins and losses by character (Stepper ?) [VERY IMPORTANT]
+    * Create a search input when selecting user
     * Allow remove selected character
     * Tooltip with character info
     * Cancel creation and dismiss changes (with alert)
@@ -10,6 +11,17 @@
     * Error checking:
         + At least 1 character each user
         + One team with every character dead
+    * Responsive:
+        + Breakpoint at 760px -> Hide sidebar and make it float over the content when expanded (with minimum size when folded) (global setting)
+        + Breakpoint at 620px -> Change layout of each match (expandible card ?)
+
+- Ranking:
+    * Change numbers for cool icon of a trophy
+    * Show points per user
+    * Set filters to search on different rankings (always by game):
+        + Mode
+        + Organization
+        + Group
 
 - General TODO:
     * RESPONSIVE [VERY VERY VERY VERY VERY IMPORTANT]
@@ -18,6 +30,7 @@
     * User list
 
 - Unassigned:
+    * Do the fucking backend
     * Metrics [VERY IMPORTANT]
     * Chat ?
     * Duels
