@@ -100,6 +100,7 @@ function DownPlayerSide (props) {
           key={character.id}
           username={player.username}
           character={character}
+          onClick={() => isCreating ? clickCharacter(character) : null}
         />
       )}
       {isCreating && team.length < 8 && (<Fragment>
@@ -200,36 +201,39 @@ function Match (props) {
 
   function clickCharacter (character, player) {
     let found = false;
+    const teamCopy = [ ...state['player'+player].team ];
 
-    state['player'+player].team.forEach((char) => {
+    console.log(player, character)
+
+    teamCopy.forEach((char) => {
       if (char.id === character.id) {
         found = true;
 
         if (char.alive === undefined)
-          char.alive = true;
+          char.alive = false;
         else
           char.alive = !char.alive;
       }
     });
 
+    let prevState = { ...state };
+
     if (!found) {
-      let prevState = { ...state };
-
       setState({
+        ...prevState,
         ['player'+player]: {
-          team: [ ...prevState['player'+player].team, character],
-          ...prevState['player'+player]
-        },
-        ...prevState
+          ...prevState['player'+player],
+          team: [ ...prevState['player'+player].team, { ...character } ]
+        }
       });
-
-      console.log({
+    } else {
+      setState({
+        ...prevState,
         ['player'+player]: {
-          team: [ ...prevState['player'+player].team, character],
-          ...prevState['player'+player]
-        },
-        ...prevState
-      })
+          ...prevState['player'+player],
+          team: [ ...teamCopy ]
+        }
+      });
     }
   }
 
@@ -282,6 +286,7 @@ function Match (props) {
               team={state.player2.team}
               availableCharacters={availableCharacters}
               isCreating={isCreating}
+              clickCharacter={(character) => clickCharacter(character, 2)}
             />
           </div>
         </Fragment>

@@ -45,8 +45,23 @@ function ContextMenu (props) {
   }
 
   useEffect(() => {
+    const menuWidth = node.current.offsetWidth;
+    const space = window.innerWidth - x - window.scrollX
+    let xPosition = x - window.scrollX;
+
+    /* console.log('Total X =', window.innerWidth);
+    console.log('X =', x - window.scrollX);
+    console.log('Space =', space);
+    console.log('Menu Width =', menuWidth);
+    console.log('Fits?', space > menuWidth); */
+
+    if (space < menuWidth)
+      xPosition -= menuWidth;
+
+    // console.log('Final X =', xPosition);
+
     setPosition({
-      x: x - window.scrollX,
+      x: xPosition,
       y: y - window.scrollY
     });
   }, [ x, y ]);
@@ -64,7 +79,7 @@ function ContextMenu (props) {
       document.removeEventListener('mousedown', handleClickOutside);
       document.addEventListener('scroll', handleScroll);
     };
-  }, [open]);
+  }, [ open ]);
 
   return (
     <div className={clsx(className, classes.root)} style={{

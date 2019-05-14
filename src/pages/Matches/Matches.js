@@ -24,8 +24,7 @@ function Matches (props) {
   useEffect(() => {
     getMatches({
       _sort: 'date',
-      _order: 'desc',
-      _limit: 1
+      _order: 'desc'
     }).then(
       (data) => setMatches(data),
       console.error
