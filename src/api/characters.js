@@ -3,7 +3,7 @@ import { doRequest } from '@/utils';
 
 const endpoint = 'characters';
 
-function getCharacter(query) {
+function getCharacters(query) {
   return doRequest(`${url}/${endpoint}?${query}`);
 }
 
@@ -12,6 +12,6 @@ function getCharacterById(id) {
 }
 
 export {
-  getCharacter,
+  getCharacters,
   getCharacterById
 };

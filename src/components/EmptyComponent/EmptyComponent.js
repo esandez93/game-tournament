@@ -1,23 +1,27 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './EmptyComponent.scss';
+import styles from './styles.js';
 
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core/styles';
 
-class EmptyComponent extends Component {
-  render() {
-    return (
-      <div className="EmptyComponent">
+const useStyles = makeStyles(styles);
 
-      </div>
-    );
-  }
+function EmptyComponent (props) {
+  const {
+    className,
+    children,
+    ...other
+  } = props;
+
+  const classes = useStyles();
+
+  return (
+    <div className={clsx(className, classes.root)} {...other}>
+
+    </div>
+  )
 }
-
-EmptyComponent.propTypes = {
-
-};
-EmptyComponent.defaultProps = {
-
-};
 
 export default EmptyComponent;

@@ -13,6 +13,10 @@ export default theme => ({
     height: theme.spacing(6),
     width: theme.spacing(6)
   },
+  characterAvatar: {
+    margin: `0 ${theme.spacing(1) / 2}px`,
+    display: 'inline-block'
+  },
   userInfo: {
     marginRight: theme.spacing(2),
     marginLeft: theme.spacing(2)
@@ -71,5 +75,45 @@ export default theme => ({
   newMatch: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
+  },
+  newCharacterButton: {
+    padding: 0,
+    border: `1px solid ${theme.palette.text.secondary}`,
+    borderRadius: 0,
+    boxSizing: 'content-box',
+    height: `${theme.spacing(4)}px`,
+    width: `${theme.spacing(4)}px`,
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    }
+  },
+  newCharacterIcon: {
+    color: theme.palette.text.secondary,
+    borderColor: theme.palette.text.secondary,
+    fontSize: theme.spacing(4),
+    '&:hover': {
+      color: theme.palette.background.paper,
+      backgroundColor: theme.palette.primary.main,
+    }
+  },
+  contextMenu: {
+    border: `1px solid ${theme.palette.text.secondary}`,
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(1)
+  },
+  selectableCharacterAvatar: {
+    margin: `${theme.spacing(1) / 2}px`,
+    cursor: 'pointer',
+    '&:hover': {
+      borderColor: theme.palette.primary.main
+    }
+  },
+  selectableCharacterAvatarShadow: {
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.4)'
+    },
+    '&:active': {
+      backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    },
   }
 });

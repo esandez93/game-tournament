@@ -11,20 +11,28 @@ import ListItem from '@material-ui/core/ListItem';
 
 import { LocaleContext } from '@/context';
 import { getMatches } from '@/api/matches';
+import { getCharacters } from '@/api/characters';
 import { Match } from '@/components';
 
 const useStyles = makeStyles(styles);
 
 function Matches (props) {
   const classes = useStyles();
-  const [matches, setMatches] = useState([]);
+  const [ matches, setMatches ] = useState([]);
+  const [ availableCharacters, setAvailableCharacters ] = useState([]);
 
   useEffect(() => {
     getMatches({
       _sort: 'date',
-      _order: 'desc'
+      _order: 'desc',
+      _limit: 1
     }).then(
       (data) => setMatches(data),
+      console.error
+    );
+
+    getCharacters().then(
+      (data) => setAvailableCharacters(data),
       console.error
     );
   }, []);
@@ -32,7 +40,7 @@ function Matches (props) {
   return (
     <div className={clsx('Matches', props.className)}>
       <List className={classes.list}>
-        <Match className={classes.listItem} newMatch component={ListItem} />
+        <Match className={classes.listItem} characters={availableCharacters} newMatch component={ListItem} />
         {matches.map((match, index) => (
           <Fragment key={match.id}>
             <div className={clsx(classes.customDivider)}></div>

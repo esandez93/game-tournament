@@ -13,7 +13,7 @@ const character = {
       "pattern": names.join('|')
     }
   },
-  "required": [ "id", "name", "avatar" ]
+  "required": [ "id", "name" ]
 };
 
 const characters = {

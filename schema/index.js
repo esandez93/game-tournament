@@ -1,9 +1,9 @@
 import { users } from './users';
-import { matches } from './matches';
 import { characters } from './characters';
+import { matches } from './matches';
 
 export default {
   users,
+  characters,
   matches,
-  characters
 }

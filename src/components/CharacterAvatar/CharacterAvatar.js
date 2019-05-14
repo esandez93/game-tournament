@@ -9,21 +9,27 @@ import { makeStyles } from '@material-ui/core/styles';
 
 function CharacterAvatar (props) {
   const {
+    className,
     character,
-    username
+    username,
+    width,
+    height,
+    shadow,
+    ...other
   } = props;
 
   const classes = makeStyles((theme) => ({
     root: {
       position: 'relative',
-      height: theme.spacing(4),
-      margin: `0 ${theme.spacing(1) / 2}px`,
-      border: `1px solid ${character.alive ? theme.palette.text.secondary : theme.palette.error.main}`
+      height: height || theme.spacing(4),
+      border: `1px solid ${character.alive === false ? theme.palette.error.main : theme.palette.text.secondary}`
     },
     shadow: {
       position: 'absolute',
-      width: theme.spacing(4),
-      height: theme.spacing(4),
+      width: width || theme.spacing(4),
+      height: height || theme.spacing(4),
+    },
+    death: {
       backgroundColor: 'rgba(0, 0, 0, 0.6)',
       backgroundImage: `
         linear-gradient(
@@ -36,20 +42,20 @@ function CharacterAvatar (props) {
         )`
     },
     characterAvatar: {
-      width: theme.spacing(4),
-      height: theme.spacing(4),
+      width: width || theme.spacing(4),
+      height: height || theme.spacing(4),
     }
   }))();
 
   return (
-    <div className={clsx(classes.root)}>
-      <div className={clsx({
-        [classes.shadow]: !character.alive
+    <div className={clsx(className, classes.root)} {...other}>
+      <div className={clsx(classes.shadow, shadow, {
+        [classes.death]: character.alive === false
       })}></div>
       <img
         className={clsx(classes.characterAvatar)}
         src={avatars[character.name.toLowerCase()]}
-        alt={`${username} - ${character.name}`}
+        alt={`${username ? username + ' - ' : ''}${character.name}`}
       />
     </div>
   )

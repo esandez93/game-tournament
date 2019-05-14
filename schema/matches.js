@@ -1,7 +1,10 @@
 import { user } from './users';
 import { character } from './characters';
 
-let teamCharacter = character;
+/* TODO
+ * Change to spread operator working with Babel
+ */
+let teamCharacter = JSON.parse(JSON.stringify(character));
 teamCharacter.properties.alive = {
   "type": "boolean",
   "faker": "random.boolean"
@@ -22,7 +25,7 @@ const player = {
     "user": user,
     "team": team,
   },
-  "required": ["user", "team"]
+  "required": [ "user", "team" ]
 };
 
 const match = {
