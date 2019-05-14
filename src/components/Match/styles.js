@@ -15,7 +15,8 @@ export default theme => ({
   },
   characterAvatar: {
     margin: `0 ${theme.spacing(1) / 2}px`,
-    display: 'inline-block'
+    display: 'inline-block',
+    userSelect: 'none'
   },
   userInfo: {
     marginRight: theme.spacing(2),
@@ -101,6 +102,22 @@ export default theme => ({
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(1)
   },
+  selectableUserAvatar: {
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main
+    }
+  },
+  selectableUser: {
+    display: 'flex',
+    boxSizing: 'border-box',
+    margin: `${theme.spacing(1) / 2}px`,
+    cursor: 'pointer',
+    '&:hover': {
+      border: `1px solid ${theme.palette.primary.main}`
+    }
+
+  },
   selectableCharacterAvatar: {
     margin: `${theme.spacing(1) / 2}px`,
     cursor: 'pointer',
@@ -114,6 +131,14 @@ export default theme => ({
     },
     '&:active': {
       backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    },
+  },
+  selectableDeadCharacterAvatarShadow: {
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.7)'
+    },
+    '&:active': {
+      backgroundColor: 'rgba(0, 0, 0, 0.9)'
     },
   }
 });

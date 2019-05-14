@@ -30,17 +30,66 @@ function PlayerInfo (props) {
     className,
     player,
     win,
+    clickUser,
+    isCreating,
+    availableUsers,
     ...other
   } = props;
+
+  const [ userMenu, setUserMenu ] = useState({
+    open: false,
+    x: -100,
+    y: -100
+  });
+
+  function selectUserMenu (event) {
+    if (!isCreating) return;
+
+    event.preventDefault();
+
+    setUserMenu({
+      open: true,
+      x: event.clientX,
+      y: event.clientY
+    });
+  }
+
+  function closeUserMenu() {
+    setUserMenu({
+      open: false,
+      x: -100,
+      y: -100
+    })
+  }
 
   return (
     <div className={clsx(className, classes.spaceBetween)} {...other}>
       <div className={clsx(classes.flex)}>
-        <Avatar className={classes.avatar} src={player.avatar} name={player.name} />
+        <Avatar className={clsx(classes.avatar, {
+          [classes.selectableUserAvatar]: isCreating
+        })} onClick={(event) => selectUserMenu(event)} src={player.avatar} name={player.name} />
         <span className={classes.userInfo}>
           <Typography variant="body1">{player.username}</Typography>
           <Typography className={classes.secondaryColor} variant="body2">{player.name}</Typography>
         </span>
+
+        <ContextMenu
+          className={classes.contextMenu}
+          open={userMenu.open}
+          x={userMenu.x}
+          y={userMenu.y}
+          closeMenu={closeUserMenu}
+        >
+          {availableUsers.map((user, index) => {
+            return (<div className={clsx(classes.selectableUser)} key={index} onClick={() => clickUser(user)}>
+              <Avatar className={classes.avatar} src={user.avatar} name={user.name} />
+              <span className={classes.userInfo}>
+                <Typography variant="body1">{user.username}</Typography>
+                <Typography className={classes.secondaryColor} variant="body2">{user.name}</Typography>
+              </span>
+            </div>)
+          })}
+        </ContextMenu>
       </div>
       {win && <div className={clsx(classes.centerVertical)}>
         <Typography className={clsx(classes.win)} variant="h5">WIN</Typography>
@@ -70,7 +119,7 @@ function DownPlayerSide (props) {
   const theme = useTheme();
   const characterAvatarSize = theme.spacing(4);
 
-  function selectCharacterMenu (event, player) {
+  function selectCharacterMenu (event) {
     if (!isCreating) return;
 
     event.preventDefault();
@@ -94,20 +143,26 @@ function DownPlayerSide (props) {
     <div className={clsx(className)} {...other}>
       {team.map((character) =>
         <CharacterAvatar
-          className={clsx(classes.characterAvatar)}
+          className={clsx(classes.characterAvatar, {
+            //[classes.selectableCharacterAvatar]: isCreating
+          })}
           height={characterAvatarSize}
           width={characterAvatarSize}
           key={character.id}
           username={player.username}
           character={character}
+          shadow={clsx({
+            [classes.selectableCharacterAvatarShadow]: isCreating && character.alive,
+            [classes.selectableDeadCharacterAvatarShadow]: isCreating && !character.alive,
+          })}
           onClick={() => isCreating ? clickCharacter(character) : null}
         />
       )}
       {isCreating && team.length < 8 && (<Fragment>
         <IconButton
           className={classes.newCharacterButton}
-          onContextMenu={(e) => selectCharacterMenu(e, 1)}
-          onClick={(e) => selectCharacterMenu(e, 1)}
+          onContextMenu={(e) => selectCharacterMenu(e)}
+          onClick={(e) => selectCharacterMenu(e)}
         >
           <AddIcon className={classes.newCharacterIcon} />
         </IconButton>
@@ -149,6 +204,7 @@ function Match (props) {
     translate,
     newMatch,
     characters,
+    users,
     ...other
   } = props;
 
@@ -191,39 +247,30 @@ function Match (props) {
     setCreating(true);
   }
 
-  function selectUserMenu (event, player) {
-    if (!isCreating) return;
-
-    event.preventDefault();
-
-
-  }
-
   function clickCharacter (character, player) {
     let found = false;
     const teamCopy = [ ...state['player'+player].team ];
-
-    console.log(player, character)
 
     teamCopy.forEach((char) => {
       if (char.id === character.id) {
         found = true;
 
-        if (char.alive === undefined)
-          char.alive = false;
-        else
-          char.alive = !char.alive;
+        char.alive = !char.alive;
       }
     });
 
-    let prevState = { ...state };
+    const prevState = { ...state };
 
     if (!found) {
+      const char = { ...character };
+      if (char.alive === undefined)
+        char.alive = true;
+
       setState({
         ...prevState,
         ['player'+player]: {
           ...prevState['player'+player],
-          team: [ ...prevState['player'+player].team, { ...character } ]
+          team: [ ...prevState['player'+player].team, char ]
         }
       });
     } else {
@@ -237,6 +284,19 @@ function Match (props) {
     }
   }
 
+  function clickUser (user, player) {
+    const prevState = { ...state };
+    const userCopy = { ...user };
+
+    setState({
+      ...prevState,
+      ['player'+player]: {
+        ...prevState['player'+player],
+        user: userCopy
+      }
+    });
+  }
+
   return (
     <Wrapper className={clsx(className)} {...other}>
       {isNew && <Button className={classes.newMatch} variant="contained" color="primary" onClick={handleNew}>{props.translate('matches.newMatch')}</Button>}
@@ -245,10 +305,11 @@ function Match (props) {
           <div className={clsx(classes.upperSide)}>
             <PlayerInfo
               className={clsx(classes.leftSide)}
-              onContextMenu={(e) => selectUserMenu(e, 1)}
-              onClick={(e) => selectUserMenu(e, 1)}
+              clickUser={(user) => clickUser(user, 1)}
+              availableUsers={users}
               player={state.player1.user}
               classes={classes}
+              isCreating={isCreating}
               win={state.result === 1}
             />
             <div className={clsx(classes.center)}>
@@ -260,10 +321,11 @@ function Match (props) {
             </div>
             <PlayerInfo
               className={clsx(classes.leftSide)}
-              onContextMenu={(e) => selectUserMenu(e, 2)}
-              onClick={(e) => selectUserMenu(e, 2)}
+              clickUser={(user) => clickUser(user, 2)}
+              availableUsers={users}
               player={state.player2.user}
               classes={classes}
+              isCreating={isCreating}
               dir="rtl"
               win={state.result === 2}
             />
@@ -296,11 +358,13 @@ function Match (props) {
 }
 
 Match.propTypes = {
-  characters: PropTypes.array
+  characters: PropTypes.array,
+  users: PropTypes.array
 };
 
 Match.defaultProps = {
-  characters: []
+  characters: [],
+  users: []
 };
 
 export default React.forwardRef((props, ref) => (
