@@ -33,13 +33,14 @@ function PlayerInfo (props) {
     clickUser,
     isCreating,
     availableUsers,
+    selectedUsers,
     ...other
   } = props;
 
   const [ userMenu, setUserMenu ] = useState({
     open: false,
-    x: -100,
-    y: -100
+    x: -1000,
+    y: -1000
   });
 
   function selectUserMenu (event) {
@@ -57,8 +58,8 @@ function PlayerInfo (props) {
   function closeUserMenu() {
     setUserMenu({
       open: false,
-      x: -100,
-      y: -100
+      x: -1000,
+      y: -1000
     })
   }
 
@@ -81,7 +82,9 @@ function PlayerInfo (props) {
           closeMenu={closeUserMenu}
         >
           {availableUsers.map((user, index) => {
-            return (<div className={clsx(classes.selectableUser)} key={index} onClick={() => clickUser(user)}>
+            return (<div className={clsx(classes.selectableUser, {
+              [classes.selectedUser]: selectedUsers.includes(user.id)
+            })} key={index} onClick={() => selectedUsers.includes(user.id) ? null : clickUser(user)}>
               <Avatar className={classes.avatar} src={user.avatar} name={user.name} />
               <span className={classes.userInfo}>
                 <Typography variant="body1">{user.username}</Typography>
@@ -112,8 +115,8 @@ function DownPlayerSide (props) {
 
   const [ characterMenu, setCharacterMenu ] = useState({
     open: false,
-    x: -100,
-    y: -100
+    x: -1000,
+    y: -1000
   });
 
   const theme = useTheme();
@@ -134,8 +137,8 @@ function DownPlayerSide (props) {
   function closeCharacterMenu() {
     setCharacterMenu({
       open: false,
-      x: -100,
-      y: -100
+      x: -1000,
+      y: -1000
     })
   }
 
@@ -218,6 +221,7 @@ function Match (props) {
   const [ isNew, setNew ] = useState(newMatch);
   const [ isCreating, setCreating ] = useState(false);
   const [ availableCharacters, setAvailableCharacters ] = useState(characters);
+  const [ selectedUsers, setSelectedUsers ] = useState([]);
 
   useEffect(() => {
     setAvailableCharacters(characters);
@@ -295,6 +299,11 @@ function Match (props) {
         user: userCopy
       }
     });
+
+    let selectedCopy = [ ...selectedUsers ];
+    selectedCopy[player-1] = userCopy.id;
+
+    setSelectedUsers(selectedCopy);
   }
 
   return (
@@ -307,6 +316,7 @@ function Match (props) {
               className={clsx(classes.leftSide)}
               clickUser={(user) => clickUser(user, 1)}
               availableUsers={users}
+              selectedUsers={selectedUsers}
               player={state.player1.user}
               classes={classes}
               isCreating={isCreating}
@@ -323,6 +333,7 @@ function Match (props) {
               className={clsx(classes.leftSide)}
               clickUser={(user) => clickUser(user, 2)}
               availableUsers={users}
+              selectedUsers={selectedUsers}
               player={state.player2.user}
               classes={classes}
               isCreating={isCreating}

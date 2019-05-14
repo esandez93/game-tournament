@@ -1,3 +1,36 @@
+### TODOs
+- Match creation:
+    * Set wins and losses by character (Stepper ?) [VERY IMPORTANT]
+    * Allow remove selected character
+    * Tooltip with character info
+    * Cancel creation and dismiss changes (with alert)
+    * Save match
+    * Implement draw result
+    * Leave comments on matches
+    * Error checking:
+        + At least 1 character each user
+        + One team with every character dead
+
+- General TODO:
+    * RESPONSIVE [VERY VERY VERY VERY VERY IMPORTANT]
+    * User creation
+    * Profile management (info and settings)
+    * User list
+
+- Unassigned:
+    * Metrics [VERY IMPORTANT]
+    * Chat ?
+    * Duels
+    * Events
+    * Tournament organization
+    * Game creation (to allow this to work with other games)
+    * Notifications ?
+        + Ranking position lost (configure by position)
+        + Message received
+        + Message posted on own match or another match you commented on
+        + Match created
+
+
 ### Goals
 
 Have a CRA project with the common features and examples used in lots of projects

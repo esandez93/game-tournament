@@ -111,12 +111,20 @@ export default theme => ({
   selectableUser: {
     display: 'flex',
     boxSizing: 'border-box',
+    border: `1px solid transparent`,
     margin: `${theme.spacing(1) / 2}px`,
     cursor: 'pointer',
     '&:hover': {
       border: `1px solid ${theme.palette.primary.main}`
     }
-
+  },
+  selectedUser: {
+    cursor: 'not-allowed',
+    border: `1px solid ${theme.palette.text.secondary}`,
+    backgroundColor: theme.palette.text.secondary,
+    '&:hover': {
+      border: `1px solid ${theme.palette.text.secondary}`
+    }
   },
   selectableCharacterAvatar: {
     margin: `${theme.spacing(1) / 2}px`,
