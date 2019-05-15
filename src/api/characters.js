@@ -1,14 +1,14 @@
 import { url } from './config';
-import { doRequest } from '@/utils';
+import { get } from '@/utils';
 
 const endpoint = 'characters';
 
 function getCharacters(query) {
-  return doRequest(`${url}/${endpoint}?${query}`);
+  return get(`${url}/${endpoint}?${query}`);
 }
 
 function getCharacterById(id) {
-  return doRequest(`${url}/${endpoint}/${id}`);
+  return get(`${url}/${endpoint}/${id}`);
 }
 
 export {

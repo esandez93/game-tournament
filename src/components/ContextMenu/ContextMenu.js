@@ -26,6 +26,8 @@ function ContextMenu (props) {
     x: x - window.scrollX,
     y: y - window.scrollY
   });
+  const [ initialXScroll, setInitialXScroll ] = useState(-1);
+  const [ initialYScroll, setInitialYScroll ] = useState(-1);
 
   function handleClickOutside (event) {
     if (node.current.contains(event.target)) {
@@ -38,21 +40,26 @@ function ContextMenu (props) {
 
   function calcPosition (isScrollEvent) {
     if (open && node.current) {
-      const menuWidth = node.current.offsetWidth;
-      const xSpace = window.innerWidth - x - (isScrollEvent ? window.scrollX : 0);
-      let xPosition = x - (isScrollEvent ? window.scrollX : 0);
+      function getScroll(axis) {
+        let scroll = null;
 
-      const menuHeight = node.current.offsetHeight;
-      const ySpace = window.innerHeight - y - (isScrollEvent ? window.scrollY : 0);
-      let yPosition = y - (isScrollEvent ? window.scrollY : 0);
+        if (axis === 'x')
+          scroll = initialXScroll - window.scrollX;
+        else
+          scroll = initialYScroll - window.scrollY;
 
-      console.group('calcPosition');
+        return isScrollEvent ? scroll : 0;
+      }
+
+      function showDebug () {
+        console.group('calcPosition');
         console.group('X');
           console.log('Screen Width =', window.innerWidth);
           console.log('Menu Width =', menuWidth);
           console.log('Click =', x);
           console.log('Scroll X =', window.scrollX);
-          console.log('Space X =', window.innerWidth - x - window.scrollX);
+          console.log('Initial Scroll X =', initialXScroll);
+          console.log('Space X =', window.innerWidth - x + getScroll('x'));
           console.log('Fits X =', xSpace >= menuWidth);
           console.log('Position =', xPosition);
         console.groupEnd();
@@ -61,15 +68,27 @@ function ContextMenu (props) {
           console.log('Menu Height =', menuHeight);
           console.log('Click =', y);
           console.log('Scroll Y =', window.scrollY);
-          console.log('Space Y =', window.innerHeight - y - window.scrollY);
+          console.log('Initial Scroll Y =', initialYScroll);
+          console.log('Space Y =', window.innerHeight - y + getScroll('y'));
           console.log('Fits Y =', ySpace >= menuHeight);
           console.log('Position =', yPosition);
         console.groupEnd();
       console.groupEnd();
+      }
+
+      const menuWidth = node.current.offsetWidth;
+      const xSpace = window.innerWidth - x + getScroll('x');
+      let xPosition = x + getScroll('x');
+
+      const menuHeight = node.current.offsetHeight;
+      const ySpace = window.innerHeight - y + getScroll('y');
+      let yPosition = y + getScroll('y');
+
+      // showDebug();
 
       if (xSpace < menuWidth) {
-        console.log(`${xSpace} < ${menuWidth}, Not enough X space`);
-        xPosition = window.innerWidth + (isScrollEvent ? window.scrollX : 0) - menuWidth - 30;
+        // console.log(`${xSpace} < ${menuWidth}, Not enough X space`);
+        xPosition = window.innerWidth + (isScrollEvent ? window.scrollX : 0) - menuWidth - 16;
       }
 
       setPosition({
@@ -78,8 +97,8 @@ function ContextMenu (props) {
       });
 
       if (ySpace < menuHeight) {
-        console.log(`${ySpace} < ${menuHeight}, Not enough Y space`);
-        yPosition = window.innerHeight + (isScrollEvent ? window.scrollY : 0) - menuHeight - 30;
+        // console.log(`${ySpace} < ${menuHeight}, Not enough Y space`);
+        yPosition = window.innerHeight + (isScrollEvent ? window.scrollY : 0) - menuHeight - 16;
       }
 
       setPosition({
@@ -89,10 +108,12 @@ function ContextMenu (props) {
     }
   }
 
-  useEffect(calcPosition, [ x, y ]);
-
   useEffect(() => {
     const handleScroll = () => calcPosition(true);
+    if (open) {
+      setInitialXScroll(window.scrollX);
+      setInitialYScroll(window.scrollY);
+    }
 
     if (open && !registeredEvents) {
       registeredEvents = true;
@@ -101,15 +122,17 @@ function ContextMenu (props) {
     } else {
       registeredEvents = false;
       document.removeEventListener('mousedown', handleClickOutside);
-      document.addEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll);
     }
 
     return () => {
       registeredEvents = false;
       document.removeEventListener('mousedown', handleClickOutside);
-      document.addEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll);
     };
-  }, [ open ]);
+  }, [ open, initialXScroll, initialYScroll ]);
+
+  useEffect(calcPosition, [ x, y ]);
 
   return (
     <div className={clsx(className, classes.root)} style={{

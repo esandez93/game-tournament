@@ -1,17 +1,25 @@
 import { url } from './config';
-import { doRequest } from '@/utils';
+import {
+  get,
+  post
+} from '@/utils';
 
 const endpoint = 'matches';
 
 function getMatches(params) {
-  return doRequest(`${url}/${endpoint}`, params);
+  return get(`${url}/${endpoint}`, params);
 }
 
 function getMatchById(id) {
-  return doRequest(`${url}/${endpoint}/${id}`);
+  return get(`${url}/${endpoint}/${id}`);
+}
+
+function createMatch(match) {
+  return post(`${url}/${endpoint}`, match);
 }
 
 export {
   getMatches,
-  getMatchById
+  getMatchById,
+  createMatch
 };

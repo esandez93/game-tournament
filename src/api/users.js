@@ -1,22 +1,22 @@
 import { url } from './config';
-import { doRequest } from '@/utils';
+import { get } from '@/utils';
 
 const endpoint = 'users';
 
 function getUsers() {
-  return doRequest(`${url}/${endpoint}`);
+  return get(`${url}/${endpoint}`);
 }
 
 function getUserById(id) {
-  return doRequest(`${url}/${endpoint}/${id}`);
+  return get(`${url}/${endpoint}/${id}`);
 }
 
 function getRanking() {
-  return doRequest(`${url}/${endpoint}`);
+  return get(`${url}/${endpoint}`);
 }
 
 function login(user, password) {
-  return doRequest(`${url}/${endpoint}`, { _limit: 1 });
+  return get(`${url}/${endpoint}`, { _limit: 1 });
 }
 
 export {

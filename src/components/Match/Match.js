@@ -15,6 +15,7 @@ import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 
+import { createMatch } from '@/api/matches';
 import { LocaleContext } from '@/context';
 import {
   Avatar,
@@ -210,6 +211,7 @@ function Match (props) {
     newMatch,
     characters,
     users,
+    matchCreated,
     ...other
   } = props;
 
@@ -251,6 +253,11 @@ function Match (props) {
     });
     setNew(false);
     setCreating(true);
+  }
+
+  function reset () {
+    setNew(true);
+    setCreating(false);
   }
 
   function clickCharacter (character, player) {
@@ -308,6 +315,65 @@ function Match (props) {
     setSelectedUsers(selectedCopy);
   }
 
+  function hasErrors () {
+    let message = null;
+    const result = getResult();
+    console.log('result =', result)
+
+    // TODO: Set error messages
+    if (!state.player1.user.id) {
+      message = '1';
+    } else if (!state.player2.user.id) {
+      message = '2';
+    } else if (state.player1.team.length === 0) {
+      message = '3';
+    } else if (state.player2.team.length === 0) {
+      message = '4';
+    } else if (result === -1) {
+      message = '5';
+    }
+
+    if (message) {
+      // show alert
+      console.error(message);
+    }
+
+    return message !== null;
+  }
+
+  function getResult () {
+    const p1Alive = state.player1.team.filter((character) => character.alive).length;
+    const p2Alive = state.player2.team.filter((character) => character.alive).length;
+
+    if (p1Alive > 0 && p2Alive > 0)
+      return -1;
+    if (p1Alive === 0 && p2Alive === 0)
+      return 0;
+    else if (p1Alive > 0)
+      return 1;
+    else if (p2Alive > 0)
+      return 2;
+  }
+
+  function clickCreateMatch () {
+    if (hasErrors()) {
+      return;
+    }
+
+    const finalResult = getResult();
+
+    createMatch({
+      player1: state.player1,
+      player2: state.player2,
+      date: state.date,
+      result: finalResult
+    }).then((result) => {
+      // show alert
+      matchCreated(result);
+      reset();
+    }).catch(console.error);
+  }
+
   return (
     <Wrapper className={clsx(className)} {...other}>
       {isNew && <Button className={classes.newMatch} variant="contained" color="primary" onClick={handleNew}>{props.translate('matches.newMatch')}</Button>}
@@ -354,6 +420,9 @@ function Match (props) {
               isCreating={isCreating}
               clickCharacter={(character) => clickCharacter(character, 1)}
             />
+
+            <Button size="small" variant="outlined" onClick={clickCreateMatch}>Create</Button>
+
             <DownPlayerSide
               className={clsx(classes.rightSide)}
               classes={classes}

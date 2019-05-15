@@ -43,11 +43,22 @@ function Matches (props) {
     );
   }, []);
 
+  function matchCreated (match) {
+    setMatches([ match, ...matches]);
+  }
+
   return (
     <div className={clsx('Matches', props.className)}>
       <List className={classes.list}>
-        <Match className={classes.listItem} characters={availableCharacters} users={availableUsers} newMatch component={ListItem} />
-        {matches.map((match, index) => (
+        <Match
+          className={classes.listItem}
+          characters={availableCharacters}
+          users={availableUsers}
+          newMatch
+          matchCreated={matchCreated}
+          component={ListItem}
+        />
+        {matches.map((match) => (
           <Fragment key={match.id}>
             <div className={clsx(classes.customDivider)}></div>
             <Match
