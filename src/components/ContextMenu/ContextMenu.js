@@ -19,6 +19,7 @@ function ContextMenu (props) {
     ...other
   } = props;
 
+  let registeredEvents = false;
   const node = useRef();
   const classes = useStyles();
   const [ position, setPosition ] = useState({
@@ -35,47 +36,76 @@ function ContextMenu (props) {
     closeMenu();
   }
 
-  function handleScroll (event) {
-    if (!open) return
+  function calcPosition (isScrollEvent) {
+    if (open && node.current) {
+      const menuWidth = node.current.offsetWidth;
+      const xSpace = window.innerWidth - x - (isScrollEvent ? window.scrollX : 0);
+      let xPosition = x - (isScrollEvent ? window.scrollX : 0);
 
-    setPosition({
-      x: x - window.scrollX,
-      y: y - window.scrollY
-    });
+      const menuHeight = node.current.offsetHeight;
+      const ySpace = window.innerHeight - y - (isScrollEvent ? window.scrollY : 0);
+      let yPosition = y - (isScrollEvent ? window.scrollY : 0);
+
+      console.group('calcPosition');
+        console.group('X');
+          console.log('Screen Width =', window.innerWidth);
+          console.log('Menu Width =', menuWidth);
+          console.log('Click =', x);
+          console.log('Scroll X =', window.scrollX);
+          console.log('Space X =', window.innerWidth - x - window.scrollX);
+          console.log('Fits X =', xSpace >= menuWidth);
+          console.log('Position =', xPosition);
+        console.groupEnd();
+        console.group('Y');
+          console.log('Screen Height =', window.innerHeight);
+          console.log('Menu Height =', menuHeight);
+          console.log('Click =', y);
+          console.log('Scroll Y =', window.scrollY);
+          console.log('Space Y =', window.innerHeight - y - window.scrollY);
+          console.log('Fits Y =', ySpace >= menuHeight);
+          console.log('Position =', yPosition);
+        console.groupEnd();
+      console.groupEnd();
+
+      if (xSpace < menuWidth) {
+        console.log(`${xSpace} < ${menuWidth}, Not enough X space`);
+        xPosition = window.innerWidth + (isScrollEvent ? window.scrollX : 0) - menuWidth - 30;
+      }
+
+      setPosition({
+        x: xPosition,
+        y: yPosition
+      });
+
+      if (ySpace < menuHeight) {
+        console.log(`${ySpace} < ${menuHeight}, Not enough Y space`);
+        yPosition = window.innerHeight + (isScrollEvent ? window.scrollY : 0) - menuHeight - 30;
+      }
+
+      setPosition({
+        x: xPosition,
+        y: yPosition
+      });
+    }
   }
 
-  useEffect(() => {
-    const menuWidth = node.current.offsetWidth;
-    const space = window.innerWidth - x - window.scrollX
-    let xPosition = x - window.scrollX;
-
-    /* console.log('Total X =', window.innerWidth);
-    console.log('X =', x - window.scrollX);
-    console.log('Space =', space);
-    console.log('Menu Width =', menuWidth);
-    console.log('Fits?', space > menuWidth); */
-
-    if (space < menuWidth)
-      xPosition -= menuWidth;
-
-    // console.log('Final X =', xPosition);
-
-    setPosition({
-      x: xPosition,
-      y: y - window.scrollY
-    });
-  }, [ x, y ]);
+  useEffect(calcPosition, [ x, y ]);
 
   useEffect(() => {
-    if (open) {
+    const handleScroll = () => calcPosition(true);
+
+    if (open && !registeredEvents) {
+      registeredEvents = true;
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('scroll', handleScroll);
     } else {
+      registeredEvents = false;
       document.removeEventListener('mousedown', handleClickOutside);
       document.addEventListener('scroll', handleScroll);
     }
 
     return () => {
+      registeredEvents = false;
       document.removeEventListener('mousedown', handleClickOutside);
       document.addEventListener('scroll', handleScroll);
     };

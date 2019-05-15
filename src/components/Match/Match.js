@@ -46,13 +46,13 @@ function PlayerInfo (props) {
   function selectUserMenu (event) {
     if (!isCreating) return;
 
-    event.preventDefault();
-
     setUserMenu({
       open: true,
       x: event.clientX,
       y: event.clientY
     });
+
+    event.preventDefault();
   }
 
   function closeUserMenu() {
@@ -127,6 +127,8 @@ function DownPlayerSide (props) {
 
     event.preventDefault();
 
+    console.log(`Click: [ ${event.clientX}, ${event.clientY} ]`);
+
     setCharacterMenu({
       open: true,
       x: event.clientX,
@@ -147,7 +149,7 @@ function DownPlayerSide (props) {
       {team.map((character) =>
         <CharacterAvatar
           className={clsx(classes.characterAvatar, {
-            //[classes.selectableCharacterAvatar]: isCreating
+            // [classes.selectableCharacterAvatar]: isCreating
           })}
           height={characterAvatarSize}
           width={characterAvatarSize}
