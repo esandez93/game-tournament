@@ -33,6 +33,7 @@
     * Do the fucking backend
     * Make it work as a PWA
     * Metrics [VERY IMPORTANT]
+    * Allow to add an X and Y offset to ContextMenu component
     * Chat ?
     * Duels
     * Events
