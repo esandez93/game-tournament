@@ -5,12 +5,9 @@
     * Allow remove selected character
     * Tooltip with character info
     * Cancel creation and dismiss changes (with alert)
-    * Save match
+    * Save match [DONE IN db.json]
     * Implement draw result
     * Leave comments on matches
-    * Error checking:
-        + At least 1 character each user
-        + One team with every character dead
     * Responsive:
         + Breakpoint at 760px -> Hide sidebar and make it float over the content when expanded (with minimum size when folded) (global setting)
         + Breakpoint at 620px -> Change layout of each match (expandible card ?)
