@@ -1,16 +1,29 @@
+### Contribute
+To run the project locally you will have to do some steps depending on your OS.
+
+- Mac / Linux
+   * On the project's root, run `npm start`. This will launch the fake server and the frontend in the same terminal tab while keeping both watchers.
+   
+- Windows
+   * The first time, you will have to generate the fake DB using `npm run generate-db`.
+   * Then, you run the frontend with `npm run start-no-db`.
+   * Last, you run the fake server API using `npm run start-mockapi`.
+   
+This steps will probably have some changes in the moment the real backend and DB are created, but for the time being it will be like this.
+
 ### TODOs
+- Prepare project to be a monorepo for the backend and the frontend (Lerna ?)
+- Make a stable version and start branching from there
 - Match creation:
-    * Set wins and losses by character (Stepper ?) [VERY IMPORTANT]
+    * Create mobile view of Match Component[VERY IMPORTANT]
+    * Set wins and losses by character (Graph ?) [IMPORTANT]
     * Create a search input when selecting user
     * Allow remove selected character
     * Tooltip with character info
     * Cancel creation and dismiss changes (with alert)
-    * Save match
+    * Save match [DONE IN db.json]
     * Implement draw result
     * Leave comments on matches
-    * Error checking:
-        + At least 1 character each user
-        + One team with every character dead
     * Responsive:
         + Breakpoint at 760px -> Hide sidebar and make it float over the content when expanded (with minimum size when folded) (global setting)
         + Breakpoint at 620px -> Change layout of each match (expandible card ?)
