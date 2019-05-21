@@ -1,3 +1,16 @@
+### Contribute
+To run the project locally you will have to do some steps depending on your OS.
+
+- Mac / Linux
+   * On the project's root, run `npm start`. This will launch the fake server and the frontend in the same terminal tab while keeping both watchers.
+   
+- Windows
+   * The first time, you will have to generate the fake DB using `npm run generate-db`.
+   * Then, you run the frontend with `npm run start-no-db`.
+   * Last, you run the fake server API using `npm run start-mockapi`.
+   
+This steps will probably have some changes in the moment the real backend and DB are created, but for the time being it will be like this.
+
 ### TODOs
 - Match creation:
     * Set wins and losses by character (Stepper ?) [VERY IMPORTANT]
