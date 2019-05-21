@@ -13,7 +13,8 @@ This steps will probably have some changes in the moment the real backend and DB
 
 ### TODOs
 - Match creation:
-    * Set wins and losses by character (Stepper ?) [VERY IMPORTANT]
+    * Create mobile view of Match Component[VERY IMPORTANT]
+    * Set wins and losses by character (Graph ?) [IMPORTANT]
     * Create a search input when selecting user
     * Allow remove selected character
     * Tooltip with character info
