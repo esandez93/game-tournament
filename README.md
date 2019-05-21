@@ -12,6 +12,8 @@ To run the project locally you will have to do some steps depending on your OS.
 This steps will probably have some changes in the moment the real backend and DB are created, but for the time being it will be like this.
 
 ### TODOs
+- Prepare project to be a monorepo for the backend and the frontend (Lerna ?)
+- Make a stable version and start branching from there
 - Match creation:
     * Create mobile view of Match Component[VERY IMPORTANT]
     * Set wins and losses by character (Graph ?) [IMPORTANT]
