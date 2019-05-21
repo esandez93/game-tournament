@@ -1,0 +1,8 @@
+{
+  "packages": [
+    "front/**",
+    "back/**",
+    "packages/*"
+  ],
+  "version": "0.1.0"
+}
