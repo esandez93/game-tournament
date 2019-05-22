@@ -1,5 +1,5 @@
 {
-  "name": "@tekken-tournament/back",
+  "name": "@game-tournament/back",
   "version": "0.1.5",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@tekken-tournament/logger": "^0.1.5",
+    "@game-tournament/logger": "^0.1.5",
     "express": "^4.17.0",
     "mongoose": "^5.5.10"
   },
@@ -18,5 +18,5 @@
   "keywords": [],
   "author": "esandez",
   "license": "ISC",
-  "gitHead": "f0b77fead3607d147fe5c08318b456216fb3a09f"
+  "gitHead": "d64c5b0d98590fdbff862d0071dc95a96f5c9d66"
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@tekken-tournament/logger",
+  "name": "@game-tournament/logger",
   "version": "0.1.5",
   "description": "",
   "main": "index.js",
@@ -16,5 +16,5 @@
   "dependencies": {
     "chalk": "^2.4.2"
   },
-  "gitHead": "f0b77fead3607d147fe5c08318b456216fb3a09f"
+  "gitHead": "d64c5b0d98590fdbff862d0071dc95a96f5c9d66"
 }

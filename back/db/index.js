@@ -1,6 +1,6 @@
 //Import the mongoose module
 const mongoose = require('mongoose');
-const logger = require('@tekken-tournament/logger');
+const logger = require('@game-tournament/logger');
 
 //Set up default mongoose connection
 const mongoDB = 'mongodb://localhost:27017';

@@ -1,5 +1,5 @@
 const express = require('express');
-const logger = require('@tekken-tournament/logger');
+const logger = require('@game-tournament/logger');
 require('./db')
 
 const PORT = process.env.PORT || 3020;

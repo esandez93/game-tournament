@@ -1,5 +1,5 @@
 const http = require('http');
-const logger = require('@tekken-tournament/logger');
+const logger = require('@game-tournament/logger');
 
 /**
  * Get port from environment and store in Express.
