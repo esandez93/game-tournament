@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import './Match.scss';
 import styles from './styles.js';
-// import versus from '@/assets/img/vs.png'
 
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -35,6 +34,7 @@ function PlayerInfo (props) {
     isCreating,
     availableUsers,
     selectedUsers,
+    rightSide,
     ...other
   } = props;
 
@@ -64,13 +64,19 @@ function PlayerInfo (props) {
     })
   }
 
+  const moreClasses = makeStyles(theme => ({
+    rightSide: {
+      textAlign: 'right'
+    }
+  }))();
+
   return (
-    <div className={clsx(className, classes.spaceBetween)} {...other}>
+    <div className={clsx(className, classes.spaceBetween)} dir={rightSide ? 'rtl' : 'ltr'} {...other}>
       <div className={clsx(classes.flex)}>
         <Avatar className={clsx(classes.avatar, {
           [classes.selectableUserAvatar]: isCreating
         })} onClick={(event) => selectUserMenu(event)} src={player.avatar} name={player.name} />
-        <span className={classes.userInfo}>
+        <span className={clsx(classes.userInfo, { [moreClasses.rightSide]: rightSide })}>
           <Typography variant="body1">{player.username}</Typography>
           <Typography className={classes.secondaryColor} variant="body2">{player.name}</Typography>
         </span>
@@ -128,8 +134,6 @@ function DownPlayerSide (props) {
 
     event.preventDefault();
 
-    console.log(`Click: [ ${event.clientX}, ${event.clientY} ]`);
-
     setCharacterMenu({
       open: true,
       x: event.clientX,
@@ -147,14 +151,14 @@ function DownPlayerSide (props) {
 
   return (
     <div className={clsx(className)} {...other}>
-      {team.map((character) =>
+      {team.map((character, index) =>
         <CharacterAvatar
+          key={character.id}
           className={clsx(classes.characterAvatar, {
             // [classes.selectableCharacterAvatar]: isCreating
           })}
           height={characterAvatarSize}
           width={characterAvatarSize}
-          key={character.id}
           username={player.username}
           character={character}
           shadow={clsx({
@@ -180,8 +184,9 @@ function DownPlayerSide (props) {
           closeMenu={closeCharacterMenu}
         >
           {availableCharacters.map((character, index) => {
-            return (<Fragment key={character.id}>
+            return (<Fragment>
               <CharacterAvatar
+                key={character.id}
                 className={clsx(classes.characterAvatar, classes.selectableCharacterAvatar)}
                 onClick={() => clickCharacter(character)}
                 height={characterAvatarSize * 1.5}
@@ -248,7 +253,7 @@ function Match (props) {
     setState({
       player1: { ...playerModel },
       player2: { ...playerModel },
-      date: new Date(),
+      // date: new Date(),
       result: null
     });
     setNew(false);
@@ -365,7 +370,7 @@ function Match (props) {
     createMatch({
       player1: state.player1,
       player2: state.player2,
-      date: state.date,
+      // date: state.date,
       result: finalResult
     }).then((result) => {
       // show alert
@@ -391,9 +396,10 @@ function Match (props) {
               win={state.result === 1}
             />
             <div className={clsx(classes.center)}>
+              {state.date &&
               <Typography className={classes.secondaryColor} variant="body2">
-                <Moment parse="ddd MMM DD YYYY HH:mm:ss zzZZ (zzZ)" format="DD/MM/YY HH:mm">{state.date}</Moment>
-              </Typography>
+                <Moment parse="YYYY-MM-DDTHH:mm:ss.SSSZ" format="DD/MM/YY HH:mm">{state.date}</Moment>
+              </Typography>}
               {/* <img alt="versus" className={classes.versus} src={versus} /> */}
               <div className={classes.versus}>VS</div>
             </div>
@@ -405,7 +411,7 @@ function Match (props) {
               player={state.player2.user}
               classes={classes}
               isCreating={isCreating}
-              dir="rtl"
+              rightSide
               win={state.result === 2}
             />
           </div>

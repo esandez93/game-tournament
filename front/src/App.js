@@ -9,22 +9,16 @@ import deepmerge from 'deepmerge';
 import { ThemeProvider } from '@material-ui/styles';
 import { makeStyles } from '@material-ui/core/styles';
 
+import routes from '@/routes';
 import {
   ThemeContext,
   LocaleContext,
   LoginContext,
-  NetworkContext
+  AppContext
 } from '@/context';
 import * as languages from '@/locale';
 import * as themes from '@/themes';
-import {
-  Home,
-  Login,
-  Matches,
-  NotFound,
-  Ranking,
-  ThemeTest
-} from '@/pages';
+import { NotFound } from '@/pages';
 import {
   OfflineBadge,
   SideMenu
@@ -41,7 +35,8 @@ function DevConfig (props) {
       right: 0,
       padding: theme.spacing(1) / 2,
       backgroundColor: theme.palette.error.dark,
-      border: `2px solid ${theme.palette.text.secondary}`
+      border: `2px solid ${theme.palette.text.secondary}`,
+      zIndex: 1200
     }
   }))();
 
@@ -71,9 +66,9 @@ const MultiProvider = (props) => {
       <ThemeProvider theme={props.themeContext.theme}>
         <LocaleContext.Provider value={props.localeContext}>
           <LoginContext.Provider value={props.loginContext}>
-            <NetworkContext.Provider value={props.networkContext}>
+            <AppContext.Provider value={props.appContext}>
               {props.children}
-            </NetworkContext.Provider>
+            </AppContext.Provider>
           </LoginContext.Provider>
         </LocaleContext.Provider>
       </ThemeProvider>
@@ -120,6 +115,11 @@ class App extends Component {
     );
   }
 
+  toggleSideMenu = () => {
+    console.log('toggling', this.state.appContext.sideMenu.isOpen)
+    this.mergeState('appContext', { sideMenu : { isOpen: !this.state.appContext.sideMenu.isOpen }});
+  }
+
   state = {
     themeContext: {
       name: 'defaultLight',
@@ -136,8 +136,12 @@ class App extends Component {
       login: this.doLogin,
       user: {}
     },
-    networkContext: {
-      offline: false
+    appContext: {
+      offline: false,
+      sideMenu: {
+        isOpen: window.innerWidth > 960,
+        toggle: this.toggleSideMenu
+      }
     }
   }
 
@@ -154,7 +158,7 @@ class App extends Component {
   }
 
   setOfflineStatus = () => {
-    this.mergeState('networkContext', { offline: !navigator.onLine });
+    this.mergeState('appContext', { offline: !navigator.onLine });
   }
 
   componentDidMount() {
@@ -166,7 +170,7 @@ class App extends Component {
       themeContext,
       localeContext,
       loginContext,
-      networkContext
+      appContext
     } = this.state;
 
     return (
@@ -174,21 +178,17 @@ class App extends Component {
         themeContext={themeContext}
         localeContext={localeContext}
         loginContext={loginContext}
-        networkContext={networkContext}
+        appContext={appContext}
       >
         <div className="App" style={{
           backgroundColor: themeContext.theme.palette.background.default,
           color: themeContext.theme.palette.text.primary
         }}>
-          {networkContext.offline && <OfflineBadge />}
+          {appContext.offline && <OfflineBadge />}
           {DEV_MODE && <DevConfig themeContext={themeContext} localeContext={localeContext} />}
-          {loginContext.logged && <Route component={SideMenu}/>}
+          {loginContext.logged && <Route render={(props) => <SideMenu {...props} />}/>}
           <Switch>
-            <Route exact path="/" component={Home}/>
-            <Route exact path="/matches" component={Matches}/>
-            <Route exact path="/login" component={Login}/>
-            <Route exact path="/ranking" component={Ranking}/>
-            <Route exact path="/theme-test" component={ThemeTest}/>
+            {routes.map((route, index) => <Route key={index} exact path={route.path} render={(props) => <route.component {...props} />}/>)}
             <Route component={NotFound}/>
           </Switch>
         </div>

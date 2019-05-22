@@ -20,14 +20,21 @@ import GroupIcon from '@material-ui/icons/Group';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Typography from '@material-ui/core/Typography';
 
-import { LoginContext, LocaleContext } from '@/context';
+import { LoginContext, LocaleContext, AppContext } from '@/context';
+import { useWindowSize } from '@/hooks';
 
 const useStyles = makeStyles(styles);
 
 function SideMenu (props) {
+  const {
+    toggleOpen,
+    open
+  } = props;
+
   const classes = useStyles();
-  const [open, setOpen] = useState(window.innerWidth > 1080);
   const [currentSection, setCurrentSection] = useState(null);
+
+  const size = useWindowSize();
 
   const menu = [{
     icon: PersonIcon,
@@ -54,11 +61,10 @@ function SideMenu (props) {
     disabled: true
   }];
 
-  function toggleOpen () {
-    setOpen(!open);
-  }
-
   function navigate (url) {
+    if (size.width <= 640)
+      toggleOpen();
+
     props.history.push(url);
   }
 
@@ -68,10 +74,10 @@ function SideMenu (props) {
 
   return (
     <Drawer
-      variant="permanent"
+      variant={size.width > 640 ? 'permanent' : 'temporary'}
       className={clsx('SideMenu', classes.drawer, {
         [classes.drawerOpen]: open,
-        [classes.drawerClose]: !open,
+        [classes.drawerClose]: !open
       })}
       classes={{
         paper: clsx({
@@ -80,6 +86,7 @@ function SideMenu (props) {
         }),
       }}
       open={open}
+      onClose={toggleOpen}
     >
       <div className={classes.header}>
         <Avatar className={classes.avatar} src={props.avatar} onClick={toggleOpen}>
@@ -101,7 +108,6 @@ function SideMenu (props) {
             <ListItemText primary={item.text} />
           </ListItem>
         ))}
-
       </List>
     </Drawer>
   );
@@ -119,14 +125,20 @@ export default React.forwardRef((props, ref) => (
     {(login) =>
       <LocaleContext.Consumer>
         {(locale) =>
-          <SideMenu
-            name={login.user.name}
-            username={login.user.username}
-            avatar={login.user.avatar}
-            translate={locale.translate}
-            ref={ref}
-            {...props}
-          />
+          <AppContext.Consumer>
+            {(app) =>
+              <SideMenu
+                name={login.user.name}
+                username={login.user.username}
+                avatar={login.user.avatar}
+                translate={locale.translate}
+                ref={ref}
+                open={app.sideMenu.isOpen}
+                toggleOpen={app.sideMenu.toggle}
+                {...props}
+              />
+            }
+          </AppContext.Consumer>
         }
       </LocaleContext.Consumer>
     }

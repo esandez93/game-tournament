@@ -1,6 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import './Matches.scss';
 import styles from './styles.js';
+import logger from '@game-tournament/logger';
 
 import clsx from 'clsx';
 
@@ -29,17 +30,17 @@ function Matches (props) {
       _order: 'desc'
     }).then(
       (data) => setMatches(data),
-      console.error
+      logger.error
     );
 
     getCharacters().then(
       (data) => setAvailableCharacters(data),
-      console.error
+      logger.error
     );
 
     getUsers().then(
       (data) => setAvailableUsers(data),
-      console.error
+      logger.error
     );
   }, []);
 

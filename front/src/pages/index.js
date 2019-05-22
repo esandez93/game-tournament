@@ -1,13 +1,8 @@
 import React from 'react';
 import Loadable from 'react-loadable';
-import { Redirect } from 'react-router-dom';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 
 import { Loading } from '@/components';
-import { LoginContext, LocaleContext } from '@/context';
-import { cleanString } from '@/utils';
+import BasePage from './BasePage';
 
 /*
 Loadable important things [ https://github.com/jamiebuilds/react-loadable ]
@@ -32,61 +27,6 @@ Loadable important things [ https://github.com/jamiebuilds/react-loadable ]
   });
 */
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flex: 1,
-    paddingTop: theme.spacing(1),
-    paddingRight: theme.spacing(4),
-    paddingLeft: theme.spacing(4),
-    paddingBottom: theme.spacing(1)
-  },
-  header: {
-  },
-  page: {
-    paddingTop: theme.spacing(2)
-  }
-}));
-
-function Header (props) {
-  return (
-    <div className={clsx('Header', props.className)}>
-      <Typography variant="h4">{props.title}</Typography>
-    </div>
-  );
-}
-
-function Page (props) {
-  const classes = useStyles();
-  const {
-    component: Component,
-    name,
-    ...other
-  } = props;
-
-  return (
-    <LoginContext.Consumer>
-      {(login) => (
-        <LocaleContext.Consumer>
-          {(locale) => {
-            if (login.logged && name === 'Login') {
-              return <Redirect to='/' />
-            } else if (login.logged || name === 'Login') {
-              return (
-                <div className={classes.root}>
-                  <Header className={clsx(classes.header)} title={locale.translate(`sections.${cleanString(props.name.toLowerCase())}`)} />
-                  <Component className={clsx('Page', classes.page)} {...other} />
-                </div>
-              );
-            } else {
-              return <Redirect to='/login' />
-            }
-          }}
-        </LocaleContext.Consumer>
-      )}
-    </LoginContext.Consumer>
-  );
-}
-
 function getLoadable(name, loader) {
   return Loadable({
     loader,
@@ -94,7 +34,7 @@ function getLoadable(name, loader) {
     modules: [ name ],
     render(loaded, props) {
       const Component = loaded.namedExport ? loaded.namedExport : loaded.default;
-      return <Page component={Component} name={name} {...props} />
+      return <BasePage component={Component} name={name} {...props} />
     }
   });
 }

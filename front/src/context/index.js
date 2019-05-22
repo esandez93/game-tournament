@@ -1,11 +1,11 @@
 import ThemeContext from './theme-context';
 import LocaleContext from './locale-context';
 import LoginContext from './login-context';
-import NetworkContext from './network-context';
+import AppContext from './app-context';
 
 export {
   ThemeContext,
   LocaleContext,
   LoginContext,
-  NetworkContext
+  AppContext
 };
