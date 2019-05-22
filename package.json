@@ -1,6 +1,6 @@
 {
   "name": "root",
-  "private": true,
+  "private": false,
   "scripts": {
     "mongo": "../mongodb-osx-x86_64-4.0.9/bin/mongod --dbpath=./db"
   },

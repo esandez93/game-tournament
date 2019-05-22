@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "description": "",
   "main": "index.js",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@tekken-tournament/logger": "^0.1.2",
     "express": "^4.17.0",
