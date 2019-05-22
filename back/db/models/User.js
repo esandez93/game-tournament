@@ -35,8 +35,8 @@ function populate (data) {
     company: data.company,
     group: data.group,
     settings: {
-      theme: data.theme || 'defaultDark',
-      locale: data.locale || 'en',
+      theme: data.settings.theme || 'defaultDark',
+      locale: data.settings.locale || 'en',
     }
   })
 }

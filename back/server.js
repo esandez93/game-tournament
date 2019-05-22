@@ -6,6 +6,7 @@ const logger = require('@game-tournament/logger');
  */
 module.exports = function (app) {
   const port = process.env.PORT || '3020';
+  const host = '192.168.1.48';
   app.set('port', port);
 
   /**
@@ -16,5 +17,5 @@ module.exports = function (app) {
   /**
   * Listen on provided port, on all network interfaces.
   */
-  server.listen(port, () => logger.info(`API running on localhost:${port}`));
+  server.listen(port, () => logger.info(`API running on ${host}:${port}`));
 }
