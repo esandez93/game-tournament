@@ -24,4 +24,16 @@ router.post('/', (req, res, next) => {
     .catch(err => res.status(500).json(err));
 });
 
+router.post('/batch', (req, res, next) => {
+  let characters = [];
+  req.body.forEach(char => {
+    let character = Character.populate(char);
+    character.save()
+      .then(characters.push)
+      .catch(err => res.status(500).json(err));
+  });
+
+  return res.status(200).json(characters);
+});
+
 module.exports = router;
