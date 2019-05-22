@@ -1,6 +1,6 @@
 {
   "name": "@game-tournament/back",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "",
   "main": "index.js",
   "private": false,
@@ -8,7 +8,7 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@game-tournament/logger": "^0.1.5",
+    "@game-tournament/logger": "^0.1.6",
     "express": "^4.17.0",
     "mongoose": "^5.5.10"
   },
