@@ -48,7 +48,7 @@ const match = {
     },
     "result": {
       "type": "number",
-      "pattern": "1|2"
+      "pattern": "0|1|2"
     }
   },
   "required": [ "id", "player1", "player2", "blindPick", "date", "result" ]

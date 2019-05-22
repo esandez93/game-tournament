@@ -1,14 +1,17 @@
 const express = require('express');
 const logger = require('@tekken-tournament/logger');
+require('./db')
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3020;
 const app = express();
 
-app.get('/greeting', (req, res) => {
-    logger.info('/greeting was called');
-    res.send({
-        message: `Hello, ${req.query.name || 'World'}!`
-    });
-})
+const modules = [
+  './middleware',
+  './routes',
+  './error-handler',
+  './server'
+]
 
-app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
+modules.forEach((mod) => {
+  require(mod)(app);
+});
