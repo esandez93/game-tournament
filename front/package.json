@@ -3,6 +3,9 @@
   "version": "0.1.4",
   "private": false,
   "author": "esandez",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@babel/polyfill": "^7.4.0",
     "@babel/register": "^7.4.0",
@@ -86,5 +89,5 @@
   "main": "config-overrides.js",
   "keywords": [],
   "license": "ISC",
-  "gitHead": "50b3608eacb72f512a325fddc9ffbee08a2eb3a8"
+  "gitHead": "f0b77fead3607d147fe5c08318b456216fb3a09f"
 }
