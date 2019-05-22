@@ -1,11 +1,11 @@
 {
   "name": "@tekken-tournament/back",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "main": "index.js",
   "private": true,
   "dependencies": {
-    "@tekken-tournament/logger": "^0.1.1",
+    "@tekken-tournament/logger": "^0.1.2",
     "express": "^4.17.0",
     "mongoose": "^5.5.10"
   },
