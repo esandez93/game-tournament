@@ -12,5 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^2.4.2"
-  }
+  },
+  "gitHead": "d09c954dea4a57600b7158838d98c74b21f27a48"
 }
