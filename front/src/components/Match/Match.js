@@ -1,6 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import './Match.scss';
-import styles from './styles.js';
+import styles from './styles';
+import xsStyles from './xsStyles';
 
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -12,6 +13,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
 
 import { createMatch } from '@/api/matches';
@@ -21,8 +23,10 @@ import {
   CharacterAvatar,
   ContextMenu
 } from '@/components';
+import { useWindowSize } from '@/hooks';
 
 const useStyles = makeStyles(styles);
+const useXsStyles = makeStyles(xsStyles);
 
 function PlayerInfo (props) {
   const {
@@ -101,9 +105,9 @@ function PlayerInfo (props) {
           })}
         </ContextMenu>
       </div>
-      {win && <div className={clsx(classes.centerVertical)}>
+      {/* win && <div className={clsx(classes.centerVertical)}>
         <Typography className={clsx(classes.win)} variant="h5">WIN</Typography>
-      </div>}
+        </div> */}
     </div>
   );
 }
@@ -170,7 +174,7 @@ function DownPlayerSide (props) {
       )}
       {isCreating && team.length < 8 && (<Fragment>
         <IconButton
-          className={classes.newCharacterButton}
+          className={clsx(classes.newCharacterButton, classes.characterAvatar)}
           onContextMenu={(e) => selectCharacterMenu(e)}
           onClick={(e) => selectCharacterMenu(e)}
         >
@@ -184,7 +188,7 @@ function DownPlayerSide (props) {
           closeMenu={closeCharacterMenu}
         >
           {availableCharacters.map((character, index) => {
-            return (<Fragment>
+            return (<Fragment key={character.id}>
               <CharacterAvatar
                 key={character.id}
                 className={clsx(classes.characterAvatar, classes.selectableCharacterAvatar)}
@@ -195,7 +199,7 @@ function DownPlayerSide (props) {
                 character={character}
                 shadow={classes.selectableCharacterAvatarShadow}
               />
-              {(index+1) % 5 === 0 ? <br /> : null}
+              {(index+1) % 5 === 0 ? <br key={index} /> : null}
             </Fragment>)
           })}
         </ContextMenu>
@@ -238,7 +242,9 @@ function Match (props) {
 
   const Wrapper = component || 'div';
 
+  const size = useWindowSize();
   const classes = useStyles();
+  const xsClasses = useXsStyles();
 
   function handleNew () {
     const playerModel = {
@@ -320,30 +326,27 @@ function Match (props) {
     setSelectedUsers(selectedCopy);
   }
 
-  function hasErrors () {
-    let message = null;
+  function hasError() {
+    return getError() !== '';
+  }
+
+  function getError () {
+    let message = '';
     const result = getResult();
-    console.log('result =', result)
 
-    // TODO: Set error messages
     if (!state.player1.user.id) {
-      message = '1';
+      message = translate('match.errors.player1');
     } else if (!state.player2.user.id) {
-      message = '2';
+      message = translate('match.errors.player2');
     } else if (state.player1.team.length === 0) {
-      message = '3';
+      message = translate('match.errors.player1Team');
     } else if (state.player2.team.length === 0) {
-      message = '4';
+      message = translate('match.errors.player1Team');
     } else if (result === -1) {
-      message = '5';
+      message = translate('match.errors.noResult');
     }
 
-    if (message) {
-      // show alert
-      console.error(message);
-    }
-
-    return message !== null;
+    return message;
   }
 
   function getResult () {
@@ -360,8 +363,8 @@ function Match (props) {
       return 2;
   }
 
-  function clickCreateMatch () {
-    if (hasErrors()) {
+  function createMatch () {
+    if (hasError()) {
       return;
     }
 
@@ -379,10 +382,20 @@ function Match (props) {
     }).catch(console.error);
   }
 
+  function isBigScreen() {
+    return size.width > 640;
+  }
+  function isMediumScreen() {
+    return size.width > 440 && size.width <= 640;
+  }
+  function isSmallScreen() {
+    return size.width <= 440;
+  }
+
   return (
     <Wrapper className={clsx(className)} {...other}>
       {isNew && <Button className={classes.newMatch} variant="contained" color="primary" onClick={handleNew}>{props.translate('matches.newMatch')}</Button>}
-      {!isNew && (
+      {!isNew && isBigScreen() && (
         <Fragment>
           <div className={clsx(classes.upperSide)}>
             <PlayerInfo
@@ -427,8 +440,6 @@ function Match (props) {
               clickCharacter={(character) => clickCharacter(character, 1)}
             />
 
-            <Button size="small" variant="outlined" onClick={clickCreateMatch}>Create</Button>
-
             <DownPlayerSide
               className={clsx(classes.rightSide)}
               classes={classes}
@@ -441,6 +452,108 @@ function Match (props) {
           </div>
         </Fragment>
       )}
+      {!isNew && (isMediumScreen() || isSmallScreen()) && (
+        <Fragment>
+          <div className={clsx({ [xsClasses.inlinePlayer]: isMediumScreen() })}>
+            <PlayerInfo
+              className={clsx()}
+              clickUser={(user) => clickUser(user, 1)}
+              availableUsers={users}
+              selectedUsers={selectedUsers}
+              player={state.player1.user}
+              classes={classes}
+              isCreating={isCreating}
+              win={state.result === 1}
+            />
+            {isMediumScreen() && (
+              <DownPlayerSide
+                className={clsx(xsClasses.team, xsClasses.alignRight)}
+                classes={classes}
+                player={state.player1.user}
+                team={state.player1.team}
+                availableCharacters={availableCharacters}
+                isCreating={isCreating}
+                clickCharacter={(character) => clickCharacter(character, 1)}
+              />
+            )}
+            {isSmallScreen() && (<Fragment>
+              <Divider className={clsx(xsClasses.divider)} variant="fullWidth" component="div" />
+              <DownPlayerSide
+                className={clsx(xsClasses.team, xsClasses.downTeam)}
+                classes={classes}
+                style={{ justifyContent: 'flex-start' }}
+                player={state.player1.user}
+                team={state.player1.team}
+                availableCharacters={availableCharacters}
+                isCreating={isCreating}
+                clickCharacter={(character) => clickCharacter(character, 1)}
+              />
+            </Fragment>)}
+          </div>
+          <div className={clsx(xsClasses.center)}>
+            {/* state.date &&
+            <Typography className={classes.secondaryColor} variant="body2">
+              <Moment parse="YYYY-MM-DDTHH:mm:ss.SSSZ" format="DD/MM/YY HH:mm">{state.date}</Moment>
+            </Typography> */}
+            {/* <img alt="versus" className={classes.versus} src={versus} /> */}
+            <div className={clsx(classes.versus, xsClasses.versus)}>VS</div>
+            <Divider className={clsx(classes.divider)} variant="fullWidth" component="div" />
+          </div>
+          <div className={clsx({ [xsClasses.inlinePlayer]: isMediumScreen() })} dir="rtl">
+            <PlayerInfo
+              className={clsx()}
+              clickUser={(user) => clickUser(user, 2)}
+              availableUsers={users}
+              selectedUsers={selectedUsers}
+              player={state.player2.user}
+              classes={classes}
+              rightSide
+              isCreating={isCreating}
+              win={state.result === 2}
+            />
+            {isMediumScreen() && (
+              <DownPlayerSide
+                className={clsx(xsClasses.team)}
+                classes={classes}
+                player={state.player2.user}
+                team={state.player2.team}
+                availableCharacters={availableCharacters}
+                isCreating={isCreating}
+                clickCharacter={(character) => clickCharacter(character, 2)}
+              />
+            )}
+            {isSmallScreen() && (<Fragment>
+              <Divider className={clsx(xsClasses.divider)} variant="fullWidth" component="div" />
+              <DownPlayerSide
+                className={clsx(xsClasses.team, xsClasses.downTeam)}
+                classes={classes}
+                style={{ justifyContent: 'flex-start' }}
+                player={state.player2.user}
+                team={state.player2.team}
+                availableCharacters={availableCharacters}
+                isCreating={isCreating}
+                clickCharacter={(character) => clickCharacter(character, 2)}
+              />
+            </Fragment>)}
+          </div>
+        </Fragment>
+      )}
+      {isCreating &&
+        <Tooltip classes={{
+          tooltip: classes.tooltip,
+          popper: classes.popper
+        }} title={getError()} leaveDelay={200}>
+          <span>
+            <Button
+              size="small"
+              variant="outlined"
+              className={clsx(classes.createButton)}
+              disabled={hasError()}
+              onClick={createMatch}
+            >{translate('create')}</Button>
+          </span>
+        </Tooltip>
+      }
     </Wrapper>
   );
 }

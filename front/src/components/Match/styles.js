@@ -13,7 +13,7 @@ export default theme => ({
     width: theme.spacing(6)
   },
   characterAvatar: {
-    margin: `0 ${theme.spacing(1) / 2}px`,
+    margin: `${theme.spacing(1) / 2}px`,
     display: 'inline-block',
     userSelect: 'none'
   },
@@ -61,7 +61,7 @@ export default theme => ({
     alignItems: 'center'
   },
   versus: {
-    fontSize: '56px',
+    fontSize: `${theme.spacing(8)}px`,
     position: 'absolute',
     display: 'block',
     textAlign: 'center',
@@ -149,5 +149,13 @@ export default theme => ({
     '&:active': {
       backgroundColor: 'rgba(0, 0, 0, 0.9)'
     },
+  },
+  createButton: {
+    margin: `${theme.spacing(1)}px 0`
+  },
+  tooltip: {
+    backgroundColor: theme.palette.error.dark,
+    marginTop: `${theme.spacing(1)}px`,
+    padding: `${theme.spacing(1)}px`,
   }
 });
