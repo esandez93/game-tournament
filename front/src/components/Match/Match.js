@@ -7,206 +7,22 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import Moment from 'react-moment';
 
-import { useTheme } from '@material-ui/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
-import AddIcon from '@material-ui/icons/Add';
+import Slide from '@material-ui/core/Slide';
 
+import PlayerInfo from './PlayerInfo';
+import DownPlayerSide from './DownPlayerSide';
+import { Snackbar } from '@/components';
 import { createMatch } from '@/api/matches';
 import { LocaleContext } from '@/context';
-import {
-  Avatar,
-  CharacterAvatar,
-  ContextMenu
-} from '@/components';
 import { useWindowSize } from '@/hooks';
 
 const useStyles = makeStyles(styles);
 const useXsStyles = makeStyles(xsStyles);
-
-function PlayerInfo (props) {
-  const {
-    classes,
-    className,
-    player,
-    win,
-    clickUser,
-    isCreating,
-    availableUsers,
-    selectedUsers,
-    rightSide,
-    ...other
-  } = props;
-
-  const [ userMenu, setUserMenu ] = useState({
-    open: false,
-    x: -1000,
-    y: -1000
-  });
-
-  function selectUserMenu (event) {
-    if (!isCreating) return;
-
-    setUserMenu({
-      open: true,
-      x: event.clientX,
-      y: event.clientY
-    });
-
-    event.preventDefault();
-  }
-
-  function closeUserMenu() {
-    setUserMenu({
-      open: false,
-      x: -1000,
-      y: -1000
-    })
-  }
-
-  const moreClasses = makeStyles(theme => ({
-    rightSide: {
-      textAlign: 'right'
-    }
-  }))();
-
-  return (
-    <div className={clsx(className, classes.spaceBetween)} dir={rightSide ? 'rtl' : 'ltr'} {...other}>
-      <div className={clsx(classes.flex)}>
-        <Avatar className={clsx(classes.avatar, {
-          [classes.selectableUserAvatar]: isCreating
-        })} onClick={(event) => selectUserMenu(event)} src={player.avatar} name={player.name} />
-        <span className={clsx(classes.userInfo, { [moreClasses.rightSide]: rightSide })}>
-          <Typography variant="body1">{player.username}</Typography>
-          <Typography className={classes.secondaryColor} variant="body2">{player.name}</Typography>
-        </span>
-
-        <ContextMenu
-          className={classes.contextMenu}
-          open={userMenu.open}
-          x={userMenu.x}
-          y={userMenu.y}
-          closeMenu={closeUserMenu}
-        >
-          {availableUsers.map((user, index) => {
-            return (<div className={clsx(classes.selectableUser, {
-              [classes.selectedUser]: selectedUsers.includes(user.id)
-            })} key={index} onClick={() => selectedUsers.includes(user.id) ? null : clickUser(user)}>
-              <Avatar className={classes.avatar} src={user.avatar} name={user.name} />
-              <span className={classes.userInfo}>
-                <Typography variant="body1">{user.username}</Typography>
-                <Typography className={classes.secondaryColor} variant="body2">{user.name}</Typography>
-              </span>
-            </div>)
-          })}
-        </ContextMenu>
-      </div>
-      {/* win && <div className={clsx(classes.centerVertical)}>
-        <Typography className={clsx(classes.win)} variant="h5">WIN</Typography>
-        </div> */}
-    </div>
-  );
-}
-
-function DownPlayerSide (props) {
-  const {
-    className,
-    classes,
-    player,
-    team,
-    availableCharacters,
-    isCreating,
-    clickCharacter,
-    ...other
-  } = props;
-
-  const [ characterMenu, setCharacterMenu ] = useState({
-    open: false,
-    x: -1000,
-    y: -1000
-  });
-
-  const theme = useTheme();
-  const characterAvatarSize = theme.spacing(4);
-
-  function selectCharacterMenu (event) {
-    if (!isCreating) return;
-
-    event.preventDefault();
-
-    setCharacterMenu({
-      open: true,
-      x: event.clientX,
-      y: event.clientY
-    });
-  }
-
-  function closeCharacterMenu() {
-    setCharacterMenu({
-      open: false,
-      x: -1000,
-      y: -1000
-    })
-  }
-
-  return (
-    <div className={clsx(className)} {...other}>
-      {team.map((character, index) =>
-        <CharacterAvatar
-          key={character.id}
-          className={clsx(classes.characterAvatar, {
-            // [classes.selectableCharacterAvatar]: isCreating
-          })}
-          height={characterAvatarSize}
-          width={characterAvatarSize}
-          username={player.username}
-          character={character}
-          shadow={clsx({
-            [classes.selectableCharacterAvatarShadow]: isCreating && character.alive,
-            [classes.selectableDeadCharacterAvatarShadow]: isCreating && !character.alive,
-          })}
-          onClick={() => isCreating ? clickCharacter(character) : null}
-        />
-      )}
-      {isCreating && team.length < 8 && (<Fragment>
-        <IconButton
-          className={clsx(classes.newCharacterButton, classes.characterAvatar)}
-          onContextMenu={(e) => selectCharacterMenu(e)}
-          onClick={(e) => selectCharacterMenu(e)}
-        >
-          <AddIcon className={classes.newCharacterIcon} />
-        </IconButton>
-        <ContextMenu
-          className={classes.contextMenu}
-          open={characterMenu.open}
-          x={characterMenu.x}
-          y={characterMenu.y}
-          closeMenu={closeCharacterMenu}
-        >
-          {availableCharacters.map((character, index) => {
-            return (<Fragment key={character.id}>
-              <CharacterAvatar
-                key={character.id}
-                className={clsx(classes.characterAvatar, classes.selectableCharacterAvatar)}
-                onClick={() => clickCharacter(character)}
-                height={characterAvatarSize * 1.5}
-                width={characterAvatarSize * 1.5}
-                username={player.username}
-                character={character}
-                shadow={classes.selectableCharacterAvatarShadow}
-              />
-              {(index+1) % 5 === 0 ? <br key={index} /> : null}
-            </Fragment>)
-          })}
-        </ContextMenu>
-      </Fragment>)}
-    </div>
-  );
-}
 
 function Match (props) {
   const {
@@ -231,10 +47,14 @@ function Match (props) {
     result,
     isNew: newMatch
   });
+  const [ snackbar, setSnackbar ] = useState({
+    open: false,
+    message: null
+  });
   const [ isNew, setNew ] = useState(newMatch);
   const [ isCreating, setCreating ] = useState(false);
   const [ availableCharacters, setAvailableCharacters ] = useState(characters);
-  const [ selectedUsers, setSelectedUsers ] = useState([]);
+  const [ selectedUsers, setSelectedUsers ] = useState([]);;
 
   useEffect(() => {
     setAvailableCharacters(characters);
@@ -308,6 +128,21 @@ function Match (props) {
     }
   }
 
+  function deleteCharacter (index, player) {
+    const teamCopy = [ ...state['player'+player].team ];
+    const newTeam = [ ...teamCopy.slice(0, index), ...teamCopy.slice(index+1, teamCopy.length) ];
+
+    const prevState = { ...state };
+
+    setState({
+      ...prevState,
+      ['player'+player]: {
+        ...prevState['player'+player],
+        team: [ ...newTeam ]
+      }
+    });
+  }
+
   function clickUser (user, player) {
     const prevState = { ...state };
     const userCopy = { ...user };
@@ -350,6 +185,9 @@ function Match (props) {
   }
 
   function getResult () {
+    if (!state.player1 || !state.player2)
+      return null;
+
     const p1Alive = state.player1.team.filter((character) => character.alive).length;
     const p2Alive = state.player2.team.filter((character) => character.alive).length;
 
@@ -363,8 +201,19 @@ function Match (props) {
       return 2;
   }
 
-  function createMatch () {
-    if (hasError()) {
+  function clickCreateMatch () {
+    const error = getError();
+    if (error !== '') {
+      setSnackbar({
+        open: true,
+        message: error
+      });
+      setTimeout(() => {
+        setSnackbar({
+          open: false,
+          message: null
+        });
+      }, 2000);
       return;
     }
 
@@ -437,6 +286,7 @@ function Match (props) {
               team={state.player1.team}
               availableCharacters={availableCharacters}
               isCreating={isCreating}
+              deleteCharacter={(index) => deleteCharacter(index, 1)}
               clickCharacter={(character) => clickCharacter(character, 1)}
             />
 
@@ -447,6 +297,7 @@ function Match (props) {
               team={state.player2.team}
               availableCharacters={availableCharacters}
               isCreating={isCreating}
+              deleteCharacter={(index) => deleteCharacter(index, 2)}
               clickCharacter={(character) => clickCharacter(character, 2)}
             />
           </div>
@@ -473,6 +324,7 @@ function Match (props) {
                 team={state.player1.team}
                 availableCharacters={availableCharacters}
                 isCreating={isCreating}
+                deleteCharacter={(index) => deleteCharacter(index, 1)}
                 clickCharacter={(character) => clickCharacter(character, 1)}
               />
             )}
@@ -486,6 +338,7 @@ function Match (props) {
                 team={state.player1.team}
                 availableCharacters={availableCharacters}
                 isCreating={isCreating}
+                deleteCharacter={(index) => deleteCharacter(index, 1)}
                 clickCharacter={(character) => clickCharacter(character, 1)}
               />
             </Fragment>)}
@@ -519,6 +372,7 @@ function Match (props) {
                 team={state.player2.team}
                 availableCharacters={availableCharacters}
                 isCreating={isCreating}
+                deleteCharacter={(index) => deleteCharacter(index, 2)}
                 clickCharacter={(character) => clickCharacter(character, 2)}
               />
             )}
@@ -532,28 +386,48 @@ function Match (props) {
                 team={state.player2.team}
                 availableCharacters={availableCharacters}
                 isCreating={isCreating}
+                deleteCharacter={(index) => deleteCharacter(index, 2)}
                 clickCharacter={(character) => clickCharacter(character, 2)}
               />
             </Fragment>)}
           </div>
         </Fragment>
       )}
-      {isCreating &&
+      {/* isCreating &&
         <Tooltip classes={{
           tooltip: classes.tooltip,
           popper: classes.popper
-        }} title={getError()} leaveDelay={200}>
+        }} title={getError()} leaveDelay={200} disableTouchListener>
           <span>
             <Button
               size="small"
               variant="outlined"
               className={clsx(classes.createButton)}
               disabled={hasError()}
-              onClick={createMatch}
+              onClick={clickCreateMatch}
             >{translate('create')}</Button>
           </span>
         </Tooltip>
-      }
+      */}
+      {isCreating && <Fragment>
+        <Button
+          size="small"
+          variant="outlined"
+          className={clsx(classes.createButton)}
+          onClick={clickCreateMatch}
+        >{translate('create')}</Button>
+        <Snackbar
+          variant="error"
+          direction="up"
+          message={snackbar.message}
+          open={snackbar.open}
+          TransitionComponent={Slide}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: isBigScreen() ? 'right' : 'center'
+          }}
+        ></Snackbar>
+      </Fragment>}
     </Wrapper>
   );
 }

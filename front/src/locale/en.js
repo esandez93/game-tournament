@@ -17,5 +17,8 @@ export default {
       player2Team: "Player 2 has not any characters",
       noResult: "Both Players have characters alive"
     }
-  }
+  },
+  alive: 'Alive',
+  dead: 'Dead',
+  delete: 'Delete'
 };

@@ -6,6 +6,7 @@ import MuiSnackbarContent from '@material-ui/core/SnackbarContent';
 import IconButton from '@material-ui/core/IconButton';
 
 import green from '@material-ui/core/colors/green';
+import blue from '@material-ui/core/colors/blue';
 import amber from '@material-ui/core/colors/amber';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -27,29 +28,32 @@ const variantIcon = {
 };
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    opacity: 0.95
+  },
   success: {
-    backgroundColor: green[600],
+    backgroundColor: green[600]
   },
   error: {
-    backgroundColor: theme.palette.error.dark,
+    backgroundColor: theme.palette.error.dark
   },
   info: {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: blue[600]
   },
   warning: {
-    backgroundColor: amber[700],
+    backgroundColor: amber[700]
   },
   icon: {
-    fontSize: 20,
+    fontSize: 20
   },
   iconVariant: {
     opacity: 0.9,
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(1)
   },
   message: {
     display: 'flex',
-    alignItems: 'center',
-  },
+    alignItems: 'center'
+  }
 }));
 
 function Snackbar (props) {
@@ -60,8 +64,6 @@ function Snackbar (props) {
     onClose,
     hasClose,
     icon,
-    anchorOrigin,
-    open,
     classes: propClasses,
     contentProps,
     ...other
@@ -72,10 +74,7 @@ function Snackbar (props) {
 
   return (
     <MuiSnackbar
-      className={clsx('Snackbar', className)}
-      open={open}
-      onClose={onClose}
-      anchorOrigin={anchorOrigin}
+      className={clsx('Snackbar', className, classes.root)}
       classes={propClasses}
       {...other}
     >

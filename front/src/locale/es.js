@@ -17,5 +17,8 @@ export default {
       player2Team: "No se han añadido personajes al Jugador 2",
       noResult: "A los dos Jugadores les quedan personajes vivos"
     }
-  }
+  },
+  alive: 'Vivo',
+  dead: 'Muerto',
+  delete: 'Eliminar'
 };
