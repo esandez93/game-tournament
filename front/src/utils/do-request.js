@@ -1,3 +1,7 @@
+function hasError (code) {
+  return code >= 400 && code <= 599;
+}
+
 function get (url, params = {}, options = { method: 'GET' }) {
   let query = '';
   const keys = Object.keys(params);
@@ -10,7 +14,15 @@ function get (url, params = {}, options = { method: 'GET' }) {
     if (index < keys.length-1) query += '&';
   });
 
-  return fetch(url + query, options).then(res => res.json()).catch((e) => { throw e });
+  return fetch(url + query, options)
+    .then(res => {
+      if(hasError(res.status)) {
+        throw res.statusText;
+      } else {
+        return res.json();
+      }
+    })
+    .catch((e) => { throw e });
 }
 
 function post (url, body = {}, options = {}) {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './OfflineBadge.scss';
 
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
 import OfflineIcon from '@material-ui/icons/CloudOff';
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function OfflineBadge (props) {
-  const [open, setOpen] = useState(true);
+  const [ open ] = useState(true);
 
   const {
     className,

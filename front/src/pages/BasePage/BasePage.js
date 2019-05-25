@@ -1,6 +1,6 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,6 +13,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { LoginContext, LocaleContext, AppContext } from '@/context';
 import { cleanString } from '@/utils';
 import { useWindowSize } from '@/hooks';
+import { breakpoints } from '@/constants';
 
 function Header (props) {
   const {
@@ -25,7 +26,7 @@ function Header (props) {
 
   const size = useWindowSize();
 
-  return size.width > 640 ? (
+  return size.width > breakpoints.m ? (
     <div className={clsx('Header', className, classes.header)} {...other}>
       <Typography variant="h4">{title}</Typography>
     </div>
@@ -70,7 +71,7 @@ function BasePage (props) {
     header: {
     },
     page: {
-      paddingTop: size.width < 640 ? theme.spacing(10) : theme.spacing(2)
+      paddingTop: size.width < breakpoints.m ? theme.spacing(10) : theme.spacing(2)
     }
   }))();
 

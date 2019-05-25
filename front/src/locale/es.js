@@ -18,6 +18,10 @@ export default {
       noResult: "A los dos Jugadores les quedan personajes vivos"
     }
   },
+  card: {
+    expand: 'Expandir',
+    collapse: 'Colapsar'
+  },
   alive: 'Vivo',
   dead: 'Muerto',
   delete: 'Eliminar'

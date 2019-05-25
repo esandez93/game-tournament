@@ -3,7 +3,8 @@ import {
   Login,
   Matches,
   Ranking,
-  ThemeTest
+  ThemeTest,
+  Users
 } from '@/pages';
 
 export default [{
@@ -15,6 +16,9 @@ export default [{
 }, {
   path: '/ranking',
   component: Ranking
+}, {
+  path: '/users',
+  component: Users
 }, {
   path: '/matches',
   component: Matches

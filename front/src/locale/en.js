@@ -18,6 +18,10 @@ export default {
       noResult: "Both Players have characters alive"
     }
   },
+  card: {
+    expand: 'Expand',
+    collapse: 'Collapse'
+  },
   alive: 'Alive',
   dead: 'Dead',
   delete: 'Delete'

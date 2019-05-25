@@ -1,5 +1,6 @@
 import Avatar from './Avatar';
 import Button from './Button';
+import Card from './Card';
 import CharacterAvatar from './CharacterAvatar';
 import ContextMenu from './ContextMenu';
 import Icon from './Icon';
@@ -12,6 +13,7 @@ import Snackbar from './Snackbar';
 export {
   Avatar,
   Button,
+  Card,
   CharacterAvatar,
   ContextMenu,
   Icon,

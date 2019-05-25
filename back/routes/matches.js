@@ -3,34 +3,26 @@ const express = require('express');
 const router = express.Router();
 
 // const MatchController = require('../../controllers/matchess.js');
-const Match = require('../db/models/Match')
-
-const populatePlayer = (num) => ({
-  path: `player${num}.user`,
-  populate: { path: 'company' }
-});
+const Match = require('../db/models/Match');
+const MatchController = require('../db/controllers/match.ctrl');
+const User = require('../db/models/User');
 
 router.get('/', (req, res, next) => {
-  Match.model.find()
-    .populate(populatePlayer(1))
-    .populate(populatePlayer(2))
+  MatchController.find(req.query)
     .then(matches => res.status(200).json(matches))
-    .catch(err => res.status(500).send(error));
+    .catch(err => res.status(500).send(err));
 });
 
 router.get('/:id', (req, res, next) => {
-  Match.model.findById(req.params.id)
-    .populate(populatePlayer(1))
-    .populate(populatePlayer(2))
+  MatchController.findById(req.params.id)
     .then(match => res.status(200).json(match))
-    .catch(err => res.status(500).send(error));
+    .catch(err => res.status(500).send(err));
 });
 
 router.post('/', (req, res, next) => {
-  let match = Match.populate(req.body);
-  match.save()
-    .then(newMatch => res.status(200).json(newMatch))
-    .catch(err => res.status(500).json(err));
+  MatchController.save(req.body)
+    .then(match => res.status(200).json(match))
+    .catch(err => res.status(500).send(err));
 });
 
 module.exports = router;

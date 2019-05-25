@@ -24,7 +24,7 @@ jsf.resolve(schema).then((db) => {
     if (err) {
       return console.log(chalk.red(err));
     } else {
-      console.log(chalk.green("Mock data generated."));
+      console.log(chalk.green('Mock data generated.'));
     }
   });
 });

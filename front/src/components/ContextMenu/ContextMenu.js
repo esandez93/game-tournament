@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ContextMenu.scss';
-import styles from './styles.js';
+import styles from './styles';
 
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -52,30 +52,30 @@ function ContextMenu (props) {
         return isScrollEvent ? scroll : 0;
       }
 
-      function showDebug () {
+      /* function showDebug () {
         console.group('calcPosition');
-        console.group('X');
-          console.log('Screen Width =', window.innerWidth);
-          console.log('Menu Width =', menuWidth);
-          console.log('Click =', x);
-          console.log('Scroll X =', window.scrollX);
-          console.log('Initial Scroll X =', initialXScroll);
-          console.log('Space X =', window.innerWidth - x + getScroll('x'));
-          console.log('Fits X =', xSpace >= menuWidth);
-          console.log('Position =', xPosition);
+          console.group('X');
+            console.log('Screen Width =', window.innerWidth);
+            console.log('Menu Width =', menuWidth);
+            console.log('Click =', x);
+            console.log('Scroll X =', window.scrollX);
+            console.log('Initial Scroll X =', initialXScroll);
+            console.log('Space X =', window.innerWidth - x + getScroll('x'));
+            console.log('Fits X =', xSpace >= menuWidth);
+            console.log('Position =', xPosition);
+          console.groupEnd();
+          console.group('Y');
+            console.log('Screen Height =', window.innerHeight);
+            console.log('Menu Height =', menuHeight);
+            console.log('Click =', y);
+            console.log('Scroll Y =', window.scrollY);
+            console.log('Initial Scroll Y =', initialYScroll);
+            console.log('Space Y =', window.innerHeight - y + getScroll('y'));
+            console.log('Fits Y =', ySpace >= menuHeight);
+            console.log('Position =', yPosition);
+          console.groupEnd();
         console.groupEnd();
-        console.group('Y');
-          console.log('Screen Height =', window.innerHeight);
-          console.log('Menu Height =', menuHeight);
-          console.log('Click =', y);
-          console.log('Scroll Y =', window.scrollY);
-          console.log('Initial Scroll Y =', initialYScroll);
-          console.log('Space Y =', window.innerHeight - y + getScroll('y'));
-          console.log('Fits Y =', ySpace >= menuHeight);
-          console.log('Position =', yPosition);
-        console.groupEnd();
-      console.groupEnd();
-      }
+      } */
 
       const menuWidth = node.current.offsetWidth;
       const xSpace = window.innerWidth - x + getScroll('x');

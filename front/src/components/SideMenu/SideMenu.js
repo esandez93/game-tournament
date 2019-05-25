@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './SideMenu.scss';
 import styles from './styles';
 
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,6 +22,7 @@ import Typography from '@material-ui/core/Typography';
 
 import { LoginContext, LocaleContext, AppContext } from '@/context';
 import { useWindowSize } from '@/hooks';
+import { breakpoints } from '@/constants';
 
 const useStyles = makeStyles(styles);
 
@@ -52,8 +53,7 @@ function SideMenu (props) {
   }, {
     icon: GroupIcon,
     text: props.translate('sections.users'),
-    url: '/users',
-    disabled: true
+    url: '/users'
   }, {
     icon: SettingsIcon,
     text: props.translate('sections.settings'),
@@ -62,7 +62,7 @@ function SideMenu (props) {
   }];
 
   function navigate (url) {
-    if (size.width <= 640)
+    if (size.width <= breakpoints.m)
       toggleOpen();
 
     props.history.push(url);
@@ -74,7 +74,7 @@ function SideMenu (props) {
 
   return (
     <Drawer
-      variant={size.width > 640 ? 'permanent' : 'temporary'}
+      variant={size.width > breakpoints.m ? 'permanent' : 'temporary'}
       className={clsx('SideMenu', classes.drawer, {
         [classes.drawerOpen]: open,
         [classes.drawerClose]: !open

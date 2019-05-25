@@ -11,7 +11,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
 import Slide from '@material-ui/core/Slide';
 
 import PlayerInfo from './PlayerInfo';
@@ -20,6 +19,7 @@ import { Snackbar } from '@/components';
 import { createMatch } from '@/api/matches';
 import { LocaleContext } from '@/context';
 import { useWindowSize } from '@/hooks';
+import { breakpoints } from '@/constants';
 
 const useStyles = makeStyles(styles);
 const useXsStyles = makeStyles(xsStyles);
@@ -161,9 +161,9 @@ function Match (props) {
     setSelectedUsers(selectedCopy);
   }
 
-  function hasError() {
+  /* function hasError() {
     return getError() !== '';
-  }
+  } */
 
   function getError () {
     let message = '';
@@ -220,8 +220,14 @@ function Match (props) {
     const finalResult = getResult();
 
     createMatch({
-      player1: state.player1,
-      player2: state.player2,
+      player1: {
+        user: state.player1.user.id,
+        team: state.player1.team
+      },
+      player2: {
+        user: state.player2.user.id,
+        team: state.player2.team
+      },
       // date: state.date,
       result: finalResult
     }).then((result) => {
@@ -232,13 +238,13 @@ function Match (props) {
   }
 
   function isBigScreen() {
-    return size.width > 640;
+    return size.width > breakpoints.m;
   }
   function isMediumScreen() {
-    return size.width > 440 && size.width <= 640;
+    return size.width > breakpoints.s && size.width <= breakpoints.m;
   }
   function isSmallScreen() {
-    return size.width <= 440;
+    return size.width <= breakpoints.s;
   }
 
   return (

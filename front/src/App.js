@@ -116,7 +116,6 @@ class App extends Component {
   }
 
   toggleSideMenu = () => {
-    console.log('toggling', this.state.appContext.sideMenu.isOpen)
     this.mergeState('appContext', { sideMenu : { isOpen: !this.state.appContext.sideMenu.isOpen }});
   }
 

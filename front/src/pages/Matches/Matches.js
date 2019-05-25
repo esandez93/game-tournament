@@ -6,7 +6,6 @@ import logger from '@game-tournament/logger';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
@@ -26,11 +25,13 @@ function Matches (props) {
 
   useEffect(() => {
     getMatches({
-      _sort: 'date',
-      _order: 'desc'
+      sort: '-date'
     }).then(
-      (data) => setMatches(data),
-      logger.error
+      (data) => { setMatches(data) },
+      (error) => {
+        setMatches([]);
+        logger.error(error);
+      }
     );
 
     getCharacters().then(
