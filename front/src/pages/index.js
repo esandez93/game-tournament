@@ -39,18 +39,20 @@ function getLoadable(name, loader) {
   });
 }
 
-const Matches = getLoadable('Matches', () => import(/* webpackChunkName: "Matches" */ './Matches'));
 const Home = getLoadable('Home', () => import(/* webpackChunkName: "Home" */ './Home'));
 const Login = getLoadable('Login', () => import(/* webpackChunkName: "Login" */ './Login'));
-const ThemeTest = getLoadable('ThemeTest', () => import(/* webpackChunkName: "ThemeTest" */ './ThemeTest'));
 const NotFound = getLoadable('NotFound', () => import(/* webpackChunkName: "NotFound" */ './NotFound'));
+const Matches = getLoadable('Matches', () => import(/* webpackChunkName: "Matches" */ './Matches'));
 const Ranking = getLoadable('Ranking', () => import(/* webpackChunkName: "Ranking" */ './Ranking'));
+const ThemeTest = getLoadable('ThemeTest', () => import(/* webpackChunkName: "ThemeTest" */ './ThemeTest'));
+const Users = getLoadable('Users', () => import(/* webpackChunkName: "Users" */ './Users'));
 
 export {
   Home,
   Login,
   NotFound,
   Matches,
+  Ranking,
   ThemeTest,
-  Ranking
+  Users
 };

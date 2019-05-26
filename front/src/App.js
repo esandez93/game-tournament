@@ -172,6 +172,7 @@ class App extends Component {
       appContext
     } = this.state;
 
+    console.log(this.props)
     return (
       <MultiProvider
         themeContext={themeContext}
@@ -185,9 +186,9 @@ class App extends Component {
         }}>
           {appContext.offline && <OfflineBadge />}
           {DEV_MODE && <DevConfig themeContext={themeContext} localeContext={localeContext} />}
-          {loginContext.logged && <Route render={(props) => <SideMenu {...props} />}/>}
+          {loginContext.logged && <Route render={(props) => { console.log(props); return <SideMenu {...props} />} } />}
           <Switch>
-            {routes.map((route, index) => <Route key={index} exact path={route.path} render={(props) => <route.component {...props} />}/>)}
+            {routes.map((route, index) => <Route key={index} exact path={`${this.props.location.pathname}/${route.path}`} render={(props) => <route.component {...props} />}/>)}
             <Route component={NotFound}/>
           </Switch>
         </div>

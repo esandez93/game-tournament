@@ -1,5 +1,7 @@
 export default {
   sections: {
+    login: "Login",
+    home: "Home",
     profile: "Profile",
     ranking: "Ranking",
     matches: "Matches",
