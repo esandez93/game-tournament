@@ -5,8 +5,7 @@
     "mongo": "../mongodb-osx-x86_64-4.0.9/bin/mongod --dbpath=./db"
   },
   "devDependencies": {
-    "lerna": "^3.14.1",
-    "reactotron-react-js": "^3.2.3"
+    "lerna": "^3.14.1"
   },
   "comments": "Mongo script ONLY while developing without server"
 }

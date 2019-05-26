@@ -9,11 +9,13 @@
   },
   "dependencies": {
     "@game-tournament/logger": "^0.1.6",
+    "dotenv": "^8.0.0",
     "express": "^4.17.0",
     "mongoose": "^5.5.10"
   },
   "scripts": {
-    "start": "set DEBUG=*,-express:*,-nodemon,-nodemon:*,-body-parser:* && nodemon index.js"
+    "start": "set DEBUG=*,-express:*,-nodemon,-nodemon:*,-body-parser:* && nodemon index.js",
+    "start-production": "NODE_ENV=production node index.js"
   },
   "keywords": [],
   "author": "esandez",

@@ -2,9 +2,11 @@
 const mongoose = require('mongoose');
 const logger = require('@game-tournament/logger');
 const normalizeDocuments = require('./plugins/normalizeDocuments')
+require('dotenv').config();
 
 // Set up default mongoose connection
-const mongoDB = 'mongodb://localhost:27017';
+const mongoDB = `mongodb+srv://${process.env.MONGODB_USER}:${encodeURIComponent(process.env.MONGODB_PASSWORD)}@game-tournament-lyhih.mongodb.net/test?retryWrites=true`;
+console.log(mongoDB)
 mongoose.connect(mongoDB)
 .then(() => {
   logger.info('Mongoose connected');
