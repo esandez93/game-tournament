@@ -1,6 +1,6 @@
 // Import dependencies
 const express = require('express');
-const withAuth = require('./middleware/withAuth');
+const withAuth = require('../middleware/withAuth');
 const router = express.Router();
 
 // const UserController = require('../../controllers/users.js');
@@ -26,14 +26,14 @@ router.post('/', (req, res) => {
 });
 
 router.post('/auth', (req, res) => {
-  const { email, password } = req.body;
-  User.findOne({ email }, (err, user) => {
+  const { username, password } = req.body;
+  User.findOne({ username }, (err, user) => {
     if (err) {
       res.status(500).json(err);
     } else if (!user) {
       res.status(401)
         .json({
-          error: 'Incorrect email or password'
+          error: 'Incorrect username or password'
         });
     } else {
       user.isCorrectPassword(password, (err, same) => {
@@ -42,15 +42,15 @@ router.post('/auth', (req, res) => {
         } else if (!same) {
           res.status(401)
             .json({
-              error: 'Incorrect email or password'
+              error: 'Incorrect username or password'
             });
         } else {
           // Issue token
-          const payload = { email };
+          const payload = { username };
           const token = jwt.sign(payload, process.env.AUTH_SECRET, {
             expiresIn: '1h'
           });
-          res.cookie('token', token, { httpOnly: true }).sendStatus(200);
+          res.cookie('token', token, { httpOnly: true }).status(200).json(user);
         }
       });
     }

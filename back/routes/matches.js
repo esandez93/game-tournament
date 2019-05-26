@@ -1,6 +1,6 @@
 // Import dependencies
 const express = require('express');
-const withAuth = require('./middleware/withAuth');
+const withAuth = require('../middleware/withAuth');
 const router = express.Router();
 
 // const MatchController = require('../../controllers/matchess.js');
