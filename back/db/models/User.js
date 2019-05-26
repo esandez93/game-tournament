@@ -1,8 +1,10 @@
 //Require Mongoose
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const schema = new mongoose.Schema({
   username: { type: String, trim: true, required: true },
+  password: { type: String, required: true },
   name: { type: String, required: true },
   email: { type: String, match: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/, required: true },
   avatar: { type: String, trim: true },
@@ -21,6 +23,34 @@ const schema = new mongoose.Schema({
   }
 });
 schema.index({ id: 1 });
+
+const SALT_ROUNDS = 10;
+schema.pre('save', function (next) {
+  // Check if document is new or a new password has been set
+  if (this.isNew || this.isModified('password')) {
+    // Saving reference to this because of changing scopes
+    const document = this;
+    bcrypt.hash(document.password, SALT_ROUNDS, (err, hashedPassword) => {
+      if (err) {
+        next(err);
+      } else {
+        document.password = hashedPassword;
+        next();
+      }
+    });
+  } else {
+    next();
+  }
+});
+schema.methods.isCorrectPassword = function(password, callback){
+  bcrypt.compare(password, this.password, (err, same) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(err, same);
+    }
+  });
+}
 
 const model = mongoose.model('User', schema);
 
