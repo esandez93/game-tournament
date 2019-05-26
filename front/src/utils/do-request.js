@@ -1,5 +1,33 @@
+function ResError ({ code = 500, error = 'Unexpected error' }) {
+  this.code = code;
+  this.message = error;
+  this.stack = (new Error()).stack;
+}
+ResError.prototype = Object.create(Error.prototype);
+ResError.prototype.constructor = ResError;
+
 function hasError (code) {
   return code >= 400 && code <= 599;
+}
+
+function resolveRequest (promise) {
+  return new Promise((resolve, reject) => {
+    promise
+      .then(res => {
+        console.log(res)
+        if(hasError(res.status)) {
+          res.json().then(({ error }) => {
+            reject(new ResError({
+              code: res.status,
+              message: `${res.status} ${res.statusText}: ${error}`
+            }));
+          });
+        } else {
+          resolve(res.json());
+        }
+      })
+      .catch(reject);
+  });
 }
 
 function get (url, params = {}, options = { method: 'GET' }) {
@@ -14,15 +42,7 @@ function get (url, params = {}, options = { method: 'GET' }) {
     if (index < keys.length-1) query += '&';
   });
 
-  return fetch(url + query, options)
-    .then(res => {
-      if(hasError(res.status)) {
-        throw res.statusText;
-      } else {
-        return res.json();
-      }
-    })
-    .catch((e) => { throw e });
+  return resolveRequest(fetch(url + query, options));
 }
 
 function post (url, body = {}, options = {}) {
@@ -36,7 +56,7 @@ function post (url, body = {}, options = {}) {
     body: JSON.stringify(body)
   };
 
-  return fetch(url, _options).then(res => res.json()).catch((e) => { throw e });
+  return resolveRequest(fetch(url, _options));
 }
 
 function put (url, body = {}, options = {}) {
@@ -50,7 +70,7 @@ function put (url, body = {}, options = {}) {
     body
   };
 
-  return fetch(url, _options).then(res => res.json()).catch((e) => { throw e });
+  return resolveRequest(fetch(url, _options));
 }
 
 export {

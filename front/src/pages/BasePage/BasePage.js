@@ -21,6 +21,7 @@ function Header (props) {
     classes,
     title,
     toggleSideMenu,
+    logged,
     ...other
   } = props;
 
@@ -33,7 +34,7 @@ function Header (props) {
   ) : (
     <AppBar position="fixed" className={clsx('Header', className, classes.appBar)} {...other}>
       <Toolbar>
-        <IconButton
+        {logged && <IconButton
           color="inherit"
           aria-label="Open drawer"
           edge="start"
@@ -41,7 +42,7 @@ function Header (props) {
           className={classes.menuButton}
         >
           <MenuIcon />
-        </IconButton>
+        </IconButton>}
         <Typography variant="h6" noWrap>
           {title}
         </Typography>
@@ -88,7 +89,7 @@ function BasePage (props) {
                   return (
                     <Fragment>
                       <div className={classes.root}>
-                        <Header className={clsx(classes.header)} classes={classes} toggleSideMenu={app.sideMenu.toggle} title={locale.translate(`sections.${cleanString(props.name.toLowerCase())}`)} />
+                        <Header className={clsx(classes.header)} classes={classes} logged={login.logged} toggleSideMenu={app.sideMenu.toggle} title={locale.translate(`sections.${cleanString(props.name.toLowerCase())}`)} />
                         <Component className={clsx('Page', classes.page)} {...other} />
                       </div>
                     </Fragment>

@@ -20,6 +20,10 @@ export default {
       noResult: "Both Players have characters alive"
     }
   },
+  user: {
+    username: 'Username',
+    password: 'Password'
+  },
   card: {
     expand: 'Expand',
     collapse: 'Collapse'

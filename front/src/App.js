@@ -25,7 +25,7 @@ import {
 } from '@/components';
 import { login } from '@/api/users';
 
-const DEV_MODE = process.env.NODE_ENV === 'development';
+const DEV_MODE = false; // process.env.NODE_ENV === 'development';
 
 function DevConfig (props) {
   const classes = makeStyles((theme) => ({
@@ -101,18 +101,17 @@ class App extends Component {
     }
   }
 
-  doLogin = () => {
-    login().then(
-      (user) => {
-        this.mergeState('loginContext', {
-          logged: true,
-          user: user[0]
-        });
-        this.changeLocale(user[0].settings.locale);
-        this.changeTheme(user[0].settings.theme);
-      },
-      console.error
-    );
+  doLogin = ({ username, password }) => {
+    login(username, password)
+    .then((user) => {
+      this.mergeState('loginContext', {
+        logged: true,
+        user
+      });
+      this.changeLocale(user.settings.locale);
+      this.changeTheme(user.settings.theme);
+    })
+    .catch(console.error);
   }
 
   toggleSideMenu = () => {
@@ -121,8 +120,8 @@ class App extends Component {
 
   state = {
     themeContext: {
-      name: 'defaultLight',
-      theme: themes.defaultLight,
+      name: 'defaultDark',
+      theme: themes.defaultDark,
       changeTheme: this.changeTheme
     },
     localeContext: {
@@ -161,7 +160,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.doLogin();
+    // this.doLogin();
   }
 
   render() {

@@ -1,5 +1,5 @@
 import { url } from './config';
-import { get } from '@/utils';
+import { get, post } from '@/utils';
 
 const endpoint = 'users';
 
@@ -12,16 +12,29 @@ function getUserById(id) {
 }
 
 function getRanking() {
+  // TODO: Add Ranking endpoint
   return get(`${url}/${endpoint}`);
 }
 
-function login(user, password) {
-  return get(`${url}/${endpoint}`, { _limit: 1 });
+function register(user) {
+  return post(`${url}/${endpoint}`, user);
+}
+
+function checkToken() {
+  return get(`${url}/${endpoint}/checkToken`, { _limit: 1 });
+}
+
+function login(username, password) {
+  return post(`${url}/${endpoint}/auth`, {
+    username,
+    password
+   });
 }
 
 export {
   getUsers,
   getUserById,
   getRanking,
-  login
+  login,
+  register
 };

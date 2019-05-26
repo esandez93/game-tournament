@@ -20,6 +20,10 @@ export default {
       noResult: "A los dos Jugadores les quedan personajes vivos"
     }
   },
+  user: {
+    username: 'Nombre de usuario',
+    password: 'Contraseña'
+  },
   card: {
     expand: 'Expandir',
     collapse: 'Colapsar'
