@@ -6,7 +6,7 @@
   "publishConfig": {
     "access": "restricted"
   },
-  "homepage": "http://81.36.191.255/game-tournament",
+  "homepage": "https://game-tournament.netlify.com/",
   "dependencies": {
     "@babel/polyfill": "^7.4.0",
     "@babel/register": "^7.4.0",
