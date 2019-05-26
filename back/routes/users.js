@@ -1,5 +1,7 @@
 // Import dependencies
 const express = require('express');
+const jwt = require('jsonwebtoken');
+
 const withAuth = require('../middleware/withAuth');
 const router = express.Router();
 
