@@ -57,6 +57,10 @@ const model = mongoose.model('User', schema);
 function populate (data) {
   if (!data) return;
 
+  if (!data.settings) {
+    data.settings = {};
+  }
+
   return new model({
     username: data.username,
     name: data.name,
