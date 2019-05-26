@@ -6,7 +6,7 @@
   "publishConfig": {
     "access": "restricted"
   },
-  "homepage" : "http://81.36.191.255/game-tournament",
+  "homepage": "http://81.36.191.255/game-tournament",
   "dependencies": {
     "@babel/polyfill": "^7.4.0",
     "@babel/register": "^7.4.0",
@@ -83,6 +83,7 @@
     "react-app-rewire-workbox": "^2.0.1",
     "react-app-rewired": "^2.1.1",
     "react-moment": "^0.9.2",
+    "reactotron-react-js": "^3.2.3",
     "storybook-addon-smart-knobs": "^4.1.0",
     "workbox-webpack-plugin": "^4.1.1"
   },
