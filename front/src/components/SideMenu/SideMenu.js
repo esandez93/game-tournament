@@ -8,7 +8,6 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
-import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -23,13 +22,17 @@ import Typography from '@material-ui/core/Typography';
 import { LoginContext, LocaleContext, AppContext } from '@/context';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
+import { Avatar } from '@/components';
 
 const useStyles = makeStyles(styles);
 
 function SideMenu (props) {
   const {
     toggleOpen,
-    open
+    open,
+    avatar,
+    name,
+    username
   } = props;
 
   const classes = useStyles();
@@ -89,12 +92,10 @@ function SideMenu (props) {
       onClose={toggleOpen}
     >
       <div className={classes.header}>
-        <Avatar className={classes.avatar} src={props.avatar} onClick={toggleOpen}>
-          <PersonIcon />
-        </Avatar>
+        <Avatar className={classes.avatar} src={avatar} name={name} onClick={toggleOpen} />
         <div>
-          <Typography variant="body1">{props.username}</Typography>
-          <Typography className={classes.secondaryText} variant="body2">{props.name}</Typography>
+          <Typography variant="body1">{username}</Typography>
+          <Typography className={classes.secondaryText} variant="body2">{name}</Typography>
         </div>
       </div>
       <Divider />

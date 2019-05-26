@@ -14,7 +14,6 @@ function resolveRequest (promise) {
   return new Promise((resolve, reject) => {
     promise
       .then(res => {
-        console.log(res)
         if(hasError(res.status)) {
           res.json().then(({ error }) => {
             reject(new ResError({
