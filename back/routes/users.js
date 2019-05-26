@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
 
 router.post('/auth', (req, res) => {
   const { username, password } = req.body;
-  User.findOne({ username }, (err, user) => {
+  User.model.findOne({ username }, (err, user) => {
     if (err) {
       res.status(500).json(err);
     } else if (!user) {
