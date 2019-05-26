@@ -63,6 +63,7 @@ function populate (data) {
 
   return new model({
     username: data.username,
+    password: data.password,
     name: data.name,
     email: data.email,
     avatar: data.avatar,
