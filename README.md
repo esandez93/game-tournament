@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/763bcdc2-2cca-4491-b3af-ddf39aaaa1fc/deploy-status)](https://app.netlify.com/sites/game-tournament/deploys)
+
 ### RUN
 
 * If you're developing the frontend using mock DB, you will find further instructions in [front README](https://github.com/esandez93/tekken3-scytl-tournament/blob/master/front/README.md).
