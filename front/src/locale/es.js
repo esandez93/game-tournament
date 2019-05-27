@@ -6,7 +6,8 @@ export default {
     ranking: "Ranking",
     matches: "Partidas",
     users: "Usuarios",
-    settings: "Configuración"
+    settings: "Configuración",
+    notfound: "No encontrada"
   },
   matches: {
     newMatch: "Nueva partida"

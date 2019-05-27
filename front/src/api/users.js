@@ -21,7 +21,7 @@ function register(user) {
 }
 
 function checkToken() {
-  return get(`${url}/${endpoint}/checkToken`, { _limit: 1 });
+  return get(`${url}/${endpoint}/checkToken`);
 }
 
 function login(username, password) {
@@ -35,6 +35,7 @@ export {
   getUsers,
   getUserById,
   getRanking,
+  checkToken,
   login,
   register
 };

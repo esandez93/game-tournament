@@ -82,22 +82,15 @@ function BasePage (props) {
         <AppContext.Consumer>
           {(app) =>
             <LocaleContext.Consumer>
-              {(locale) => {
-                if (login.logged && name === 'Login') {
-                  return <Redirect to='/' />
-                } else if (login.logged || name === 'Login') {
-                  return (
-                    <Fragment>
-                      <div className={classes.root}>
-                        <Header className={clsx(classes.header)} classes={classes} logged={login.logged} toggleSideMenu={app.sideMenu.toggle} title={locale.translate(`sections.${cleanString(props.name.toLowerCase())}`)} />
-                        <Component className={clsx('Page', classes.page)} {...other} />
-                      </div>
-                    </Fragment>
-                  );
-                } else {
-                  return <Redirect to='/login' />
-                }
-              }}
+              {(locale) => (
+                <Fragment>
+                  <div className={classes.root}>
+                    <Header className={clsx(classes.header)} classes={classes} logged={login.logged} toggleSideMenu={app.sideMenu.toggle} title={locale.translate(`sections.${cleanString(props.name.toLowerCase())}`)} />
+                    <Component className={clsx('Page', classes.page)} {...other} />
+                  </div>
+                </Fragment>
+                )
+              }
             </LocaleContext.Consumer>
           }
         </AppContext.Consumer>

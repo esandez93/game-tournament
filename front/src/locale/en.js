@@ -6,7 +6,8 @@ export default {
     ranking: "Ranking",
     matches: "Matches",
     users: "Users",
-    settings: "Settings"
+    settings: "Settings",
+    notfound: "Not found"
   },
   matches: {
     newMatch: "New match"

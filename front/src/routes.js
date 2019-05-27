@@ -9,19 +9,23 @@ import {
 
 export default [{
   path: '/',
-  component: Home
+  component: Home,
+  // auth: true
 }, {
   path: '/login',
   component: Login
 }, {
   path: '/ranking',
-  component: Ranking
+  component: Ranking,
+  // auth: true
 }, {
   path: '/users',
-  component: Users
+  component: Users,
+  // auth: true
 }, {
   path: '/matches',
-  component: Matches
+  component: Matches,
+  // auth: true
 }, {
   path: '/theme-test',
   component: ThemeTest

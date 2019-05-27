@@ -4,6 +4,7 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
+import { withRouter } from "react-router";
 import { withTranslation } from 'react-i18next';
 import deepmerge from 'deepmerge';
 import { ThemeProvider } from '@material-ui/styles';
@@ -19,6 +20,7 @@ import {
 import * as languages from '@/locale';
 import * as themes from '@/themes';
 import { NotFound } from '@/pages';
+import { withAuth } from '@/hoc';
 import {
   OfflineBadge,
   SideMenu
@@ -110,6 +112,7 @@ class App extends Component {
       });
       this.changeLocale(user.settings.locale);
       this.changeTheme(user.settings.theme);
+      this.props.history.push('/');
     })
     .catch(console.error);
   }
@@ -145,6 +148,7 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+    console.log(props)
 
     window.addEventListener('online', this.setOfflineStatus);
     window.addEventListener('offline', this.setOfflineStatus);
@@ -160,7 +164,14 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // this.doLogin();
+    const routed = routes.map((route, index) =>
+    <Route key={index} exact path={route.path} render={(props) => {
+      const Routed = route.auth ? withAuth(route.component) : route.component;
+
+      return <Routed {...props} />
+    }} />);
+
+    this.setState({ routes: routed });
   }
 
   render() {
@@ -186,7 +197,7 @@ class App extends Component {
           {DEV_MODE && <DevConfig themeContext={themeContext} localeContext={localeContext} />}
           {loginContext.logged && <Route render={(props) => <SideMenu {...props} />}/>}
           <Switch>
-            {routes.map((route, index) => <Route key={index} exact path={route.path} render={(props) => <route.component {...props} />}/>)}
+            {this.state.routes}
             <Route component={NotFound}/>
           </Switch>
         </div>
@@ -195,4 +206,4 @@ class App extends Component {
   }
 }
 
-export default withTranslation()(App);
+export default withRouter(withTranslation()(App));
