@@ -12,7 +12,7 @@ import {
   FilledInput,
   OutlinedInput
 } from '@material-ui/core';
-import MuiSelect from '@material-ui/core/select';
+import MuiSelect from '@material-ui/core/Select';
 
 const useStyles = makeStyles(styles);
 
