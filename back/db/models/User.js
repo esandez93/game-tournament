@@ -10,8 +10,7 @@ const schema = new mongoose.Schema({
   avatar: { type: String, trim: true },
   company: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Company',
-    required: true
+    ref: 'Company'
   },
   group: {
     type: mongoose.Schema.Types.ObjectId,

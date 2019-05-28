@@ -81,6 +81,7 @@ const MultiProvider = (props) => {
 const localeExists = (locale) => languages[locale] ? true : false;
 const themeExists = (theme) => themes[theme] ? true : false;
 
+// TODO: Change locale to save name too
 class App extends Component {
   // Helper function to deep merge the context values
   mergeState = (key, value) => {
@@ -144,7 +145,7 @@ class App extends Component {
       changeTheme: this.changeTheme
     },
     localeContext: {
-      locale: 'es',
+      locale: 'en',
       changeLocale: this.changeLocale,
       translate: this.props.t
     },

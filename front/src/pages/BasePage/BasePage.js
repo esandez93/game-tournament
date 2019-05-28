@@ -29,7 +29,7 @@ function Header (props) {
 
   return size.width > breakpoints.m ? (
     <div className={clsx('Header', className, classes.header)} {...other}>
-      <Typography variant="h4">{title}</Typography>
+      {title !== 'Login' && <Typography variant="h4">{title}</Typography>}
     </div>
   ) : (
     <AppBar position="fixed" className={clsx('Header', className, classes.appBar)} {...other}>

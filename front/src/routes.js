@@ -3,6 +3,7 @@ import {
   Login,
   Matches,
   Ranking,
+  Signup,
   ThemeTest,
   Users
 } from '@/pages';
@@ -14,6 +15,9 @@ export default [{
 }, {
   path: '/login',
   component: Login
+}, {
+  path: '/signup',
+  component: Signup
 }, {
   path: '/ranking',
   component: Ranking,

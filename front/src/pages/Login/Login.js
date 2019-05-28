@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import './Login.scss';
 import styles from './styles';
 
 import clsx from 'clsx';
+import { Link } from 'react-router-dom';
+import { Trans } from 'react-i18next';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
+import { Typography } from '@material-ui/core';
 
 import { checkToken } from '@/api/auth';
-import { Button } from '@/components';
+import {
+  Button,
+  Input
+} from '@/components';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
 import {
@@ -17,6 +22,7 @@ import {
 
 const useStyles = makeStyles(styles);
 
+// TODO: Remember me + reset password
 function Login (props) {
   const {
     className,
@@ -53,35 +59,37 @@ function Login (props) {
     setValues({ ...values, [name]: event.target.value });
   };
 
-  // TODO: Create Input component with built-in validation -> https://material-ui.com/components/text-fields/
-  // Also with type password to set adornments (show/hide)
   return (
     <div className={clsx('Login', className)} {...other}>
-      {checked && <form className={clsx(classes.form, moreClasses.form)} noValidate>
-        <TextField
-          id="username"
-          label={translate('user.username')}
-          value={values.username}
-          onChange={handleChange('username')}
-          margin="normal"
-          variant="outlined"
-        />
-        <TextField
-          id="password"
-          label={translate('user.password')}
-          value={values.password}
-          onChange={handleChange('password')}
-          type="password"
-          margin="normal"
-          variant="outlined"
-        />
+      {checked && <div className={clsx(classes.root)}>
+        <form className={clsx(classes.form, moreClasses.form)} noValidate>
+          <Typography className={clsx(classes.title)}>Sign in</Typography>
+          <Input
+            id="username"
+            label={translate('user.username')}
+            value={values.username}
+            onChange={handleChange('username')}
+          />
+          <Input
+            id="password"
+            label={translate('user.password')}
+            value={values.password}
+            onChange={handleChange('password')}
+            type="password"
+          />
 
-        <Button className={classes.button} color="primary" variant="contained" onClick={() => login(values)}>
-          {translate('login')}
-        </Button>
-      </form>
-      }
-   </div>
+          <Button className={classes.button} color="primary" variant="contained" onClick={() => login(values)}>
+            {translate('sections.login')}
+          </Button>
+        </form>
+
+        <Typography className={clsx(classes.signup)}>
+          <Trans i18nKey="login.signup">
+            You don't have an account? <Link to="/signup" style={{ fontWeight: 'bold' }}>REGISTER HERE</Link>
+          </Trans>
+        </Typography>
+      </div>}
+    </div>
   );
 }
 
