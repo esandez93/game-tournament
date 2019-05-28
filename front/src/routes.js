@@ -10,22 +10,22 @@ import {
 export default [{
   path: '/',
   component: Home,
-  // auth: true
+  auth: true
 }, {
   path: '/login',
   component: Login
 }, {
   path: '/ranking',
   component: Ranking,
-  // auth: true
+  auth: true
 }, {
   path: '/users',
   component: Users,
-  // auth: true
+  auth: true
 }, {
   path: '/matches',
   component: Matches,
-  // auth: true
+  auth: true
 }, {
   path: '/theme-test',
   component: ThemeTest

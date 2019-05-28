@@ -20,22 +20,9 @@ function register(user) {
   return post(`${url}/${endpoint}`, user);
 }
 
-function checkToken() {
-  return get(`${url}/${endpoint}/checkToken`);
-}
-
-function login(username, password) {
-  return post(`${url}/${endpoint}/auth`, {
-    username,
-    password
-   });
-}
-
 export {
   getUsers,
   getUserById,
   getRanking,
-  checkToken,
-  login,
   register
 };

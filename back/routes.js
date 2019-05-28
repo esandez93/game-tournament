@@ -1,5 +1,6 @@
 const withAuth = require('./middleware/withAuth');
 
+const auth = require('./routes/auth');
 const users = require('./routes/users');
 const companies = require('./routes/companies');
 const matches = require('./routes/matches');
@@ -10,8 +11,7 @@ module.exports = (app) => {
     res.status(200).send(`Welcome to the Tekken Tournament API!`);
   });
 
-  app.get('/checkToken', withAuth, (req, res) => res.sendStatus(200));
-
+  app.use('/auth', auth);
   app.use('/users', users);
   app.use('/companies', companies);
   app.use('/matches', matches);

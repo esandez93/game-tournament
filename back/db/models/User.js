@@ -42,13 +42,15 @@ schema.pre('save', function (next) {
     next();
   }
 });
-schema.methods.isCorrectPassword = function(password, callback){
-  bcrypt.compare(password, this.password, (err, same) => {
-    if (err) {
-      callback(err);
-    } else {
-      callback(err, same);
-    }
+schema.methods.isCorrectPassword = function(password) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, this.password, (err, same) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(same);
+      }
+    });
   });
 }
 

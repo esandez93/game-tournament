@@ -16,10 +16,10 @@ function resolveRequest (promise) {
       .then(res => {
         if(hasError(res.status)) {
           res.json().then(({ error }) => {
-            reject(new ResError({
+            reject({
               code: res.status,
               message: `${res.status} ${res.statusText}: ${error}`
-            }));
+            });
           });
         } else {
           resolve(res.json());
@@ -30,6 +30,13 @@ function resolveRequest (promise) {
 }
 
 function get (url, params = {}, options = { method: 'GET' }) {
+  const _options = {
+    ...options,
+    method: 'GET',
+    headers: { ...options.headers },
+    credentials: 'include'
+  };
+
   let query = '';
   const keys = Object.keys(params);
 
@@ -41,7 +48,7 @@ function get (url, params = {}, options = { method: 'GET' }) {
     if (index < keys.length-1) query += '&';
   });
 
-  return resolveRequest(fetch(url + query, options));
+  return resolveRequest(fetch(url + query, _options));
 }
 
 function post (url, body = {}, options = {}) {
@@ -51,6 +58,7 @@ function post (url, body = {}, options = {}) {
       'Content-Type': 'application/json',
       ...options.headers
     },
+    credentials: 'include',
     method: 'POST',
     body: JSON.stringify(body)
   };
@@ -65,6 +73,7 @@ function put (url, body = {}, options = {}) {
       'Content-Type': 'application/json',
       ...options.headers
     },
+    credentials: 'include',
     method: 'PUT',
     body
   };

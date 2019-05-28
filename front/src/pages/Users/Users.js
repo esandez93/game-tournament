@@ -5,15 +5,21 @@ import styles from './styles.js';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  Button,
+  Fab,
+  IconButton
+} from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import AddIcon from '@material-ui/icons/Add';
 
 import {
   Avatar,
   Card
 } from '@/components';
 import { getUsers } from '@/api/users';
+
 
 const useStyles = makeStyles(styles);
 
@@ -27,6 +33,10 @@ function Users (props) {
       (error) => console.error(error)
     );
   }, []);
+
+  function clickAddUser () {
+
+  }
 
   function getCardHeader(user) {
     return {
@@ -43,10 +53,15 @@ function Users (props) {
     <div className={clsx('Users', props.className)}>
       {users.map((user) => (
         <Card
+          className={clsx(classes.card)}
           key={user.id}
           header={getCardHeader(user)}
         ></Card>
       ))}
+
+      <Fab className={clsx(classes.fab)} color="primary" aria-label="Add" onClick={clickAddUser}>
+        <AddIcon />
+      </Fab>
     </div>
   );
 }

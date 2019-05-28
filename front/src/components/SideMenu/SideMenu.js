@@ -17,6 +17,7 @@ import ShowChartIcon from '@material-ui/icons/ShowChart';
 import StorageIcon from '@material-ui/icons/Storage';
 import GroupIcon from '@material-ui/icons/Group';
 import SettingsIcon from '@material-ui/icons/Settings';
+import PowerSettingsIcon from '@material-ui/icons/PowerSettingsNew';
 import Typography from '@material-ui/core/Typography';
 
 import { LoginContext, LocaleContext, AppContext } from '@/context';
@@ -32,7 +33,8 @@ function SideMenu (props) {
     open,
     avatar,
     name,
-    username
+    username,
+    logout
   } = props;
 
   const classes = useStyles();
@@ -101,7 +103,7 @@ function SideMenu (props) {
       <Divider />
       <List>
         {menu.map((item, index) => (
-          <ListItem  button disabled={item.disabled} key={index}
+          <ListItem button disabled={item.disabled} key={index}
             selected={item.url.slice(1).toLowerCase() === currentSection}
             onClick={() => navigate(item.url)}
           >
@@ -109,6 +111,10 @@ function SideMenu (props) {
             <ListItemText primary={item.text} />
           </ListItem>
         ))}
+        <ListItem button onClick={logout}>
+          <ListItemIcon><PowerSettingsIcon /></ListItemIcon>
+          <ListItemText primary="Logout" />
+        </ListItem>
       </List>
     </Drawer>
   );
@@ -136,6 +142,7 @@ export default React.forwardRef((props, ref) => (
                 ref={ref}
                 open={app.sideMenu.isOpen}
                 toggleOpen={app.sideMenu.toggle}
+                logout={login.logout}
                 {...props}
               />
             }

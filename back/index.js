@@ -6,9 +6,9 @@ const PORT = process.env.PORT || 3020;
 const app = express();
 
 const modules = [
+  './error-handler',
   './middleware',
   './routes',
-  './error-handler',
   './server'
 ]
 

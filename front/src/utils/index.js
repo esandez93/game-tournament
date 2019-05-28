@@ -2,7 +2,6 @@ import cleanString from './clean-string';
 import getDisplayName from './get-display-name';
 import getPropTypes from './get-prop-types';
 import getDefaultProps from './get-default-props';
-import screenSize from './screen-size';
 import {
   get,
   put,
@@ -16,6 +15,5 @@ export {
   post,
   getDisplayName,
   getPropTypes,
-  getDefaultProps,
-  screenSize
+  getDefaultProps
 };

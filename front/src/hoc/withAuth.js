@@ -1,23 +1,23 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import { checkToken } from '@/api/users';
+import { checkToken } from '@/api/auth';
 
-const withAuth = (ComponentToProtect) => (props) => {
+const withAuth = (ComponentToProtect, setLogin) => (props) => {
   const [ loading, setLoading ] = useState(true);
   const [ redirect, setRedirect ] = useState(false);
 
   useEffect(() => {
     checkToken()
       .then(res => {
-        if (res.status === 200) {
-          setLoading(false);
-        } else {
-          const error = new Error(res.error);
-          throw error;
-        }
+        if (setLogin) setLogin(true);
+
+        setLoading(false);
       })
       .catch(err => {
+        if (setLogin) setLogin(false);
+
+        localStorage.removeItem('user');
         setLoading(false);
         setRedirect(true);
       });

@@ -25,7 +25,7 @@ import {
   OfflineBadge,
   SideMenu
 } from '@/components';
-import { login } from '@/api/users';
+import { login, logout } from '@/api/auth';
 
 const DEV_MODE = false; // process.env.NODE_ENV === 'development';
 
@@ -105,16 +105,32 @@ class App extends Component {
 
   doLogin = ({ username, password }) => {
     login(username, password)
-    .then((user) => {
-      this.mergeState('loginContext', {
-        logged: true,
-        user
+      .then((user) => {
+        localStorage.setItem('user', JSON.stringify(user));
+        this.mergeState('loginContext', {
+          logged: true,
+          user
+        });
+        this.changeLocale(user.settings.locale);
+        this.changeTheme(user.settings.theme);
+        this.props.history.push('/');
+      })
+      .catch(console.error);
+  }
+
+  doLogout = () => {
+    logout()
+      .then((res) => {
+        localStorage.removeItem('user');
+        this.props.history.push('/login');
+        this.mergeState('loginContext', {
+          user: {},
+          logged: false
+        });
+      })
+      .catch((err) => {
+        console.log(err);
       });
-      this.changeLocale(user.settings.locale);
-      this.changeTheme(user.settings.theme);
-      this.props.history.push('/');
-    })
-    .catch(console.error);
   }
 
   toggleSideMenu = () => {
@@ -133,9 +149,10 @@ class App extends Component {
       translate: this.props.t
     },
     loginContext: {
-      logged: DEV_MODE ? true : false,
+      logged: false,
+      user: {},
       login: this.doLogin,
-      user: {}
+      logout: this.doLogout
     },
     appContext: {
       offline: false,
@@ -148,7 +165,6 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    console.log(props)
 
     window.addEventListener('online', this.setOfflineStatus);
     window.addEventListener('offline', this.setOfflineStatus);
@@ -164,14 +180,39 @@ class App extends Component {
   }
 
   componentDidMount() {
+    const setLogin = (value) => {
+      if (this.state.loginContext.logged !== value && (value === true || value === false)) {
+        this.mergeState('loginContext', {
+          logged: value
+        });
+      }
+    }
+
     const routed = routes.map((route, index) =>
     <Route key={index} exact path={route.path} render={(props) => {
-      const Routed = route.auth ? withAuth(route.component) : route.component;
+      const Routed = route.auth ? withAuth(route.component, setLogin) : route.component;
 
       return <Routed {...props} />
     }} />);
 
     this.setState({ routes: routed });
+  }
+
+  componentDidUpdate() {
+    if (JSON.stringify(this.state.loginContext.user) === '{}') {
+      const user = localStorage.getItem('user');
+
+      if (user) {
+        this.mergeState('loginContext', {
+          logged: true,
+          user: JSON.parse(user)
+        });
+      } else if (this.state.loginContext.logged) {
+        this.mergeState('loginContext', {
+          logged: false
+        });
+      }
+    }
   }
 
   render() {

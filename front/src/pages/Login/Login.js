@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Login.scss';
 import styles from './styles';
 
@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
+import { checkToken } from '@/api/auth';
 import { Button } from '@/components';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
@@ -24,6 +25,17 @@ function Login (props) {
     login,
     ...other
   } = props;
+
+  const [ checked, setChecked ] = useState(false);
+  useEffect(() => {
+    checkToken()
+      .then(() => {
+        props.history.push('/');
+      })
+      .catch(() => {
+        setChecked(true);
+      });
+  }, []);
 
   const size = useWindowSize();
   const [ values, setValues ] = useState({
@@ -45,7 +57,7 @@ function Login (props) {
   // Also with type password to set adornments (show/hide)
   return (
     <div className={clsx('Login', className)} {...other}>
-      <form className={clsx(classes.form, moreClasses.form)} noValidate>
+      {checked && <form className={clsx(classes.form, moreClasses.form)} noValidate>
         <TextField
           id="username"
           label={translate('user.username')}
@@ -68,7 +80,8 @@ function Login (props) {
           {translate('login')}
         </Button>
       </form>
-    </div>
+      }
+   </div>
   );
 }
 
