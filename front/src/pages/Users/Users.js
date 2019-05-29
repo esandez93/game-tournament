@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './Users.scss';
-import styles from './styles.js';
+import styles from './Users.styles';
 
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Button,
-  Fab,
-  IconButton
-} from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AddIcon from '@material-ui/icons/Add';
@@ -19,24 +14,27 @@ import {
   Card
 } from '@/components';
 import { getUsers } from '@/api/users';
-
+import {
+  LoginContext,
+  LocaleContext
+} from '@/context';
 
 const useStyles = makeStyles(styles);
 
 function Users (props) {
+  const {
+    user
+  } = props;
+
   const classes = useStyles();
   const [ users, setUsers ] = useState([]);
 
   useEffect(() => {
-    getUsers().then(
+    getUsers(user.world).then(
       (data) => setUsers(data),
       (error) => console.error(error)
     );
   }, []);
-
-  function clickAddUser () {
-
-  }
 
   function getCardHeader(user) {
     return {
@@ -58,12 +56,17 @@ function Users (props) {
           header={getCardHeader(user)}
         ></Card>
       ))}
-
-      <Fab className={clsx(classes.fab)} color="primary" aria-label="Add" onClick={clickAddUser}>
-        <AddIcon />
-      </Fab>
     </div>
   );
 }
 
-export default Users;
+
+export default React.forwardRef((props, ref) => (
+  <LoginContext.Consumer>
+    {(login) =>
+      <LocaleContext.Consumer>
+        {(locale) => <Users {...props} translate={locale.translate} user={login.user} ref={ref} />}
+      </LocaleContext.Consumer>
+    }
+  </LoginContext.Consumer>
+));

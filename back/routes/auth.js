@@ -5,6 +5,7 @@ const router = express.Router();
 
 const User = require('../db/models/User');
 
+// TODO: save token and user in DB and send it with checkToken
 router.get('/checkToken', withAuth, (req, res) => res.status(200).json({}));
 
 router.post('/login', (req, res) => {

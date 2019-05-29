@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import './Matches.scss';
-import styles from './styles.js';
+import styles from './Matches.styles';
 
 import clsx from 'clsx';
 
@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
-import { LocaleContext } from '@/context';
+import { LocaleContext, LoginContext } from '@/context';
 import { getMatches } from '@/api/matches';
 import { getCharacters } from '@/api/characters';
 import { getUsers } from '@/api/users';
@@ -17,13 +17,17 @@ import { Match } from '@/components';
 const useStyles = makeStyles(styles);
 
 function Matches (props) {
+  const {
+    user
+  } = props;
+
   const classes = useStyles();
   const [ matches, setMatches ] = useState([]);
   const [ availableCharacters, setAvailableCharacters ] = useState([]);
   const [ availableUsers, setAvailableUsers ] = useState([]);
 
   useEffect(() => {
-    getMatches({
+    getMatches(user.world, {
       sort: '-date'
     }).then(
       (data) => { setMatches(data) },
@@ -33,13 +37,13 @@ function Matches (props) {
       }
     );
 
-    // TODO: manage errors
+    // TODO: Create Game logic
     getCharacters().then(
       (data) => setAvailableCharacters(data),
       console.error
     );
 
-    getUsers().then(
+    getUsers(user.world).then(
       (data) => setAvailableUsers(data),
       console.error
     );
@@ -79,7 +83,11 @@ function Matches (props) {
 }
 
 export default React.forwardRef((props, ref) => (
-  <LocaleContext.Consumer>
-    {(locale) => <Matches {...props} translate={locale.translate} ref={ref} />}
-  </LocaleContext.Consumer>
+  <LoginContext.Consumer>
+    {(login) =>
+      <LocaleContext.Consumer>
+        {(locale) => <Matches {...props} translate={locale.translate} user={login.user} ref={ref} />}
+      </LocaleContext.Consumer>
+    }
+  </LoginContext.Consumer>
 ));

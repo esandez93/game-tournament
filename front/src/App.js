@@ -1,21 +1,24 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.scss';
+import styles from './App.styles';
+
 import {
   Switch,
   Route
 } from 'react-router-dom';
 import { withRouter } from "react-router";
 import { withTranslation } from 'react-i18next';
-import deepmerge from 'deepmerge';
-import { ThemeProvider } from '@material-ui/styles';
+
 import { makeStyles } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 
 import routes from '@/routes';
 import {
   ThemeContext,
   LocaleContext,
   LoginContext,
-  AppContext
+  AppContext,
+  WorkaroundContext
 } from '@/context';
 import * as languages from '@/locale';
 import * as themes from '@/themes';
@@ -23,11 +26,15 @@ import { NotFound } from '@/pages';
 import { withAuth } from '@/hoc';
 import {
   OfflineBadge,
-  SideMenu
+  SideMenu,
+  Select
 } from '@/components';
 import { login, logout } from '@/api/auth';
+import clsx from 'clsx';
 
 const DEV_MODE = false; // process.env.NODE_ENV === 'development';
+
+const useStyles = makeStyles(styles);
 
 function DevConfig (props) {
   const classes = makeStyles((theme) => ({
@@ -62,190 +69,220 @@ function DevConfig (props) {
   );
 }
 
-const MultiProvider = (props) => {
+function MultiProvider (props) {
+  const {
+    workaroundContext,
+    themeContext,
+    localeContext,
+    loginContext,
+    appContext,
+    children
+  } = props;
+
   return (
-    <ThemeContext.Provider value={props.themeContext}>
-      <ThemeProvider theme={props.themeContext.theme}>
-        <LocaleContext.Provider value={props.localeContext}>
-          <LoginContext.Provider value={props.loginContext}>
-            <AppContext.Provider value={props.appContext}>
-              {props.children}
-            </AppContext.Provider>
-          </LoginContext.Provider>
-        </LocaleContext.Provider>
-      </ThemeProvider>
-    </ThemeContext.Provider>
+    <WorkaroundContext.Provider value={workaroundContext}>
+      <ThemeContext.Provider value={themeContext}>
+        <ThemeProvider theme={themeContext.theme}>
+          <LocaleContext.Provider value={localeContext}>
+            <LoginContext.Provider value={loginContext}>
+              <AppContext.Provider value={appContext}>
+                {children}
+              </AppContext.Provider>
+            </LoginContext.Provider>
+          </LocaleContext.Provider>
+        </ThemeProvider>
+      </ThemeContext.Provider>
+    </WorkaroundContext.Provider>
   );
-};
+}
 
 const localeExists = (locale) => languages[locale] ? true : false;
 const themeExists = (theme) => themes[theme] ? true : false;
 
 // TODO: Change locale to save name too
-class App extends Component {
-  // Helper function to deep merge the context values
-  mergeState = (key, value) => {
-    this.setState({ [key]: deepmerge(this.state[key], value) });
-  }
+function App (props) {
+  const {
+    i18n,
+    t,
+    history
+  } = props;
 
-  changeLocale = (locale) => {
+  const classes = useStyles();
+  const [ routed, setRouted ] = useState([]);
+  const [ themeContext, setThemeContext ] = useState({
+    name: 'defaultDark',
+    theme: themes.defaultDark,
+    changeTheme: changeTheme
+  });
+  const [ localeContext, setLocaleContext ] = useState({
+    locale: 'en',
+    changeLocale: changeLocale,
+    translate: t
+  });
+  const [ loginContext, setLoginContext ] = useState({
+    logged: false,
+    user: {},
+    login: doLogin,
+    logout: doLogout
+  });
+  const [ appContext, setAppContext ] = useState({
+    offline: false,
+    sideMenu: {
+      isOpen: window.innerWidth > 960
+    }
+  });
+  // TODO: It has to be another solution. The issue is with closure-related if it's put in appContext.sideMenu.
+  const [ workaroundContext, setWorkaroundContext ] = useState({
+    toggleSideMenu
+  })
+
+  function changeLocale (locale) {
     if (localeExists(locale)) {
-      this.props.i18n.changeLanguage(locale)
-      this.mergeState('localeContext', { locale: locale });
+      i18n.changeLanguage(locale)
+      setLocaleContext({
+        ...localeContext,
+        locale: locale
+      });
     }
   }
 
-  changeTheme = (theme) => {
+  function changeTheme (theme) {
     if (themeExists(theme)) {
-      this.mergeState('themeContext', {
+      setThemeContext({
+        ...themeContext,
         name: theme,
         theme: themes[theme]
       });
     }
   }
 
-  doLogin = ({ username, password }) => {
+  function doLogin ({ username, password }) {
     login(username, password)
       .then((user) => {
-        localStorage.setItem('user', JSON.stringify(user));
-        this.mergeState('loginContext', {
+        const _user = {
+          ...user,
+          world: user.world ? user.world : ''
+        };
+
+        localStorage.setItem('user', JSON.stringify(_user));
+        setLoginContext({
+          ...loginContext,
           logged: true,
-          user
+          user: _user
         });
-        this.changeLocale(user.settings.locale);
-        this.changeTheme(user.settings.theme);
-        this.props.history.push('/');
+        changeLocale(_user.settings.locale);
+        changeTheme(_user.settings.theme);
+        history.push('/');
       })
       .catch(console.error);
   }
 
-  doLogout = () => {
+  function doLogout () {
     logout()
       .then((res) => {
         localStorage.removeItem('user');
-        this.props.history.push('/login');
-        this.mergeState('loginContext', {
+        history.push('/login');
+        setLoginContext({
+          ...loginContext,
           user: {},
           logged: false
         });
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(console.error);
   }
 
-  toggleSideMenu = () => {
-    this.mergeState('appContext', { sideMenu : { isOpen: !this.state.appContext.sideMenu.isOpen }});
-  }
-
-  state = {
-    themeContext: {
-      name: 'defaultDark',
-      theme: themes.defaultDark,
-      changeTheme: this.changeTheme
-    },
-    localeContext: {
-      locale: 'en',
-      changeLocale: this.changeLocale,
-      translate: this.props.t
-    },
-    loginContext: {
-      logged: false,
-      user: {},
-      login: this.doLogin,
-      logout: this.doLogout
-    },
-    appContext: {
-      offline: false,
+  function toggleSideMenu () {
+    setAppContext({
+      ...appContext,
       sideMenu: {
-        isOpen: window.innerWidth > 960,
-        toggle: this.toggleSideMenu
+        ...appContext.sideMenu,
+        isOpen: !appContext.sideMenu.isOpen
       }
-    }
+    });
   }
 
-  constructor(props) {
-    super(props);
-
-    window.addEventListener('online', this.setOfflineStatus);
-    window.addEventListener('offline', this.setOfflineStatus);
+  function setOfflineStatus () {
+    setAppContext({
+      ...appContext,
+      offline: !navigator.onLine
+    });
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('online', this.setOfflineStatus);
-    window.removeEventListener('offline', this.setOfflineStatus);
-  }
+  useEffect(() => {
+    window.addEventListener('online', setOfflineStatus);
+    window.addEventListener('offline', setOfflineStatus);
 
-  setOfflineStatus = () => {
-    this.mergeState('appContext', { offline: !navigator.onLine });
-  }
-
-  componentDidMount() {
-    const setLogin = (value) => {
-      if (this.state.loginContext.logged !== value && (value === true || value === false)) {
-        this.mergeState('loginContext', {
+    function setLogin (value) {
+      if (loginContext.logged !== value && (value === true || value === false)) {
+        setLoginContext({
+          ...loginContext,
           logged: value
         });
       }
     }
 
-    const routed = routes.map((route, index) =>
-    <Route key={index} exact path={route.path} render={(props) => {
+    const _routed = routes.map((route, index) => {
       const Routed = route.auth ? withAuth(route.component, setLogin) : route.component;
 
-      return <Routed {...props} />
-    }} />);
+      return <Route key={index} exact path={route.path} component={Routed} />
+    });
 
-    this.setState({ routes: routed });
-  }
+    setRouted(_routed);
 
-  componentDidUpdate() {
-    if (JSON.stringify(this.state.loginContext.user) === '{}') {
+    return () => {
+      window.removeEventListener('online', setOfflineStatus);
+      window.removeEventListener('offline', setOfflineStatus);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (JSON.stringify(loginContext.user) === '{}') {
       const user = localStorage.getItem('user');
 
       if (user) {
-        this.mergeState('loginContext', {
+        setLoginContext({
+          ...loginContext,
           logged: true,
           user: JSON.parse(user)
         });
-      } else if (this.state.loginContext.logged) {
-        this.mergeState('loginContext', {
+      } else if (loginContext.logged) {
+        setLoginContext({
+          ...loginContext,
           logged: false
         });
       }
     }
-  }
+  });
 
-  render() {
-    const {
-      themeContext,
-      localeContext,
-      loginContext,
-      appContext
-    } = this.state;
-
-    return (
-      <MultiProvider
-        themeContext={themeContext}
-        localeContext={localeContext}
-        loginContext={loginContext}
-        appContext={appContext}
-      >
-        <div className="App" style={{
-          backgroundColor: themeContext.theme.palette.background.default,
-          color: themeContext.theme.palette.text.primary
-        }}>
-          {appContext.offline && <OfflineBadge />}
-          {DEV_MODE && <DevConfig themeContext={themeContext} localeContext={localeContext} />}
-          {loginContext.logged && <Route render={(props) => <SideMenu {...props} />}/>}
-          <Switch>
-            {this.state.routes}
-            <Route component={NotFound}/>
-          </Switch>
-        </div>
-      </MultiProvider>
-    );
-  }
+  return (
+    <MultiProvider
+      themeContext={themeContext}
+      localeContext={localeContext}
+      loginContext={loginContext}
+      appContext={appContext}
+      workaroundContext={workaroundContext}
+    >
+      <div className="App" style={{
+        backgroundColor: themeContext.theme.palette.background.default,
+        color: themeContext.theme.palette.text.primary
+      }}>
+        {appContext.offline && <OfflineBadge />}
+        {DEV_MODE && <DevConfig themeContext={themeContext} localeContext={localeContext} />}
+        {loginContext.logged && <Select
+          className={clsx(classes.worldSelect)}
+          label={localeContext.translate('entities.world')}
+          items={[]}
+          value={loginContext.user.world || 'asdfs'}
+          onChange={(e) => { console.log(e) }}
+        />}
+        {loginContext.logged && <Route render={(props) => <SideMenu toggleOpen={toggleSideMenu} {...props} />}/>}
+        <Switch>
+          {routed}
+          <Route component={NotFound}/>
+        </Switch>
+      </div>
+    </MultiProvider>
+  );
 }
 
 export default withRouter(withTranslation()(App));

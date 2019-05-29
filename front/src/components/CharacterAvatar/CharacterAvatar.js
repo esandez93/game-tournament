@@ -1,6 +1,6 @@
 import React from 'react';
 import './CharacterAvatar.scss';
-// import styles from './styles.js';
+// import styles from './CharacterAvatar.styles';
 
 import avatars from '@/assets/img/characters/avatars';
 

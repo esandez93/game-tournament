@@ -26,9 +26,9 @@ const user = {
       "type": "string",
       "faker": "internet.email"
     },
-    "company": {
+    "world": {
       "type": "string",
-      "faker": "company.companyName"
+      "faker": "world.worldName"
     },
     "group": {
       "type": "string",
@@ -36,7 +36,7 @@ const user = {
     },
     "settings": settings
   },
-  "required": ["id", "username", "name", "avatar", "email", "company", "group", "settings"]
+  "required": ["id", "username", "name", "avatar", "email", "world", "group", "settings"]
 };
 
 const users = {

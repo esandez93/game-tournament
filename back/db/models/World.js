@@ -2,17 +2,19 @@
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-  name: { type: String, required: true }
+  name: { type: String, required: true },
+  avatar: { type: String }
 });
 schema.index({ id: 1 });
 
-const model = mongoose.model('Company', schema);
+const model = mongoose.model('World', schema);
 
 function populate (data) {
   if (!data) return;
 
   return new model({
-    name: data.name
+    name: data.name,
+    avatar: data.avatar
   });
 }
 

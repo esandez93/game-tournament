@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styles from './styles.js';
+import styles from './Select.styles';
 
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -88,7 +88,13 @@ function Select (props) {
 Select.propTypes = {
   id: PropTypes.string,
   label: PropTypes.string,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.bool,
+    PropTypes.array,
+    PropTypes.object
+  ]),
   variant: PropTypes.oneOf([ 'standard', 'outlined', 'filled' ]),
   margin: PropTypes.oneOf([ 'none', 'dense', 'normal' ]),
   onChange: PropTypes.func.isRequired

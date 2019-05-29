@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import './SideMenu.scss';
-import styles from './styles';
+import styles from './SideMenu.styles';
 
 // import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
+import {
+  Drawer,
+  Typography,
+  List,
+  Divider,
+  ListItem,
+  ListItemText,
+  ListItemIcon
+} from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
+import HomeIcon from '@material-ui/icons/Home';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import StorageIcon from '@material-ui/icons/Storage';
 import GroupIcon from '@material-ui/icons/Group';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PowerSettingsIcon from '@material-ui/icons/PowerSettingsNew';
-import Typography from '@material-ui/core/Typography';
 
 import { LoginContext, LocaleContext, AppContext } from '@/context';
 import { useWindowSize } from '@/hooks';
@@ -43,6 +46,10 @@ function SideMenu (props) {
   const size = useWindowSize();
 
   const menu = [{
+    icon: HomeIcon,
+    text: props.translate('sections.home'),
+    url: '/'
+  }, {
     icon: PersonIcon,
     text: props.translate('sections.profile'),
     url: '/profile',
@@ -77,6 +84,7 @@ function SideMenu (props) {
     setCurrentSection(props.location.pathname.split('/')[1]);
   }, [ props.location.pathname ]);
 
+  // TODO: Disable some options if no World selected
   return (
     <Drawer
       variant={size.width > breakpoints.m ? 'permanent' : 'temporary'}

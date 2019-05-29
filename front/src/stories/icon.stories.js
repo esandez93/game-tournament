@@ -13,6 +13,3 @@ storiesOf('Icon', module)
       {story()}
     </ThemeProvider>
   ))
-  .add('Offline Icon', () => (
-    <Icon name="offline" />
-  ))

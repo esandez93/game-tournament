@@ -10,7 +10,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 
-import { LoginContext, LocaleContext, AppContext } from '@/context';
+import {
+  LoginContext,
+  LocaleContext,
+  WorkaroundContext
+} from '@/context';
 import { cleanString } from '@/utils';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
@@ -79,13 +83,13 @@ function BasePage (props) {
   return (
     <LoginContext.Consumer>
       {(login) =>
-        <AppContext.Consumer>
-          {(app) =>
+        <WorkaroundContext.Consumer>
+          {({ toggleSideMenu }) =>
             <LocaleContext.Consumer>
               {(locale) => (
                 <Fragment>
                   <div className={classes.root}>
-                    <Header className={clsx(classes.header)} classes={classes} logged={login.logged} toggleSideMenu={app.sideMenu.toggle} title={locale.translate(`sections.${cleanString(props.name.toLowerCase())}`)} />
+                    <Header className={clsx(classes.header)} classes={classes} logged={login.logged} toggleSideMenu={toggleSideMenu} title={locale.translate(`sections.${cleanString(props.name.toLowerCase())}`)} />
                     <Component className={clsx('Page', classes.page)} {...other} />
                   </div>
                 </Fragment>
@@ -93,7 +97,7 @@ function BasePage (props) {
               }
             </LocaleContext.Consumer>
           }
-        </AppContext.Consumer>
+        </WorkaroundContext.Consumer>
       }
     </LoginContext.Consumer>
   );

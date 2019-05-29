@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import './Match.scss';
-import styles from './styles';
-import xsStyles from './xsStyles';
+import styles from './Match.styles';
+import xsStyles from './Match.xsStyles';
 
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -17,7 +17,7 @@ import PlayerInfo from './PlayerInfo';
 import DownPlayerSide from './DownPlayerSide';
 import { Snackbar } from '@/components';
 import { createMatch } from '@/api/matches';
-import { LocaleContext } from '@/context';
+import { LoginContext, LocaleContext } from '@/context';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
 
@@ -35,6 +35,7 @@ function Match (props) {
     translate,
     newMatch,
     characters,
+    user,
     users,
     matchCreated,
     ...other
@@ -161,10 +162,6 @@ function Match (props) {
     setSelectedUsers(selectedCopy);
   }
 
-  /* function hasError() {
-    return getError() !== '';
-  } */
-
   function getError () {
     let message = '';
     const result = getResult();
@@ -228,7 +225,7 @@ function Match (props) {
         user: state.player2.user.id,
         team: state.player2.team
       },
-      // date: state.date,
+      world: user.world,
       result: finalResult
     }).then((result) => {
       // show alert
@@ -449,7 +446,11 @@ Match.defaultProps = {
 };
 
 export default React.forwardRef((props, ref) => (
-  <LocaleContext.Consumer>
-    {(locale) => <Match {...props} translate={locale.translate} ref={ref} />}
-  </LocaleContext.Consumer>
+  <LoginContext.Consumer>
+    {(login) =>
+      <LocaleContext.Consumer>
+        {(locale) => <Match {...props} user={login.user} translate={locale.translate} ref={ref} />}
+      </LocaleContext.Consumer>
+    }
+  </LoginContext.Consumer>
 ));

@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import './Ranking.scss';
-import styles from './styles.js';
+import styles from './Ranking.styles';
 
 import clsx from 'clsx';
 
@@ -12,7 +12,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 
-import { getRanking } from '@/api/users';
+import { getRanking } from '@/api/world';
+import {
+  LocaleContext,
+  LoginContext
+} from '@/context';
 
 const useStyles = makeStyles(styles);
 
@@ -25,11 +29,15 @@ function Trophy (props) {
 }
 
 function Ranking (props) {
+  const {
+    user
+  } = props;
+
   const classes = useStyles();
   const [ranking, setRanking] = useState([]);
 
   useEffect(() => {
-    getRanking().then(
+    getRanking(user.world).then(
       (data) => setRanking(data),
       (error) => console.error(error)
     );
@@ -71,4 +79,12 @@ function Ranking (props) {
   );
 }
 
-export default Ranking;
+export default React.forwardRef((props, ref) => (
+  <LoginContext.Consumer>
+    {(login) =>
+      <LocaleContext.Consumer>
+        {(locale) => <Ranking {...props} translate={locale.translate} user={login.user} ref={ref} />}
+      </LocaleContext.Consumer>
+    }
+  </LoginContext.Consumer>
+));

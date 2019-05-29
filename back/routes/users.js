@@ -6,13 +6,13 @@ const router = express.Router();
 const User = require('../db/models/User');
 
 router.get('/', withAuth, (req, res) => {
-  User.model.find({}).populate('company')
+  User.model.find({}).populate('world')
     .then(users => res.status(200).json(users))
     .catch(err => res.status(500).send(err));
 });
 
 router.get('/:id', withAuth, (req, res) => {
-  User.model.findById(req.params.id).populate('company')
+  User.model.findById(req.params.id).populate('world')
     .then(user => res.status(200).json(user))
     .catch(err => res.status(500).send(err));
 });

@@ -10,6 +10,10 @@ export default {
     settings: 'Settings',
     notfound: 'Not found'
   },
+  entities: {
+    user: 'User',
+    world: 'World'
+  },
   login: {
     signup: 'You don\'t have an account? <1>REGISTER HERE</1>'
   },

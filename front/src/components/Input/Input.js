@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './styles.js';
+import styles from './Input.styles';
 
 import clsx from 'clsx';
 import PropTypes from 'prop-types';

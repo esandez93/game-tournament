@@ -6,16 +6,16 @@ import {
 
 const endpoint = 'matches';
 
-function getMatches(params) {
-  return get(`${url}/${endpoint}`, params);
+function getMatches(world, params) {
+  return get(`${url}/worlds/${world}/${endpoint}`, params);
 }
 
-function getMatchById(id) {
-  return get(`${url}/${endpoint}/${id}`);
+function getMatchById(world, id) {
+  return get(`${url}/worlds/${world}/${endpoint}/${id}`);
 }
 
-function createMatch(match) {
-  return post(`${url}/${endpoint}`, match);
+function createMatch(world, match) {
+  return post(`${url}/worlds/${world}/${endpoint}`, match);
 }
 
 export {

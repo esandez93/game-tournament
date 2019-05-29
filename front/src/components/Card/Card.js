@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './styles';
+import styles from './Card.styles';
 
 import clsx from 'clsx';
 import PropTypes from 'prop-types';

@@ -4,11 +4,12 @@ const utils = require('../utils');
 
 const populatePlayer = (num) => ({
   path: `player${num}.user`,
-  populate: { path: 'company' }
+  populate: { path: 'world' }
 });
 
 function find (options = {}) {
   options.populate = [ populatePlayer(1), populatePlayer(2) ];
+
   return utils.prepareMongooseReq(Match.model, 'find', options);
 }
 

@@ -28,7 +28,7 @@ Loadable important things [ https://github.com/jamiebuilds/react-loadable ]
 */
 
 function getLoadable(name, loader) {
-  return Loadable({
+  const Component = Loadable({
     loader,
     loading: Loading,
     modules: [ name ],
@@ -37,6 +37,9 @@ function getLoadable(name, loader) {
       return <BasePage component={Component} name={name} {...props} />
     }
   });
+  Component.showName = `Loadable(${name})`
+
+  return Component;
 }
 
 const Home = getLoadable('Home', () => import(/* webpackChunkName: "Home" */ './Home'));

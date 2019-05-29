@@ -3,17 +3,12 @@ import { get, post } from '@/utils';
 
 const endpoint = 'users';
 
-function getUsers() {
-  return get(`${url}/${endpoint}`);
+function getUsers(world) {
+  return get(`${url}/worlds/${world}/${endpoint}`);
 }
 
-function getUserById(id) {
-  return get(`${url}/${endpoint}/${id}`);
-}
-
-function getRanking() {
-  // TODO: Add Ranking endpoint
-  return get(`${url}/${endpoint}`);
+function getUserById(world, id) {
+  return get(`${url}/worlds/${world}/${endpoint}/${id}`);
 }
 
 function register(user) {
@@ -23,6 +18,5 @@ function register(user) {
 export {
   getUsers,
   getUserById,
-  getRanking,
   register
 };
