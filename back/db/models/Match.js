@@ -13,7 +13,6 @@ const Player = {
   }
 }
 
-// TODO: Create Group schema
 const schema = new mongoose.Schema({
   player1: Player,
   player2: Player,
@@ -23,6 +22,11 @@ const schema = new mongoose.Schema({
   world: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'World',
+    required: true
+  },
+  game: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Game',
     required: true
   },
   group: {
@@ -44,6 +48,7 @@ function populate (data) {
     date: new Date(),
     result: data.result,
     world: data.world,
+    game: data.game,
     group: data.group
   });
 }

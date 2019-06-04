@@ -31,7 +31,6 @@ This steps will probably have some changes in the moment the real backend and DB
 
 - General TODO:
     * RESPONSIVE [VERY VERY VERY VERY VERY IMPORTANT]
-    * User creation
     * Profile management (info and settings)
     * User list
 

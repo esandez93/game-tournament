@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import styles from './BasePage.styles';
 
 import { Redirect } from 'react-router-dom';
 import clsx from 'clsx';
@@ -55,6 +56,8 @@ function Header (props) {
   );
 }
 
+const useStyles = makeStyles(styles);
+
 function BasePage (props) {
   const {
     component: Component,
@@ -65,16 +68,8 @@ function BasePage (props) {
 
   const size = useWindowSize();
 
-  const classes = makeStyles((theme) => ({
-    root: {
-      flex: 1,
-      paddingTop: theme.spacing(1),
-      paddingRight: theme.spacing(4),
-      paddingLeft: theme.spacing(4),
-      paddingBottom: theme.spacing(1)
-    },
-    header: {
-    },
+  const classes = useStyles();
+  const moreClasses = makeStyles((theme) => ({
     page: {
       paddingTop: size.width < breakpoints.m ? theme.spacing(10) : theme.spacing(2)
     }
@@ -89,8 +84,8 @@ function BasePage (props) {
               {(locale) => (
                 <Fragment>
                   <div className={classes.root}>
-                    <Header className={clsx(classes.header)} classes={classes} logged={login.logged} toggleSideMenu={toggleSideMenu} title={locale.translate(`sections.${cleanString(props.name.toLowerCase())}`)} />
-                    <Component className={clsx('Page', classes.page)} {...other} />
+                    <Header classes={classes} logged={login.logged} toggleSideMenu={toggleSideMenu} title={locale.translate(`sections.${cleanString(props.name.toLowerCase())}`)} />
+                    <Component className={clsx('Page', moreClasses.page)} {...other} />
                   </div>
                 </Fragment>
                 )

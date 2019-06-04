@@ -13,7 +13,7 @@ import {
   Avatar,
   Card
 } from '@/components';
-import { getUsers } from '@/api/users';
+import { getUsers } from '@/api/worlds';
 import {
   LoginContext,
   LocaleContext
@@ -23,14 +23,14 @@ const useStyles = makeStyles(styles);
 
 function Users (props) {
   const {
-    user
+    world
   } = props;
 
   const classes = useStyles();
   const [ users, setUsers ] = useState([]);
 
   useEffect(() => {
-    getUsers(user.world).then(
+    getUsers(world).then(
       (data) => setUsers(data),
       (error) => console.error(error)
     );
@@ -65,7 +65,7 @@ export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>
     {(login) =>
       <LocaleContext.Consumer>
-        {(locale) => <Users {...props} translate={locale.translate} user={login.user} ref={ref} />}
+        {(locale) => <Users {...props} translate={locale.translate} world={login.world} ref={ref} />}
       </LocaleContext.Consumer>
     }
   </LoginContext.Consumer>

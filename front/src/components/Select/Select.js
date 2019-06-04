@@ -38,7 +38,7 @@ function Select (props) {
 
   const classes = useStyles();
   const moreClasses = makeStyles((theme) => ({
-    formControl: {
+    root: {
       marginTop: `${theme.spacing(selectMargin)}px`,
       marginBottom: `${theme.spacing(selectMargin)}px`
     }
@@ -46,9 +46,30 @@ function Select (props) {
 
   const inputLabel = useRef(null);
   const [ labelWidth, setLabelWidth ] = useState(0);
+  const [ menuItems, setMenuItems ] = useState([]);
+
   useEffect(() => {
     setLabelWidth(inputLabel.current.offsetWidth);
   }, []);
+
+  useEffect(() => {
+    let _menuItems = [];
+
+    if (items) {
+      items.forEach((item, index) => {
+        _menuItems.push(
+          <MenuItem className={clsx(classes.item)} key={index} value={item.value}>
+            {item.image && <img className={clsx(classes.itemImage)} src={item.image} alt="logo" />}
+            <span>{item.text}</span>
+          </MenuItem>
+        )
+      });
+    } else if (children) {
+      _menuItems = children;
+    }
+
+    setMenuItems(_menuItems);
+  }, [ items ]);
 
   function getInput () {
     let Comp = null
@@ -58,28 +79,25 @@ function Select (props) {
       default: Comp = Input; break;
     }
 
-    return <Comp labelWidth={labelWidth} name={label} id={id || label.replace(' ', '')} />
+    return <Comp inputProps={{ className: clsx(classes.innerInput) }} labelWidth={labelWidth} name={label} id={id || label.replace(' ', '')} />
   }
 
   return (
-    <FormControl className={clsx(className, classes.formControl, moreClasses.formControl)} variant={variant}>
+    <FormControl className={clsx(className, classes.root, moreClasses.root)} variant={variant}>
       <InputLabel ref={inputLabel} id={id || label.replace(' ', '')}>
         {label}
       </InputLabel>
       <MuiSelect
-        value={value}
         onChange={onChange}
         input={getInput()}
+        value={value || ''}
       >
         {!required && placeholder &&
           <MenuItem value="">
             {placeholder}
           </MenuItem>
         }
-        {items.map((item, index) => (
-          <MenuItem key={index} value={item.value}>{item.text}</MenuItem>
-        ))}
-        {!items && children}
+        {menuItems}
       </MuiSelect>
     </FormControl>
   );
@@ -97,7 +115,8 @@ Select.propTypes = {
   ]),
   variant: PropTypes.oneOf([ 'standard', 'outlined', 'filled' ]),
   margin: PropTypes.oneOf([ 'none', 'dense', 'normal' ]),
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  items: PropTypes.array
 };
 Select.defaultProps = {
   variant: 'outlined',

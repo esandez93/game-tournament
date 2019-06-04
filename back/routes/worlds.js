@@ -5,7 +5,7 @@ const router = express.Router();
 // const WorldController = require('../../controllers/worlds.js');
 const World = require('../db/models/World');
 const User = require('../db/models/User');
-const Match = require('../db/models/Match');
+const Game = require('../db/models/Game');
 const MatchController = require('../db/controllers/match.ctrl');
 
 router.get('/', withAuth, (req, res) => {
@@ -31,7 +31,7 @@ router.post('/', withAuth, (req, res) => {
 // USERS
 
 router.get('/:world/users', withAuth, (req, res) => {
-  User.model.find({ world: req.params.world }).populate('world')
+  User.model.find({ worlds: req.params.world }).populate('world')
     .then(users => res.status(200).json(users))
     .catch(err => res.status(500).send(err));
 });
@@ -47,10 +47,11 @@ router.get('/:world/users/:id', withAuth, (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
+// TODO: DIFF if new user or just assigning a world. NOT WORKING NOW
 router.post('/:world/users', (req, res) => {
   let user = User.populate({
     ...req.body,
-    world: req.params.world
+    worlds: req.params.world
   });
 
   user.save()
@@ -84,6 +85,94 @@ router.post('/:world/matches', withAuth, (req, res) => {
   MatchController.save({
     ...req.body,
     world: req.params.world
+  }).then(match => res.status(200).json(match))
+    .catch(err => res.status(500).send(err));
+});
+
+
+// GAMES
+
+router.get('/:world/games', withAuth, (req, res) => {
+  World.model.findById(req.params.world).populate('games')
+    .then(world => res.status(200).json(world.games))
+    .catch(err => res.status(500).send(err));
+});
+
+router.get('/:world/games/:id', withAuth, (req, res) => {
+  const {
+    world,
+    id
+  } = req.params;
+
+  World.model.findById(world).populate('games')
+    .then(world => {
+      let game = world.games.find((item) => item.id === id);
+
+      if (game) {
+        return res.status(200).json(game);
+      } else {
+        throw new Error(`Game ${id} not found in World ${world}`);
+      }
+    })
+    .catch(err => res.status(500).send(err));
+});
+
+// TODO: REDO FROM 0. NOT WORKING
+router.post('/:world/games', withAuth, (req, res) => {
+  /* let game = Game.populate({
+    ...req.body,
+    world: req.params.world
+  });
+
+  Game.model.save({
+    ...req.body,
+    world: req.params.world
+  }).then(game => res.status(200).json(game))
+    .catch(err => res.status(500).send(err)); */
+});
+
+
+router.get('/:world/games/:id/ranking', withAuth, (req, res) => {
+  const {
+    world,
+    game
+  } = req.params;
+
+  // TODO: Create real Ranking find function
+  User.model.find({ worlds: world }).populate('world')
+    .then(user => res.status(200).json(user))
+    .catch(err => res.status(500).send(err));
+});
+
+
+// MATCHES BY GAME
+
+router.get('/:world/games/:game/matches', withAuth, (req, res) => {
+  MatchController.find({
+    ...req.query,
+    world: req.params.world,
+    game: req.params.game
+  }).then(matches => res.status(200).json(matches))
+    .catch(err => res.status(500).send(err));
+});
+
+router.get('/:world/games/:game/matches/:id', withAuth, (req, res) => {
+  const {
+    id,
+    world,
+    game
+  } = req.params;
+
+  MatchController.findById({ id, world, game })
+    .then(match => res.status(200).json(match))
+    .catch(err => res.status(500).send(err));
+});
+
+router.post('/:world/games/:game/matches', withAuth, (req, res) => {
+  MatchController.save({
+    ...req.body,
+    world: req.params.world,
+    game: req.params.game
   }).then(match => res.status(200).json(match))
     .catch(err => res.status(500).send(err));
 });

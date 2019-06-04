@@ -9,8 +9,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
 import { LocaleContext, LoginContext } from '@/context';
-import { getMatches } from '@/api/matches';
-import { getCharacters } from '@/api/characters';
+import { getMatches } from '@/api/worlds';
+import { getCharacters } from '@/api/games';
 import { getUsers } from '@/api/users';
 import { Match } from '@/components';
 
@@ -18,7 +18,9 @@ const useStyles = makeStyles(styles);
 
 function Matches (props) {
   const {
-    user
+    world,
+    game,
+    group
   } = props;
 
   const classes = useStyles();
@@ -27,23 +29,22 @@ function Matches (props) {
   const [ availableUsers, setAvailableUsers ] = useState([]);
 
   useEffect(() => {
-    getMatches(user.world, {
+    getMatches(world, game, {
       sort: '-date'
     }).then(
-      (data) => { setMatches(data) },
+      (data) => { console.log(data);setMatches(data) },
       (error) => {
         setMatches([]);
         console.error(error);
       }
     );
 
-    // TODO: Create Game logic
-    getCharacters().then(
+    getCharacters(game).then(
       (data) => setAvailableCharacters(data),
       console.error
     );
 
-    getUsers(user.world).then(
+    getUsers(world, { group: group }).then(
       (data) => setAvailableUsers(data),
       console.error
     );
@@ -86,7 +87,7 @@ export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>
     {(login) =>
       <LocaleContext.Consumer>
-        {(locale) => <Matches {...props} translate={locale.translate} user={login.user} ref={ref} />}
+        {(locale) => <Matches {...props} translate={locale.translate} world={login.world} game={login.game} group={login.group} ref={ref} />}
       </LocaleContext.Consumer>
     }
   </LoginContext.Consumer>

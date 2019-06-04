@@ -5,13 +5,15 @@ const router = express.Router();
 
 const User = require('../db/models/User');
 
-// TODO: save token and user in DB and send it with checkToken
+// TODO: save token and user in DB and send it with every checkToken ?
 router.get('/checkToken', withAuth, (req, res) => res.status(200).json({}));
 
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
-  User.model.findOne({ username })
-    .then((user) => {
+  User.model.findOne({ username }).populate({
+    path: 'worlds',
+    populate: { path: 'games' }
+  }).then((user) => {
       if (!user) {
         res.status(401)
           .json({

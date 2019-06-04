@@ -12,7 +12,8 @@ export default {
   },
   entities: {
     user: 'User',
-    world: 'World'
+    world: 'World',
+    game: 'Game'
   },
   login: {
     signup: 'You don\'t have an account? <1>REGISTER HERE</1>'

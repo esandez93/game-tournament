@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   name: { type: String, required: true },
-  avatar: { type: String }
+  avatar: { type: String },
+  games: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Game'
+  }]
 });
 schema.index({ id: 1 });
 

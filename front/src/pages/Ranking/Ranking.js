@@ -12,7 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 
-import { getRanking } from '@/api/world';
+import { getRanking } from '@/api/worlds';
 import {
   LocaleContext,
   LoginContext
@@ -30,14 +30,15 @@ function Trophy (props) {
 
 function Ranking (props) {
   const {
-    user
+    world,
+    game
   } = props;
 
   const classes = useStyles();
   const [ranking, setRanking] = useState([]);
 
   useEffect(() => {
-    getRanking(user.world).then(
+    getRanking(world, game).then(
       (data) => setRanking(data),
       (error) => console.error(error)
     );
@@ -83,7 +84,7 @@ export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>
     {(login) =>
       <LocaleContext.Consumer>
-        {(locale) => <Ranking {...props} translate={locale.translate} user={login.user} ref={ref} />}
+        {(locale) => <Ranking {...props} translate={locale.translate} world={login.world} game={login.game} ref={ref} />}
       </LocaleContext.Consumer>
     }
   </LoginContext.Consumer>

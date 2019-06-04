@@ -3,12 +3,12 @@ import { get } from '@/utils';
 
 const endpoint = 'characters';
 
-function getCharacters(game, query) {
-  return get(`${url}/games/${game}/${endpoint}?${query}`);
+function getCharacters(params) {
+  return get(`${url}/${endpoint}`, params);
 }
 
-function getCharacterById(game, id) {
-  return get(`${url}/games/${game}/${endpoint}/${id}`);
+function getCharacterById(id) {
+  return get(`${url}/${endpoint}/${id}`);
 }
 
 export {

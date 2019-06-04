@@ -13,8 +13,8 @@ function find (options = {}) {
   return utils.prepareMongooseReq(Match.model, 'find', options);
 }
 
-function findById (id) {
-  return Match.model.findById(id)
+function findById (id, world, game) {
+  return Match.model.find({ id, world, game })
     .populate(populatePlayer(1))
     .populate(populatePlayer(2));
 }

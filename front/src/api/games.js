@@ -15,8 +15,21 @@ function createGame(game) {
   return post(`${url}/${endpoint}`, game);
 }
 
+
+// CHARACTERS
+function getCharacters(game, params) {
+  return get(`${url}/${endpoint}/${game}/characters`, params);
+}
+
+function getCharacterById(game, id) {
+  return get(`${url}/${endpoint}/${game}/characters/${id}`);
+}
+
 export {
   getGames,
   getGameById,
-  createGame
+  createGame,
+
+  getCharacters,
+  getCharacterById
 };

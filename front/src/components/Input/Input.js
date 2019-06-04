@@ -14,7 +14,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 const useStyles = makeStyles(styles);
 
-// TODO: Create validations
+// TODO: Create default validations by type or by validations array
 function Input (props) {
   const {
     className,

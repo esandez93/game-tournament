@@ -57,10 +57,11 @@ router.post('/:game/characters/batch', withAuth, (req, res) => {
 
   let error;
   req.body.forEach(char => {
-    let character = Character.populate({
+    const character = Character.populate({
       ...char,
       game: req.params.game
     });
+
     character.save()
       .then(characters.push)
       .catch(err => error = err);

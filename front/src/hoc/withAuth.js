@@ -17,7 +17,7 @@ const withAuth = (ComponentToProtect, setLogin) => (props) => {
       .catch(err => {
         if (setLogin) setLogin(false);
 
-        localStorage.removeItem('user');
+        // localStorage.removeItem('user');
         setLoading(false);
         setRedirect(true);
       });

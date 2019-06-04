@@ -2,20 +2,23 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-// TODO: Create Group schema
 const schema = new mongoose.Schema({
   username: { type: String, trim: true, required: true },
   password: { type: String, required: true },
   name: { type: String, required: true },
   email: { type: String, match: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/, required: true },
   avatar: { type: String, trim: true },
-  world: {
+  worlds: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'World'
-  },
+  }],
   group: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Group'
+  },
+  mainGame: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Game'
   },
   settings: {
     theme: { type: String, required: true },
@@ -69,8 +72,9 @@ function populate (data) {
     name: data.name,
     email: data.email,
     avatar: data.avatar,
-    world: data.world,
+    worlds: data.worlds,
     group: data.group,
+    mainGame: data.mainGame,
     settings: {
       theme: data.settings.theme || 'defaultDark',
       locale: data.settings.locale || 'en',

@@ -30,6 +30,7 @@ import {
   Select
 } from '@/components';
 import { login, logout } from '@/api/auth';
+import { getGames } from '@/api/worlds';
 import clsx from 'clsx';
 
 const DEV_MODE = false; // process.env.NODE_ENV === 'development';
@@ -119,9 +120,12 @@ function App (props) {
     changeLocale: changeLocale,
     translate: t
   });
+
   const [ loginContext, setLoginContext ] = useState({
     logged: false,
     user: {},
+    world: localStorage.getItem('world'),
+    game: localStorage.getItem('game'),
     login: doLogin,
     logout: doLogout
   });
@@ -134,7 +138,10 @@ function App (props) {
   // TODO: It has to be another solution. The issue is with closure-related if it's put in appContext.sideMenu.
   const [ workaroundContext, setWorkaroundContext ] = useState({
     toggleSideMenu
-  })
+  });
+
+  const [ games, setGames ] = useState([]);
+  const [ worlds, setWorlds ] = useState([]);
 
   function changeLocale (locale) {
     if (localeExists(locale)) {
@@ -156,15 +163,48 @@ function App (props) {
     }
   }
 
+  function toggleSideMenu () {
+    setAppContext({
+      ...appContext,
+      sideMenu: {
+        ...appContext.sideMenu,
+        isOpen: !appContext.sideMenu.isOpen
+      }
+    });
+  }
+
+  function setOfflineStatus () {
+    setAppContext({
+      ...appContext,
+      offline: !navigator.onLine
+    });
+  }
+
+  function selectWorld (world) {
+    localStorage.setItem('world', world);
+    setLoginContext({
+      ...loginContext,
+      world
+    });
+  }
+
+  function selectGame (game) {
+    localStorage.setItem('game', game);
+    setLoginContext({
+      ...loginContext,
+      game
+    });
+  }
+
   function doLogin ({ username, password }) {
     login(username, password)
       .then((user) => {
         const _user = {
-          ...user,
-          world: user.world ? user.world : ''
+          ...user
         };
 
         localStorage.setItem('user', JSON.stringify(_user));
+
         setLoginContext({
           ...loginContext,
           logged: true,
@@ -191,29 +231,51 @@ function App (props) {
       .catch(console.error);
   }
 
-  function toggleSideMenu () {
-    setAppContext({
-      ...appContext,
-      sideMenu: {
-        ...appContext.sideMenu,
-        isOpen: !appContext.sideMenu.isOpen
-      }
-    });
-  }
+  useEffect(() => {
+    if (!loginContext.user.worlds) return;
 
-  function setOfflineStatus () {
-    setAppContext({
-      ...appContext,
-      offline: !navigator.onLine
+    let items = [];
+    loginContext.user.worlds.forEach((world) => {
+      items.push({
+        value: world.id,
+        text: world.name,
+        image: world.avatar
+      });
     });
-  }
+
+    setWorlds([ ...items ]);
+  }, [ loginContext.user.worlds ]);
+
+  useEffect(() => {
+    if (!loginContext.world) return;
+
+    // TODO: Manage errors
+    getGames(loginContext.world).then((res) => {
+      const items = []
+      res.forEach((game) => {
+        items.push({
+          value: game.id,
+          text: game.name,
+          image: game.logos.favicon
+        });
+      });
+
+      setGames([ ...items ]);
+    }).catch(console.error);
+  }, [ loginContext.world ]);
 
   useEffect(() => {
     window.addEventListener('online', setOfflineStatus);
     window.addEventListener('offline', setOfflineStatus);
 
     function setLogin (value) {
+      if (value === false) {
+        doLogout();
+      }
+
       if (loginContext.logged !== value && (value === true || value === false)) {
+
+        // TODO: Maybe do a get user?
         setLoginContext({
           ...loginContext,
           logged: value
@@ -268,18 +330,33 @@ function App (props) {
       }}>
         {appContext.offline && <OfflineBadge />}
         {DEV_MODE && <DevConfig themeContext={themeContext} localeContext={localeContext} />}
-        {loginContext.logged && <Select
-          className={clsx(classes.worldSelect)}
-          label={localeContext.translate('entities.world')}
-          items={[]}
-          value={loginContext.user.world || 'asdfs'}
-          onChange={(e) => { console.log(e) }}
-        />}
         {loginContext.logged && <Route render={(props) => <SideMenu toggleOpen={toggleSideMenu} {...props} />}/>}
-        <Switch>
-          {routed}
-          <Route component={NotFound}/>
-        </Switch>
+        <div className={clsx(classes.container)}>
+          {loginContext.logged && <div className={clsx(classes.selectors)}>
+            <Select
+              className={clsx(classes.selector)}
+              label={localeContext.translate('entities.world')}
+              items={worlds}
+              value={loginContext.world}
+              onChange={(e) => selectWorld(e.target.value)}
+              required
+              disabled={loginContext.user.worlds && loginContext.user.worlds.length > 0}
+            />
+            <Select
+              className={clsx(classes.selector)}
+              label={localeContext.translate('entities.game')}
+              items={games}
+              value={loginContext.game}
+              onChange={(e) => selectGame(e.target.value)}
+              required
+              disabled={games.length > 0}
+            />
+          </div>}
+          <Switch>
+            {routed}
+            <Route component={NotFound}/>
+          </Switch>
+        </div>
       </div>
     </MultiProvider>
   );

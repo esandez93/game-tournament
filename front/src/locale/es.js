@@ -12,7 +12,8 @@ export default {
   },
   entities: {
     user: 'Usuario',
-    world: 'Mundo'
+    world: 'Mundo',
+    game: 'Juego'
   },
   login: {
     signup: 'No tienes una cuenta? <1>REGÍSTRATE AQUÍ</1>'

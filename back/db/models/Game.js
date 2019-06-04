@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   name: { type: String, required: true },
-  avatar: { type: String }
+  logos: {
+    favicon: { type: String },
+    banner: { type: String }
+  }
 });
 schema.index({ id: 1 });
 
@@ -14,7 +17,7 @@ function populate (data) {
 
   return new model({
     name: data.name,
-    avatar: data.avatar
+    logos: data.logos
   });
 }
 
