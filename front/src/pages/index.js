@@ -3,6 +3,7 @@ import Loadable from 'react-loadable';
 
 import { Loading } from '@/components';
 import BasePage from './BasePage';
+import _NotFound from './NotFound';
 
 /*
 Loadable important things [ https://github.com/jamiebuilds/react-loadable ]
@@ -44,12 +45,14 @@ function getLoadable(name, loader) {
 
 const Home = getLoadable('Home', () => import(/* webpackChunkName: "Home" */ './Home'));
 const Login = getLoadable('Login', () => import(/* webpackChunkName: "Login" */ './Login'));
-const NotFound = getLoadable('NotFound', () => import(/* webpackChunkName: "NotFound" */ './NotFound'));
 const Matches = getLoadable('Matches', () => import(/* webpackChunkName: "Matches" */ './Matches'));
 const Ranking = getLoadable('Ranking', () => import(/* webpackChunkName: "Ranking" */ './Ranking'));
 const Signup = getLoadable('Signup', () => import(/* webpackChunkName: "Signup" */ './Signup'));
 const ThemeTest = getLoadable('ThemeTest', () => import(/* webpackChunkName: "ThemeTest" */ './ThemeTest'));
 const Users = getLoadable('Users', () => import(/* webpackChunkName: "Users" */ './Users'));
+
+const NotFound = (props) => <BasePage component={_NotFound} name={'NotFound'} {...props} />;
+//const NotFound = getLoadable('NotFound', () => import(/* webpackChunkName: "NotFound" */ './NotFound'));
 
 export {
   Home,

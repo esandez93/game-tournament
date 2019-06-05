@@ -30,7 +30,6 @@ import {
   Select
 } from '@/components';
 import { login, logout } from '@/api/auth';
-import { getGames } from '@/api/worlds';
 import clsx from 'clsx';
 
 const DEV_MODE = false; // process.env.NODE_ENV === 'development';
@@ -135,8 +134,8 @@ function App (props) {
       isOpen: window.innerWidth > 960
     }
   });
-  // TODO: It has to be another solution. The issue is with closure-related if it's put in appContext.sideMenu.
-  const [ workaroundContext, setWorkaroundContext ] = useState({
+  // TODO: It has to be another solution. The issue is with closure-related if it's put in appContext.sideMenu
+  const [ workaroundContext/*, setWorkaroundContext*/ ] = useState({
     toggleSideMenu
   });
 
@@ -196,12 +195,51 @@ function App (props) {
     });
   }
 
+  function initUserValues(user) {
+    function selectDefaults() {
+      if (user.worlds[0]) {
+        selectWorld(user.worlds[0].id);
+
+        if (user.worlds[0].games[0]) {
+          selectGame(user.worlds[0].games[0].id);
+        }
+      }
+    }
+
+    if (loginContext.world) {
+      let found = false;
+      user.worlds.forEach((world) => {
+        if (world.id === loginContext.world) {
+          let items = [];
+          world.games.forEach((game) => {
+            items.push({
+              value: game.id,
+              text: game.name,
+              image: game.logos.favicon
+            });
+          });
+
+          setGames([ ...items ]);
+          found = true;
+        }
+      });
+
+      if (!found) {
+        selectDefaults();
+      }
+    } else {
+      selectDefaults();
+    }
+  }
+
   function doLogin ({ username, password }) {
     login(username, password)
       .then((user) => {
         const _user = {
           ...user
         };
+
+        initUserValues(user);
 
         localStorage.setItem('user', JSON.stringify(_user));
 
@@ -210,6 +248,7 @@ function App (props) {
           logged: true,
           user: _user
         });
+
         changeLocale(_user.settings.locale);
         changeTheme(_user.settings.theme);
         history.push('/');
@@ -247,26 +286,12 @@ function App (props) {
   }, [ loginContext.user.worlds ]);
 
   useEffect(() => {
-    if (!loginContext.world) return;
-
-    // TODO: Manage errors
-    getGames(loginContext.world).then((res) => {
-      const items = []
-      res.forEach((game) => {
-        items.push({
-          value: game.id,
-          text: game.name,
-          image: game.logos.favicon
-        });
-      });
-
-      setGames([ ...items ]);
-    }).catch(console.error);
-  }, [ loginContext.world ]);
-
-  useEffect(() => {
     window.addEventListener('online', setOfflineStatus);
     window.addEventListener('offline', setOfflineStatus);
+
+    if (localStorage.getItem('user')) {
+      initUserValues(JSON.parse(localStorage.getItem('user')));
+    }
 
     function setLogin (value) {
       if (value === false) {
@@ -354,7 +379,7 @@ function App (props) {
           </div>}
           <Switch>
             {routed}
-            <Route component={NotFound}/>
+            <Route component={NotFound} />
           </Switch>
         </div>
       </div>

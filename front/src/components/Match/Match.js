@@ -7,11 +7,15 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import Moment from 'react-moment';
 
+import {
+  Button,
+  Divider,
+  IconButton,
+  Slide,
+  Typography
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-import Typography from '@material-ui/core/Typography';
-import Slide from '@material-ui/core/Slide';
+import CloseIcon from '@material-ui/icons/Close';
 
 import PlayerInfo from './PlayerInfo';
 import DownPlayerSide from './DownPlayerSide';
@@ -20,6 +24,7 @@ import { createMatch } from '@/api/matches';
 import { LoginContext, LocaleContext } from '@/context';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
+
 
 const useStyles = makeStyles(styles);
 const useXsStyles = makeStyles(xsStyles);
@@ -85,6 +90,12 @@ function Match (props) {
     });
     setNew(false);
     setCreating(true);
+  }
+
+  // TODO: Show alert to dismiss changes
+  function clickCancel () {
+    setNew(true);
+    setCreating(false);
   }
 
   function reset () {
@@ -244,7 +255,15 @@ function Match (props) {
     return size.width <= breakpoints.s;
   }
 
-  return (
+  return (<Fragment>
+    {isCreating && (
+      <div className={clsx(classes.newHeader)}>
+        <Typography className={clsx(classes.newHeaderText)}>{translate('matches.newMatch')}</Typography>
+        <IconButton className={clsx(classes.newHeaderIcon)} aria-label="Cancel match creation" onClick={clickCancel} >
+          <CloseIcon />
+        </IconButton>
+      </div>
+    )}
     <Wrapper className={clsx(className)} {...other}>
       {isNew && <Button className={classes.newMatch} variant="contained" color="primary" onClick={handleNew}>{props.translate('matches.newMatch')}</Button>}
       {!isNew && isBigScreen() && (
@@ -432,7 +451,7 @@ function Match (props) {
         ></Snackbar>
       </Fragment>}
     </Wrapper>
-  );
+  </Fragment>);
 }
 
 Match.propTypes = {

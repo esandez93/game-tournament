@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import styles from './BasePage.styles';
 
-import { Redirect } from 'react-router-dom';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';

@@ -19,6 +19,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import { Typography } from '@material-ui/core';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -26,35 +27,6 @@ const variantIcon = {
   error: ErrorIcon,
   info: InfoIcon,
 };
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    opacity: 0.95
-  },
-  success: {
-    backgroundColor: green[600]
-  },
-  error: {
-    backgroundColor: theme.palette.error.dark
-  },
-  info: {
-    backgroundColor: blue[600]
-  },
-  warning: {
-    backgroundColor: amber[700]
-  },
-  icon: {
-    fontSize: 20
-  },
-  iconVariant: {
-    opacity: 0.9,
-    marginRight: theme.spacing(1)
-  },
-  message: {
-    display: 'flex',
-    alignItems: 'center'
-  }
-}));
 
 function Snackbar (props) {
   const {
@@ -69,7 +41,35 @@ function Snackbar (props) {
     ...other
   } = props;
 
-  const classes = useStyles();
+  const classes = makeStyles(theme => ({
+    root: {
+      opacity: 0.95
+    },
+    success: {
+      backgroundColor: green[600]
+    },
+    error: {
+      backgroundColor: theme.palette.error.dark
+    },
+    info: {
+      backgroundColor: blue[600]
+    },
+    warning: {
+      backgroundColor: amber[700]
+    },
+    icon: {
+      fontSize: 20
+    },
+    iconVariant: {
+      opacity: 0.9,
+      marginRight: theme.spacing(1)
+    },
+    message: {
+      display: 'flex',
+      alignItems: 'center',
+      color: variant === 'error' ? theme.palette.text.primary : theme.palette.text.primary
+    }
+  }))();
   const Icon = icon ? icon : variantIcon[variant];
 
   return (
@@ -83,7 +83,7 @@ function Snackbar (props) {
         message={
           <span className={classes.message}>
             {icon ? <Icon className={clsx(classes.icon, classes.iconVariant)} /> : null}
-            {message}
+            <Typography>{message}</Typography>
           </span>
         }
         action={onClose ? [

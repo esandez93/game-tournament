@@ -5,12 +5,15 @@ import styles from './Ranking.styles';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Divider from '@material-ui/core/Divider';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
+import {
+  Avatar,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Typography
+} from '@material-ui/core';
 
 import { getRanking } from '@/api/worlds';
 import {
@@ -64,9 +67,9 @@ function Ranking (props) {
                 <ListItemText
                   primary={user.username}
                   secondary={
-                    <span>
+                    <Typography>
                       {user.name} - {user.group}
-                    </span>
+                    </Typography>
                   }
                 />
               </ListItem>

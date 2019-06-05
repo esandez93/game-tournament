@@ -32,7 +32,7 @@ function Matches (props) {
     getMatches(world, game, {
       sort: '-date'
     }).then(
-      (data) => { console.log(data);setMatches(data) },
+      (data) => setMatches(data),
       (error) => {
         setMatches([]);
         console.error(error);

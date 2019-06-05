@@ -7,6 +7,10 @@ const schema = new mongoose.Schema({
   games: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Game'
+  }],
+  admins: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }]
 });
 schema.index({ id: 1 });
@@ -18,7 +22,9 @@ function populate (data) {
 
   return new model({
     name: data.name,
-    avatar: data.avatar
+    avatar: data.avatar,
+    games: data.games,
+    admins: data.admins
   });
 }
 

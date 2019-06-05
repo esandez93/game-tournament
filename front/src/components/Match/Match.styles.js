@@ -56,6 +56,20 @@ export default theme => ({
   lose: {
     color: theme.palette.error.main,
   },
+  newHeader: {
+    position: 'relative',
+    height: `${theme.spacing(3)}px`,
+    textAlign: 'center',
+    backgroundColor: theme.palette.secondary.main
+  },
+  newHeaderText: {
+  },
+  newHeaderIcon: {
+    position: 'absolute',
+    right: '0px',
+    top: '0px',
+    padding: `0px ${theme.spacing(1)}px 0px 0px`,
+  },
   centerVertical: {
     display: 'flex',
     alignItems: 'center'

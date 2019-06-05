@@ -10,7 +10,8 @@ import {
   MenuItem,
   Input,
   FilledInput,
-  OutlinedInput
+  OutlinedInput,
+  Typography
 } from '@material-ui/core';
 import MuiSelect from '@material-ui/core/Select';
 
@@ -60,7 +61,7 @@ function Select (props) {
         _menuItems.push(
           <MenuItem className={clsx(classes.item)} key={index} value={item.value}>
             {item.image && <img className={clsx(classes.itemImage)} src={item.image} alt="logo" />}
-            <span>{item.text}</span>
+            <Typography>{item.text}</Typography>
           </MenuItem>
         )
       });
