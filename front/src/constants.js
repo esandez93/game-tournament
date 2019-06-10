@@ -4,6 +4,16 @@ const breakpoints = {
   l: 992
 };
 
+const languages = {
+  es: {
+    name: 'Spanish'
+  },
+  en: {
+    name: 'English'
+  }
+};
+
 export {
-  breakpoints
+  breakpoints,
+  languages
 };

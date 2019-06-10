@@ -15,12 +15,6 @@ import {
   ListItemText,
   ListItemIcon
 } from '@material-ui/core';
-import PersonIcon from '@material-ui/icons/Person';
-import HomeIcon from '@material-ui/icons/Home';
-import ShowChartIcon from '@material-ui/icons/ShowChart';
-import StorageIcon from '@material-ui/icons/Storage';
-import GroupIcon from '@material-ui/icons/Group';
-import SettingsIcon from '@material-ui/icons/Settings';
 import PowerSettingsIcon from '@material-ui/icons/PowerSettingsNew';
 
 import { LoginContext, LocaleContext, AppContext } from '@/context';
@@ -37,6 +31,7 @@ function SideMenu (props) {
     avatar,
     name,
     username,
+    items,
     logout
   } = props;
 
@@ -44,34 +39,6 @@ function SideMenu (props) {
   const [currentSection, setCurrentSection] = useState(null);
 
   const size = useWindowSize();
-
-  const menu = [{
-    icon: HomeIcon,
-    text: props.translate('sections.home'),
-    url: '/'
-  }, {
-    icon: PersonIcon,
-    text: props.translate('sections.profile'),
-    url: '/profile',
-    disabled: true
-  }, {
-    icon: ShowChartIcon,
-    text: props.translate('sections.ranking'),
-    url: '/ranking'
-  }, {
-    icon: StorageIcon,
-    text: props.translate('sections.matches'),
-    url: '/matches'
-  }, {
-    icon: GroupIcon,
-    text: props.translate('sections.users'),
-    url: '/users'
-  }, {
-    icon: SettingsIcon,
-    text: props.translate('sections.settings'),
-    url: '/settings',
-    disabled: true
-  }];
 
   function navigate (url) {
     if (size.width <= breakpoints.m)
@@ -110,15 +77,29 @@ function SideMenu (props) {
       </div>
       <Divider />
       <List>
-        {menu.map((item, index) => (
-          <ListItem button disabled={item.disabled} key={index}
-            selected={item.url.slice(1).toLowerCase() === currentSection}
-            onClick={() => navigate(item.url)}
-          >
-            <ListItemIcon><item.icon /></ListItemIcon>
-            <ListItemText primary={item.text} />
-          </ListItem>
-        ))}
+        {items.map((item, index) => {
+          if (item.separator) {
+            return <Divider key={index} className={clsx(classes.divider)} />;
+          } else {
+            return (
+              <ListItem className={clsx({ [ classes.error ]: item.hasError && item.hasError() })} button disabled={item.disabled} key={index}
+                selected={item.url.slice(1).toLowerCase() === currentSection}
+                onClick={() => {
+                  if (item.onClick) {
+                    if (item.onClick()) {
+                      navigate(item.url);
+                    }
+                  } else {
+                    navigate(item.url);
+                  }
+                }}
+              >
+                <ListItemIcon><item.icon /></ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItem>
+            );
+          }
+        })}
         <ListItem button onClick={logout}>
           <ListItemIcon><PowerSettingsIcon /></ListItemIcon>
           <ListItemText primary="Logout" />

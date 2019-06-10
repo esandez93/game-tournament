@@ -8,6 +8,10 @@ const schema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, match: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/, required: true },
   avatar: { type: String, trim: true },
+  friends: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
   worlds: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'World'

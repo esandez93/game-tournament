@@ -9,7 +9,7 @@ const Game = require('../db/models/Game');
 const MatchController = require('../db/controllers/match.ctrl');
 
 router.get('/', withAuth, (req, res) => {
-  World.model.find({}).exec()
+  World.model.find(req.query).exec()
     .then(worlds => res.status(200).json(worlds))
     .catch(err => res.status(500).send(err));
 });

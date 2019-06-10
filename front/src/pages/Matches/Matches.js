@@ -9,9 +9,11 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
 import { LocaleContext, LoginContext } from '@/context';
-import { getMatches } from '@/api/worlds';
+import {
+  getMatches,
+  getUsers
+} from '@/api/worlds';
 import { getCharacters } from '@/api/games';
-import { getUsers } from '@/api/users';
 import { Match } from '@/components';
 
 const useStyles = makeStyles(styles);

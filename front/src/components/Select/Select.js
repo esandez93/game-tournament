@@ -30,7 +30,9 @@ function Select (props) {
     placeholder,
     children,
     margin,
-    required
+    renderValue,
+    required,
+    multiple
   } = props;
 
   let selectMargin = 1;
@@ -92,6 +94,8 @@ function Select (props) {
         onChange={onChange}
         input={getInput()}
         value={value || ''}
+        multiple={multiple}
+        renderValue={renderValue}
       >
         {!required && placeholder &&
           <MenuItem value="">

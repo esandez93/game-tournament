@@ -6,8 +6,6 @@ import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
 import PersonIcon from '@material-ui/icons/Person';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import AddIcon from '@material-ui/icons/Add';
 
 import {
   Avatar,

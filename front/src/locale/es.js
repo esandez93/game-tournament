@@ -8,7 +8,8 @@ export default {
     matches: 'Partidas',
     users: 'Usuarios',
     settings: 'Configuración',
-    notfound: 'No encontrada'
+    notfound: 'No encontrada',
+    worlds: 'Mundos'
   },
   entities: {
     user: 'Usuario',
@@ -50,6 +51,30 @@ export default {
   delete: 'Eliminar',
   settings: {
     theme: 'Tema',
-    locale: 'Idioma'
+    locale: 'Idioma',
+
+    errors: {
+      noPassword: 'Debe introducir la contraseña para confirmar los cambios',
+      checkPassword: 'La contraseña es incorrecta',
+      updateUser: 'Error inesperado actualizando la información'
+    }
+  },
+  app: {
+    errors: {
+      noWorld: 'No hay ningún Mundo seleccionado',
+      currentWorldHasNoGames: 'El Mundo seleccionado no tiene Juegos asignados'
+    }
+  },
+  forms: {
+    save: 'Guardar',
+    create: 'Crear'
+  },
+  worlds: {
+    newWorld: 'Nuevo Mundo',
+    users: 'Usuarios',
+  },
+  world: {
+    name: 'Nombre',
+    avatar: 'Avatar'
   }
 };

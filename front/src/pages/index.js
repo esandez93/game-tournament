@@ -47,9 +47,11 @@ const Home = getLoadable('Home', () => import(/* webpackChunkName: "Home" */ './
 const Login = getLoadable('Login', () => import(/* webpackChunkName: "Login" */ './Login'));
 const Matches = getLoadable('Matches', () => import(/* webpackChunkName: "Matches" */ './Matches'));
 const Ranking = getLoadable('Ranking', () => import(/* webpackChunkName: "Ranking" */ './Ranking'));
+const Settings = getLoadable('Settings', () => import(/* webpackChunkName: "Settings" */ './Settings'));
 const Signup = getLoadable('Signup', () => import(/* webpackChunkName: "Signup" */ './Signup'));
 const ThemeTest = getLoadable('ThemeTest', () => import(/* webpackChunkName: "ThemeTest" */ './ThemeTest'));
 const Users = getLoadable('Users', () => import(/* webpackChunkName: "Users" */ './Users'));
+const Worlds = getLoadable('Worlds', () => import(/* webpackChunkName: "Worlds" */ './Worlds'));
 
 const NotFound = (props) => <BasePage component={_NotFound} name={'NotFound'} {...props} />;
 //const NotFound = getLoadable('NotFound', () => import(/* webpackChunkName: "NotFound" */ './NotFound'));
@@ -60,7 +62,9 @@ export {
   NotFound,
   Matches,
   Ranking,
+  Settings,
   Signup,
   ThemeTest,
-  Users
+  Users,
+  Worlds
 };

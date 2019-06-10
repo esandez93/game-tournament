@@ -33,5 +33,14 @@ export default theme => ({
     height: theme.spacing(6),
     width: theme.spacing(6),
     marginRight: theme.spacing(2)
+  },
+  error: {
+    backgroundColor: theme.palette.error.light,
+    '&:hover': {
+      backgroundColor: theme.palette.error.main,
+    }
+  },
+  divider: {
+    margin: `${theme.spacing(1)}px 0px`
   }
 });

@@ -11,6 +11,10 @@ const schema = new mongoose.Schema({
   users: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
+  }],
+  admins: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }]
 });
 schema.index({ id: 1 });

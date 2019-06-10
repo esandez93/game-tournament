@@ -9,6 +9,6 @@ export default (theme) => ({
     top: 0
   },
   selector: {
-
+    zIndex: 1
   }
 });

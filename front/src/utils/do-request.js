@@ -6,6 +6,11 @@ function ResError ({ code = 500, error = 'Unexpected error' }) {
 ResError.prototype = Object.create(Error.prototype);
 ResError.prototype.constructor = ResError;
 
+let invalidTokenCallback = null;
+function setInvalidTokenCallback (callback) {
+  invalidTokenCallback = callback;
+}
+
 function hasError (code) {
   return code >= 400 && code <= 599;
 }
@@ -16,6 +21,10 @@ function resolveRequest (promise) {
       .then(res => {
         if(hasError(res.status)) {
           res.json().then(({ error }) => {
+            if (res.status === 401 && error.includes('token') && invalidTokenCallback) {
+              invalidTokenCallback();
+            }
+
             reject({
               code: res.status,
               message: `${res.status} ${res.statusText}: ${error}`
@@ -82,6 +91,7 @@ function put (url, body = {}, options = {}) {
 }
 
 export {
+  setInvalidTokenCallback,
   get,
   post,
   put

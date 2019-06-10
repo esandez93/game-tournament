@@ -22,6 +22,7 @@ module.exports = (app) => {
     if (ALLOWED_ORIGINS.indexOf(req.headers.origin) > -1) {
       res.header('Access-Control-Allow-Credentials', 'true');
       res.header('Access-Control-Allow-Origin', req.headers.origin);
+      //res.header('Access-Control-Allow-Methods', 'POST, PUT, GET, OPTIONS');
     } else { // allow other origins to make unauthenticated CORS requests
       res.header('Access-Control-Allow-Origin', '*');
     }

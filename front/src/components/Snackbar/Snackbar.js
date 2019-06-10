@@ -1,13 +1,21 @@
 import React from 'react';
 import './Snackbar.scss';
 
-import MuiSnackbar from '@material-ui/core/Snackbar';
-import MuiSnackbarContent from '@material-ui/core/SnackbarContent';
-import IconButton from '@material-ui/core/IconButton';
+import PropTypes from 'prop-types';
+import clsx from 'clsx';
 
-import green from '@material-ui/core/colors/green';
-import blue from '@material-ui/core/colors/blue';
-import amber from '@material-ui/core/colors/amber';
+import {
+  IconButton,
+  Snackbar as MuiSnackbar,
+  SnackbarContent as MuiSnackbarContent,
+  Typography
+} from '@material-ui/core';
+
+import {
+  amber,
+  blue,
+  green
+} from '@material-ui/core/colors';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -17,9 +25,8 @@ import InfoIcon from '@material-ui/icons/Info';
 import WarningIcon from '@material-ui/icons/Warning';
 import CloseIcon from '@material-ui/icons/Close';
 
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { Typography } from '@material-ui/core';
+import { useWindowSize } from '@/hooks';
+import { breakpoints } from '@/constants';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -38,8 +45,11 @@ function Snackbar (props) {
     icon,
     classes: propClasses,
     contentProps,
+    autoHideDuration,
     ...other
   } = props;
+
+  const size = useWindowSize();
 
   const classes = makeStyles(theme => ({
     root: {
@@ -58,7 +68,8 @@ function Snackbar (props) {
       backgroundColor: amber[700]
     },
     icon: {
-      fontSize: 20
+      fontSize: 20,
+      color: variant === 'error' ? 'white' : theme.palette.text.primary
     },
     iconVariant: {
       opacity: 0.9,
@@ -67,7 +78,10 @@ function Snackbar (props) {
     message: {
       display: 'flex',
       alignItems: 'center',
-      color: variant === 'error' ? theme.palette.text.primary : theme.palette.text.primary
+      color: variant === 'error' ? 'white' : theme.palette.text.primary
+    },
+    anchorOriginTopCenter: {
+      marginTop: size.width > breakpoints.m ? '0px' : `${theme.spacing(7)}px`
     }
   }))();
   const Icon = icon ? icon : variantIcon[variant];
@@ -75,7 +89,12 @@ function Snackbar (props) {
   return (
     <MuiSnackbar
       className={clsx('Snackbar', className, classes.root)}
-      classes={propClasses}
+      classes={{
+        anchorOriginTopCenter: classes.anchorOriginTopCenter,
+        ...propClasses
+      }}
+      autoHideDuration={autoHideDuration}
+      onClose={onClose}
       {...other}
     >
       <MuiSnackbarContent
@@ -101,9 +120,14 @@ Snackbar.propTypes = {
   className: PropTypes.string,
   message: PropTypes.node,
   onClose: PropTypes.func,
-  variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired
+  variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired,
+  autoHideDuration: PropTypes.number,
+  classes: PropTypes.object
 };
 Snackbar.defaultProps = {
+  variant: 'info',
+  autoHideDuration: 3000,
+  classes: {}
 };
 
 export default Snackbar;

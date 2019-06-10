@@ -6,6 +6,7 @@ require('dotenv').config();
 
 // Set up default mongoose connection
 const mongoDB = `mongodb+srv://${process.env.MONGODB_USER}:${encodeURIComponent(process.env.MONGODB_PASSWORD)}@game-tournament-lyhih.mongodb.net/test?retryWrites=true`;
+//const mongoDB = `mongodb://localhost:27017`;
 mongoose.connect(mongoDB)
 .then(() => {
   logger.info('Mongoose connected');
