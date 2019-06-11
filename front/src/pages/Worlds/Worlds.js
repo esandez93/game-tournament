@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Worlds.styles';
 
 import clsx from 'clsx';
@@ -44,8 +44,8 @@ function Worlds (props) {
   const [ newWorldUsers, setNewWorldUsers ] = useState([]);
   const [ newWorldAdmins, setNewWorldAdmins ] = useState([]);
 
-  const handleWorldChange = name => event => {
-    setNewWorld({ ...newWorld, [name]: event.target.value });
+  const handleWorldChange = field => event => {
+    setNewWorld({ ...newWorld, [field]: event.target.value });
   };
   const worldForm = [{
     type: 'input',
@@ -63,12 +63,25 @@ function Worlds (props) {
   }, {
     type: 'select',
     multiple: true,
+    dividers: true,
     label: translate('worlds.users'),
     items: usersItems,
     value: newWorldUsers,
     renderValue: (selected) => selected.join(', '),
     onChange: event => {
+      console.log(event)
       setNewWorldUsers(event.target.value);
+    }
+  }, {
+    type: 'select',
+    multiple: true,
+    dividers: true,
+    label: translate('worlds.admins'),
+    items: usersItems,
+    value: newWorldAdmins,
+    renderValue: (selected) => selected.join(', '),
+    onChange: event => {
+      setNewWorldAdmins(event.target.value);
     }
   }];
 
@@ -78,12 +91,24 @@ function Worlds (props) {
     }).then((wrlds) => {
       setWorlds(wrlds);
     }).catch((err) => {
-
+      console.log(err);
     });
 
     getUserRelationships(user)
       .then((rels) => {
-        console.log(rels);
+        rels.forEach((rel) => {
+          usersItems.push({
+            avatar: rel.avatar || true,
+            avatarName: rel.name,
+            value: rel.id,
+            text: <span><strong>{rel.name}</strong>  -  <em>{rel.username}</em></span>
+          });
+        });
+
+        if (usersItems && usersItems.length > 0) {
+          worldForm[2].disabled = true;
+          worldForm[3].disabled = true;
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -92,6 +117,16 @@ function Worlds (props) {
 
   function clickCreateWorld (...args) {
     console.log(args);
+
+    createWorld({
+      ...newWorld,
+      users: [ user.id, ...newWorldUsers ],
+      admins: [ user.id, ...newWorldAdmins ]
+    }).then((world) => {
+
+    }).catch((err) => {
+
+    });
   }
 
   // TODO:
@@ -111,14 +146,15 @@ function Worlds (props) {
           </Card>
         ))}
       </div>}
-      {createWorld && <Fragment>
+      {createWorld && <div className={clsx(classes.forms)}>
         <Form
+          className={clsx(classes.form)}
           title={translate('worlds.newWorld')}
           fields={worldForm}
           onSubmit={clickCreateWorld}
           submitText={translate('forms.create')}
         />
-      </Fragment>}
+      </div>}
     </div>
   );
 }

@@ -10,5 +10,9 @@ export default (theme) => ({
   },
   selector: {
     zIndex: 1
+  },
+  selectorInput: {
+    height: `${theme.spacing(6)}px`,
+    boxSizing: 'border-box'
   }
 });

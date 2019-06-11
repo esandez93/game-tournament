@@ -10,6 +10,9 @@ export default (theme) => ({
     width: `${theme.spacing(4)}px`,
     marginRight: `${theme.spacing(1)}px`,
   },
+  itemAvatar: {
+    marginRight: `${theme.spacing(2)}px`
+  },
   innerInput: {
     display: 'flex',
     alignItems: 'center',

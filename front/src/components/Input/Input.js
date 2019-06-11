@@ -18,12 +18,8 @@ const useStyles = makeStyles(styles);
 function Input (props) {
   const {
     className,
-    label,
-    variant,
     type,
     InputProps,
-    value,
-    onChange,
     ...other
   } = props;
 
@@ -39,12 +35,8 @@ function Input (props) {
 
   return (
     <TextField
-      className={clsx(className, classes.root)}
-      variant={variant}
+      className={clsx(classes.root, className)}
       type={inputType}
-      label={label}
-      value={value}
-      onChange={onChange}
       InputProps={{
         ...InputProps,
         endAdornment: type === 'password' ? (

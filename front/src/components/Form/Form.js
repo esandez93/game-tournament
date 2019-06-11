@@ -49,26 +49,34 @@ function Form (props) {
       <Typography className={clsx(classes.formTitle)} variant="h5">{title}</Typography>
       {fields.map((field, index) => {
         switch (field.type) {
-          case 'input':
+          case 'input': {
+            const {
+              inputType,
+              ...other
+            } = field;
+
             return <Input
               key={index}
-              label={field.label}
-              value={field.value}
-              onChange={field.onChange}
+              className={classes.input}
+              {...other}
               type={getInputType(field.inputType)}
-              required={field.required}
               inputProps={field.inputType === 'password' ? {
                 autoComplete: 'new-password'
-              } : {}}
+              } : undefined}
             />
-          case 'select':
+          }
+          case 'select': {
+            const {
+              type,
+              ...other
+            } = field;
+
             return <Select
               key={index}
-              label={field.label}
-              items={field.items}
-              value={field.value}
-              onChange={field.onChange}
+              {...other}
+              inputProps={{ className: classes.input }}
             />
+          }
           default:
             return null;
         }

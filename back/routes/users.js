@@ -44,10 +44,12 @@ router.get('/:id/relationships', withAuth, (req, res) => {
     })
     .then(user => {
       let users = [];
-      let usr = { ...user };
+      let usr = { ...user.toJSON() };
 
       if (!usr.friends) {
         usr.friends = [];
+      } else if (!Array.isArray(usr.friends)) {
+        usr.friends = [{ ...usr.friends }];
       }
       if (!usr.worlds) {
         usr.worlds = [];

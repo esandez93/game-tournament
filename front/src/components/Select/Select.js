@@ -11,9 +11,12 @@ import {
   Input,
   FilledInput,
   OutlinedInput,
-  Typography
+  Typography,
+  Divider
 } from '@material-ui/core';
 import MuiSelect from '@material-ui/core/Select';
+
+import { Avatar } from '@/components';
 
 const useStyles = makeStyles(styles);
 
@@ -32,7 +35,9 @@ function Select (props) {
     margin,
     renderValue,
     required,
-    multiple
+    inputProps,
+    multiple,
+    dividers
   } = props;
 
   let selectMargin = 1;
@@ -61,11 +66,25 @@ function Select (props) {
     if (items) {
       items.forEach((item, index) => {
         _menuItems.push(
-          <MenuItem className={clsx(classes.item)} key={index} value={item.value}>
+          <MenuItem className={clsx(classes.item)} key={index+item.text} value={item.value}>
+            {item.avatar &&
+              <Avatar
+                className={clsx(classes.itemAvatar)}
+                src={item.avatar === true ? null : item.avatar}
+                name={item.avatarName}
+                size={item.avatarSize || 'small'}
+                alt={`${item.avatarName || item.text} avatar`}
+              />
+            }
             {item.image && <img className={clsx(classes.itemImage)} src={item.image} alt="logo" />}
             <Typography>{item.text}</Typography>
           </MenuItem>
-        )
+        );
+        if (dividers && index < items.length-1) {
+          _menuItems.push(
+            <Divider key={index} />
+          );
+        }
       });
     } else if (children) {
       _menuItems = children;
@@ -82,7 +101,9 @@ function Select (props) {
       default: Comp = Input; break;
     }
 
-    return <Comp inputProps={{ className: clsx(classes.innerInput) }} labelWidth={labelWidth} name={label} id={id || label.replace(' ', '')} />
+    return <Comp
+      inputProps={{ ...inputProps, className: clsx(classes.innerInput, inputProps.className) }}
+      labelWidth={labelWidth} name={label} id={id || label.replace(' ', '')} />
   }
 
   return (
@@ -121,12 +142,16 @@ Select.propTypes = {
   variant: PropTypes.oneOf([ 'standard', 'outlined', 'filled' ]),
   margin: PropTypes.oneOf([ 'none', 'dense', 'normal' ]),
   onChange: PropTypes.func.isRequired,
-  items: PropTypes.array
+  items: PropTypes.array,
+  inputProps: PropTypes.object,
+  multiple: PropTypes.bool
 };
 Select.defaultProps = {
   variant: 'outlined',
   type: 'text',
-  margin: 'normal'
+  margin: 'normal',
+  inputProps: {},
+  multiple: false
 };
 
 export default Select;

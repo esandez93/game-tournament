@@ -56,8 +56,9 @@ const useStyles = makeStyles(styles);
 const initialLoginContext = {
   logged: false,
   user: {},
-  world: localStorage.getItem('world'),
-  game: localStorage.getItem('game'),
+  worlds: [],
+  world: localStorage.getItem('world') || 'null',
+  game: localStorage.getItem('game') || 'null',
 };
 
 function MultiProvider (props) {
@@ -373,8 +374,8 @@ function App (props) {
     logout()
       .then((res) => {
         localStorage.removeItem('user');
-        localStorage.removeItem('world');
-        localStorage.removeItem('game');
+        /* localStorage.removeItem('world');
+        localStorage.removeItem('game'); */
 
         history.push('/login');
         setLoginContext({
@@ -393,7 +394,7 @@ function App (props) {
   function worldHasGames () {
     let hasGames = false;
 
-    if (loginContext.world) {
+    if (loginContext.world && loginContext.user.worlds) {
       const world = loginContext.user.worlds.find((item) => {
         return item.id === loginContext.world;
       });
@@ -521,15 +522,17 @@ function App (props) {
               className={clsx(classes.selector)}
               label={localeContext.translate('entities.world')}
               items={worlds}
-              value={loginContext.world || 'null'}
+              value={loginContext.world}
               onChange={(e) => selectWorld(e.target.value)}
+              inputProps={{ className: classes.selectorInput }}
             />}
             {games && games.length > 0 && <Select
               className={clsx(classes.selector)}
               label={localeContext.translate('entities.game')}
               items={games}
-              value={loginContext.game || 'null'}
+              value={loginContext.game}
               onChange={(e) => selectGame(e.target.value)}
+              inputProps={{ className: classes.selectorInput }}
             />}
           </div>}
           <Switch>

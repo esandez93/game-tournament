@@ -42,6 +42,9 @@ function Match (props) {
     characters,
     user,
     users,
+    game,
+    world,
+    group,
     matchCreated,
     ...other
   } = props;
@@ -236,7 +239,9 @@ function Match (props) {
         user: state.player2.user.id,
         team: state.player2.team
       },
-      world: user.world,
+      world: world,
+      game: game,
+      group: group,
       result: finalResult
     }).then((result) => {
       // show alert
@@ -468,7 +473,7 @@ export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>
     {(login) =>
       <LocaleContext.Consumer>
-        {(locale) => <Match {...props} user={login.user} translate={locale.translate} ref={ref} />}
+        {(locale) => <Match {...props} user={login.user} world={login.world} game={login.game} group={login.group} translate={locale.translate} ref={ref} />}
       </LocaleContext.Consumer>
     }
   </LoginContext.Consumer>
