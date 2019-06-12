@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import styles from './Worlds.styles';
 
 import clsx from 'clsx';
+import {
+  Switch,
+  Route
+} from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -47,6 +51,7 @@ function Worlds (props) {
   const handleWorldChange = field => event => {
     setNewWorld({ ...newWorld, [field]: event.target.value });
   };
+  // TODO: Change renderValue to use Chips. Update Select component to allow it.
   const worldForm = [{
     type: 'input',
     inputType: 'text',
@@ -69,7 +74,6 @@ function Worlds (props) {
     value: newWorldUsers,
     renderValue: (selected) => selected.join(', '),
     onChange: event => {
-      console.log(event)
       setNewWorldUsers(event.target.value);
     }
   }, {
@@ -135,26 +139,32 @@ function Worlds (props) {
   // * Number of played games
   return (
     <div className={clsx('Worlds', props.className, classes.root)}>
-      {!createWorld && <div className={clsx(classes.worlds)}>
-        <Card className={clsx(classes.world)}>
-          <Button color="primary" onClick={() => setCreateWorld(true)}>{translate('worlds.newWorld')}</Button>
-        </Card>
-        {worlds.map((world) => (
-          <Card key={world.id} className={clsx(classes.world)}>
-            <img src={world.avatar} alt={`${world.name} avatar`} />
-            <Typography>{world.name}</Typography>
-          </Card>
-        ))}
-      </div>}
-      {createWorld && <div className={clsx(classes.forms)}>
-        <Form
-          className={clsx(classes.form)}
-          title={translate('worlds.newWorld')}
-          fields={worldForm}
-          onSubmit={clickCreateWorld}
-          submitText={translate('forms.create')}
-        />
-      </div>}
+      <Switch>
+        <Route exact path={'/worlds'} render={(props) => (
+          <div className={clsx(classes.worlds)}>
+            <Card className={clsx(classes.world)}>
+              <Button color="primary" onClick={() => props.history.push('/worlds/new')}>{translate('worlds.newWorld')}</Button>
+            </Card>
+            {worlds.map((world) => (
+              <Card key={world.id} className={clsx(classes.world)}>
+                <img src={world.avatar} alt={`${world.name} avatar`} />
+                <Typography>{world.name}</Typography>
+              </Card>
+            ))}
+          </div>
+        )} />
+        <Route exact path={'/worlds/new'} render={(props) => (
+          <div className={clsx(classes.forms)}>
+            <Form
+              className={clsx(classes.form)}
+              title={translate('worlds.newWorld')}
+              fields={worldForm}
+              onSubmit={clickCreateWorld}
+              submitText={translate('forms.create')}
+            />
+          </div>
+        )} />
+      </Switch>
     </div>
   );
 }

@@ -40,6 +40,6 @@ export default [{
   component: Users,
   auth: true
 }, {
-  path: '/worlds',
+  path: '/worlds/:action?',
   component: Worlds
 }];
