@@ -277,26 +277,38 @@ function App (props) {
   }
 
   function selectWorld (world) {
-    localStorage.setItem('world', world);
-    setLoginContext({
-      ...loginContext,
-      world
-    });
-
     if (world === 'new') {
+      localStorage.removeItem('world');
+      history.push('/worlds/new');
+    } else if (world === 'null') {
+      localStorage.removeItem('world');
+    } else {
+      localStorage.setItem('world', world);
+    }
 
+    if (world !== 'new') {
+      setLoginContext({
+        ...loginContext,
+        world
+      });
     }
   }
 
   function selectGame (game) {
-    localStorage.setItem('game', game);
-    setLoginContext({
-      ...loginContext,
-      game
-    });
-
     if (game === 'new') {
+      localStorage.removeItem('game');
+      // history.push('/games/new');
+    } else if (game === 'null') {
+      localStorage.removeItem('game');
+    } else {
+      localStorage.setItem('game', game);
+    }
 
+    if (game !== 'new') {
+      setLoginContext({
+        ...loginContext,
+        game
+      });
     }
   }
 
@@ -313,27 +325,10 @@ function App (props) {
 
     if (user && loginContext.world) {
       let found = false;
+      // console.log(loginContext.world)
       user.worlds.forEach((world) => {
         if (world.id === loginContext.world) {
-          let items = [{
-            value: 'null',
-            text: <em>{t('app.selectGame')}</em>
-          }];
-
-          world.games.forEach((game) => {
-            items.push({
-              value: game.id,
-              text: game.name,
-              image: game.logos.favicon
-            });
-          });
-
-          items.push({
-            value: 'new',
-            text: <strong>{t('app.createNewGame')}</strong>
-          });
-
-          setGames([ ...items ]);
+          createGameItems(world);
           found = true;
         }
       });
@@ -344,6 +339,28 @@ function App (props) {
     } else {
       selectDefaults();
     }
+  }
+
+  function createGameItems (world) {
+    let items = [{
+      value: 'null',
+      text: <em>{t('app.selectGame')}</em>
+    }];
+
+    world.games.forEach((game) => {
+      items.push({
+        value: game.id,
+        text: game.name,
+        image: game.logos.favicon
+      });
+    });
+
+    items.push({
+      value: 'new',
+      text: <strong>{t('app.createNewGame')}</strong>
+    });
+
+    setGames([ ...items ]);
   }
 
   function doLogin ({ username, password }) {
@@ -430,6 +447,20 @@ function App (props) {
 
     setWorlds([ ...items ]);
   }, [ loginContext.user.worlds ]);
+
+  useEffect(() => {
+    if (!loginContext.user.worlds
+      || !loginContext.world
+      || loginContext.world === 'null'
+      || loginContext.world === 'new'
+    ) { return; }
+
+    loginContext.user.worlds.forEach((world) => {
+      if (world.id === loginContext.world) {
+        createGameItems(world);
+      }
+    });
+  }, [ loginContext.world, loginContext.user.worlds ]);
 
   useEffect(() => {
     window.addEventListener('online', setOfflineStatus);
