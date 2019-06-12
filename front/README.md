@@ -30,12 +30,9 @@ This steps will probably have some changes in the moment the real backend and DB
         + Group
 
 - General TODO:
-    * RESPONSIVE [VERY VERY VERY VERY VERY IMPORTANT]
-    * User creation
-    * Profile management (info and settings)
     * User list
-
-- Unassigned:
+    * Semantic HTML
+    * SEO
     * Make it work as a PWA
     * Metrics [VERY IMPORTANT]
     * Allow to add an X and Y offset to ContextMenu component
