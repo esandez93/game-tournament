@@ -26,7 +26,7 @@ export default [{
   component: Ranking,
   auth: true
 }, {
-  path: '/settings',
+  path: '/settings/:tab?',
   component: Settings,
   auth: true
 }, {

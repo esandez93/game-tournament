@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './Settings.styles';
 
 import clsx from 'clsx';
+import {
+  Switch,
+  Route
+} from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -43,11 +47,23 @@ function Settings (props) {
     changeLocale,
     currentLocale,
     staticContext,
+    history,
+    match,
     ...other
   } = props;
 
   const size = useWindowSize();
   const classes = useStyles();
+
+  const tabs = [{
+    label: 'User Info'
+  }, {
+    label: 'App Settings'
+  }];
+  const paths = {
+    user: 0,
+    app: 1
+  };
 
   const [ userValues, setUserValues ] = useState({
     name: user.name,
@@ -61,19 +77,13 @@ function Settings (props) {
   const [ lastSavedTheme, setLastSavedTheme ] = useState(currentTheme);
   const [ lastSavedLocale, setLastSavedLocale ] = useState(currentLocale);
   const [ errors, setErrors ] = useState([]);
-  const [ tab, setTab ] = useState(0);
+  const [ tab, setTab ] = useState(match.params ? paths[match.params.tab] : 0);
   const [ snackbar, setSnackbar ] = useState({
     open: false,
     message: null
   });
   const lastSavedThemeRef = useRef();
   const lastSavedLocaleRef = useRef();
-
-  const tabs = [{
-    label: 'User Info'
-  }, {
-    label: 'App Settings'
-  }];
 
   const moreClasses = makeStyles((theme) => ({
     root: {
@@ -108,9 +118,15 @@ function Settings (props) {
     lastSavedThemeRef.current = lastSavedTheme;
   }, [ lastSavedLocale, lastSavedTheme ]);
 
-  useEffect(() => () => {
-    changeTheme(lastSavedThemeRef.current);
-    changeLocale(lastSavedLocaleRef.current);
+  useEffect(() => {
+    if (!match.params.tab) {
+      history.push('/settings/user');
+    }
+
+    return () => {
+      changeTheme(lastSavedThemeRef.current);
+      changeLocale(lastSavedLocaleRef.current);
+    }
   }, []);
 
   const handleUserChange = name => event => {
@@ -126,6 +142,18 @@ function Settings (props) {
   };
   const handleTabChange = (event, selected) => {
     setTab(selected);
+    let page = null;
+    switch (selected) {
+      default:
+      case 0:
+        page = 'user';
+        break;
+      case 1:
+        page = 'app';
+        break;
+    }
+
+    history.push(`/settings/${page}`);
   };
 
   const themeItems = Object.keys(themes).map((key) => ({
@@ -141,74 +169,74 @@ function Settings (props) {
     return errors.includes(field);
   }
 
-  function saveSettings () {
+  function saveUserSettings () {
     const _user = {
       ...user,
       name: userValues.name,
       username: userValues.username,
-      email: userValues.email,
+      email: userValues.email
+    };
+
+    if (userValues.password === '') {
+      setSnackbar({
+        open: true,
+        message: translate('settings.errors.noPassword')
+      });
+    } else {
+      checkPassword(user.id, userValues.password)
+        .then(() => {
+          updateUser(user.id, _user)
+            .then((usr) => {
+              if (!usr) {
+                throw new Error(translate('settings.errors.updateUser'));
+              } else {
+                localStorage.setItem('user', JSON.stringify(usr));
+                changeUser(usr);
+              }
+            })
+            .catch((err) => {
+              setSnackbar({
+                open: true,
+                message: translate('settings.errors.updateUser')
+              });
+            });
+        })
+        .catch((err) => {
+          setSnackbar({
+            open: true,
+            message: translate('settings.errors.checkPassword')
+          });
+        });
+    }
+  }
+
+  function saveAppSettings () {
+    const _user = {
+      ...user,
       settings: {
         theme,
         locale
       }
     };
 
-    if (tab === 0) {
-      if (userValues.password === '') {
+    updateUser(user.id, _user)
+      .then((usr) => {
+        setLastSavedLocale(locale);
+        setLastSavedTheme(theme);
+
+        if (!usr) {
+          throw new Error(translate('settings.errors.updateUser'));
+        } else {
+          localStorage.setItem('user', JSON.stringify(usr));
+          changeUser(usr);
+        }
+      })
+      .catch((err) => {
         setSnackbar({
           open: true,
-          message: translate('settings.errors.noPassword')
+          message: translate('settings.errors.updateUser')
         });
-      } else {
-        checkPassword(user.id, userValues.password)
-          .then(() => {
-            updateUser(user.id, _user)
-              .then((usr) => {
-                if (!usr) {
-                  console.log('!usr')
-                  throw new Error(translate('settings.errors.updateUser'));
-                } else {
-                  localStorage.setItem('user', JSON.stringify(usr));
-                  changeUser(usr);
-                }
-              })
-              .catch((err) => {
-                console.log('err2', err)
-                setSnackbar({
-                  open: true,
-                  message: translate('settings.errors.updateUser')
-                });
-              });
-          })
-          .catch((err) => {
-            console.log('err1', err)
-            setSnackbar({
-              open: true,
-              message: translate('settings.errors.checkPassword')
-            });
-          })
-      }
-    } else if (tab === 1) {
-      updateUser(user.id, _user)
-        .then((usr) => {
-          setLastSavedLocale(locale);
-          setLastSavedTheme(theme);
-
-          if (!usr) {
-            throw new Error(translate('settings.errors.updateUser'));
-          } else {
-            localStorage.setItem('user', JSON.stringify(usr));
-            changeUser(usr);
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-          setSnackbar({
-            open: true,
-            message: translate('settings.errors.updateUser')
-          });
-        });
-    }
+      });
   }
 
   const userForm = [{
@@ -287,25 +315,29 @@ function Settings (props) {
           color={'secondary'}
         />
 
-        <Form
-          className={clsx(classes.form, {
-            [ moreClasses.form]: size.width < breakpoints.l,
-            hidden: tab !== 0
-          })}
-          fields={userForm}
-          onSubmit={saveSettings}
-          submitText={translate('forms.save')}
-        />
+      <Switch>
+        <Route exact path={'/settings/user'} render={(props) => (
+          <Form
+            className={clsx(classes.form, {
+              [ moreClasses.form]: size.width < breakpoints.l
+            })}
+            fields={userForm}
+            onSubmit={saveUserSettings}
+            submitText={translate('forms.save')}
+          />
+        )} />
 
-        <Form
-          className={clsx(classes.form, {
-            [ moreClasses.form]: size.width < breakpoints.l,
-            hidden: tab !== 1
-          })}
-          fields={settingsForm}
-          onSubmit={saveSettings}
-          submitText={translate('forms.save')}
-        />
+        <Route exact path={'/settings/app'} render={(props) => (
+          <Form
+            className={clsx(classes.form, {
+              [ moreClasses.form]: size.width < breakpoints.l
+            })}
+            fields={settingsForm}
+            onSubmit={saveAppSettings}
+            submitText={translate('forms.save')}
+          />
+        )} />
+      </Switch>
       </div>
     </div>
   );
