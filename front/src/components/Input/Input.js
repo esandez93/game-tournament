@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './styles.js';
+import styles from './Input.styles';
 
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -14,16 +14,12 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 const useStyles = makeStyles(styles);
 
-// TODO: Create validations
+// TODO: Create default validations by type or by validations array
 function Input (props) {
   const {
     className,
-    label,
-    variant,
     type,
     InputProps,
-    value,
-    onChange,
     ...other
   } = props;
 
@@ -39,12 +35,8 @@ function Input (props) {
 
   return (
     <TextField
-      className={clsx(className, classes.root)}
-      variant={variant}
+      className={clsx(classes.root, className)}
       type={inputType}
-      label={label}
-      value={value}
-      onChange={onChange}
       InputProps={{
         ...InputProps,
         endAdornment: type === 'password' ? (

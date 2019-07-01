@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import './Matches.scss';
-import styles from './styles.js';
+import styles from './Matches.styles';
 
 import clsx from 'clsx';
 
@@ -8,38 +8,45 @@ import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
-import { LocaleContext } from '@/context';
-import { getMatches } from '@/api/matches';
-import { getCharacters } from '@/api/characters';
-import { getUsers } from '@/api/users';
+import { LocaleContext, LoginContext } from '@/context';
+import {
+  getMatches,
+  getUsers
+} from '@/api/worlds';
+import { getCharacters } from '@/api/games';
 import { Match } from '@/components';
 
 const useStyles = makeStyles(styles);
 
 function Matches (props) {
+  const {
+    world,
+    game,
+    group
+  } = props;
+
   const classes = useStyles();
   const [ matches, setMatches ] = useState([]);
   const [ availableCharacters, setAvailableCharacters ] = useState([]);
   const [ availableUsers, setAvailableUsers ] = useState([]);
 
   useEffect(() => {
-    getMatches({
+    getMatches(world, game, {
       sort: '-date'
     }).then(
-      (data) => { setMatches(data) },
+      (data) => setMatches(data),
       (error) => {
         setMatches([]);
         console.error(error);
       }
     );
 
-    // TODO: manage errors
-    getCharacters().then(
+    getCharacters(game).then(
       (data) => setAvailableCharacters(data),
       console.error
     );
 
-    getUsers().then(
+    getUsers(world, { group: group }).then(
       (data) => setAvailableUsers(data),
       console.error
     );
@@ -79,7 +86,11 @@ function Matches (props) {
 }
 
 export default React.forwardRef((props, ref) => (
-  <LocaleContext.Consumer>
-    {(locale) => <Matches {...props} translate={locale.translate} ref={ref} />}
-  </LocaleContext.Consumer>
+  <LoginContext.Consumer>
+    {(login) =>
+      <LocaleContext.Consumer>
+        {(locale) => <Matches {...props} translate={locale.translate} world={login.world} game={login.game} group={login.group} ref={ref} />}
+      </LocaleContext.Consumer>
+    }
+  </LoginContext.Consumer>
 ));

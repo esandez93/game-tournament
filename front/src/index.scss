@@ -16,3 +16,7 @@ code {
 input:-webkit-autofill {
   -webkit-transition-delay: 9999999s;
 }
+
+.hidden {
+  display: none !important;
+}

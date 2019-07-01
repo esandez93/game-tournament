@@ -3,7 +3,7 @@ import Button from './Button';
 import Card from './Card';
 import CharacterAvatar from './CharacterAvatar';
 import ContextMenu from './ContextMenu';
-import Icon from './Icon';
+import Form from './Form';
 import Input from './Input';
 import Loading from './Loading';
 import Match from './Match';
@@ -11,6 +11,7 @@ import OfflineBadge from './OfflineBadge';
 import Select from './Select';
 import SideMenu from './SideMenu';
 import Snackbar from './Snackbar';
+import Tabs from './Tabs';
 
 export {
   Avatar,
@@ -18,12 +19,13 @@ export {
   Card,
   CharacterAvatar,
   ContextMenu,
-  Icon,
+  Form,
   Input,
   Loading,
   Match,
   OfflineBadge,
   Select,
   SideMenu,
-  Snackbar
+  Snackbar,
+  Tabs
 };

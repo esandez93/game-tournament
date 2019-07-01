@@ -8,13 +8,21 @@ const schema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, match: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/, required: true },
   avatar: { type: String, trim: true },
-  company: {
+  friends: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Company'
+    ref: 'User'
   },
+  worlds: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'World'
+  }],
   group: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Group'
+  },
+  mainGame: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Game'
   },
   settings: {
     theme: { type: String, required: true },
@@ -68,8 +76,9 @@ function populate (data) {
     name: data.name,
     email: data.email,
     avatar: data.avatar,
-    company: data.company,
+    worlds: data.worlds,
     group: data.group,
+    mainGame: data.mainGame,
     settings: {
       theme: data.settings.theme || 'defaultDark',
       locale: data.settings.locale || 'en',

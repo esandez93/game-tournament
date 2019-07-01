@@ -3,9 +3,11 @@ import {
   Login,
   Matches,
   Ranking,
+  Settings,
   Signup,
   ThemeTest,
-  Users
+  Users,
+  Worlds
 } from '@/pages';
 
 export default [{
@@ -16,21 +18,28 @@ export default [{
   path: '/login',
   component: Login
 }, {
-  path: '/signup',
-  component: Signup
+  path: '/matches',
+  component: Matches,
+  auth: true
 }, {
   path: '/ranking',
   component: Ranking,
   auth: true
 }, {
+  path: '/settings',
+  component: Settings,
+  auth: true
+}, {
+  path: '/signup',
+  component: Signup
+}, {
+  path: '/theme-test',
+  component: ThemeTest
+}, {
   path: '/users',
   component: Users,
   auth: true
 }, {
-  path: '/matches',
-  component: Matches,
-  auth: true
-}, {
-  path: '/theme-test',
-  component: ThemeTest
+  path: '/worlds',
+  component: Worlds
 }];

@@ -1,6 +1,6 @@
 export default (theme) => ({
-  root: {
-
+  tabs: {
+    position: 'absolute',
   },
   forms: {
     display: 'flex',

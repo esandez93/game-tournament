@@ -18,7 +18,21 @@ const schema = new mongoose.Schema({
   player2: Player,
   blindPick: Boolean,
   date: { type: Date, required: true },
-  result: { type: Number, required: true }
+  result: { type: Number, required: true },
+  world: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'World',
+    required: true
+  },
+  game: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Game',
+    required: true
+  },
+  group: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group'
+  }
 });
 schema.index({ id: 1 });
 
@@ -32,7 +46,10 @@ function populate (data) {
     player2: data.player2,
     blindPick: data.blindPick || false,
     date: new Date(),
-    result: data.result
+    result: data.result,
+    world: data.world,
+    game: data.game,
+    group: data.group
   });
 }
 

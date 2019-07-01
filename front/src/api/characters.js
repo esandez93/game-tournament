@@ -3,8 +3,8 @@ import { get } from '@/utils';
 
 const endpoint = 'characters';
 
-function getCharacters(query) {
-  return get(`${url}/${endpoint}?${query}`);
+function getCharacters(params) {
+  return get(`${url}/${endpoint}`, params);
 }
 
 function getCharacterById(id) {

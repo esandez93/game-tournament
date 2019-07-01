@@ -46,6 +46,9 @@ This steps will probably have some changes in the moment the real backend and DB
         + Message received
         + Message posted on own match or another match you commented on
         + Match created
+        
+- Pending Refactor:
+    * Match Component
 
 
 ### Goals
@@ -58,7 +61,6 @@ Have a CRA project with the common features and examples used in lots of project
 - Hot reload \[[react-hot-loader](https://github.com/gaearon/react-hot-loader)\]
 - Routing \[[react-router-dom](https://github.com/ReactTraining/react-router)\]
 - Sass \[[node-sass](https://github.com/sass/node-sass)\]
-- Styled components \[[styled-components](https://github.com/styled-components/styled-components)\]
 - Props checking \[[prop-types](https://github.com/facebook/prop-types)\]
 - Translations \[[i18next](https://github.com/i18next/i18next)\] \[[react-i18next](https://github.com/i18next/react-i18next)\]
 - Custom theming

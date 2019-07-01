@@ -8,7 +8,13 @@ export default {
     matches: 'Matches',
     users: 'Users',
     settings: 'Settings',
-    notfound: 'Not found'
+    notfound: 'Not found',
+    worlds: 'Worlds'
+  },
+  entities: {
+    user: 'User',
+    world: 'World',
+    game: 'Game'
   },
   login: {
     signup: 'You don\'t have an account? <1>REGISTER HERE</1>'
@@ -45,6 +51,35 @@ export default {
   delete: 'Delete',
   settings: {
     theme: 'Theme',
-    locale: 'Locale'
+    locale: 'Locale',
+
+    errors: {
+      noPassword: 'You must enter the password to confirm the changes',
+      checkPassword: 'The password is wrong',
+      updateUser: 'Unexpected error updating the data'
+    }
+  },
+  app: {
+    createNewWorld: 'Create World',
+    selectWorld: 'Select World',
+    createNewGame: 'Create Game',
+    selectGame: 'Select Game',
+
+    errors: {
+      noWorld: 'No World selected',
+      currentWorldHasNoGames: 'The selected World has not any Games assigned'
+    }
+  },
+  forms: {
+    save: 'Save',
+    create: 'Create'
+  },
+  worlds: {
+    newWorld: 'New World',
+    users: 'Users'
+  },
+  world: {
+    name: 'Nombre',
+    avatar: 'Avatar'
   }
 };

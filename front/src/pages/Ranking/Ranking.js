@@ -1,18 +1,25 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import './Ranking.scss';
-import styles from './styles.js';
+import styles from './Ranking.styles';
 
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Divider from '@material-ui/core/Divider';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
+import {
+  Avatar,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Typography
+} from '@material-ui/core';
 
-import { getRanking } from '@/api/users';
+import { getRanking } from '@/api/worlds';
+import {
+  LocaleContext,
+  LoginContext
+} from '@/context';
 
 const useStyles = makeStyles(styles);
 
@@ -25,11 +32,16 @@ function Trophy (props) {
 }
 
 function Ranking (props) {
+  const {
+    world,
+    game
+  } = props;
+
   const classes = useStyles();
   const [ranking, setRanking] = useState([]);
 
   useEffect(() => {
-    getRanking().then(
+    getRanking(world, game).then(
       (data) => setRanking(data),
       (error) => console.error(error)
     );
@@ -55,9 +67,9 @@ function Ranking (props) {
                 <ListItemText
                   primary={user.username}
                   secondary={
-                    <span>
+                    <Typography>
                       {user.name} - {user.group}
-                    </span>
+                    </Typography>
                   }
                 />
               </ListItem>
@@ -71,4 +83,12 @@ function Ranking (props) {
   );
 }
 
-export default Ranking;
+export default React.forwardRef((props, ref) => (
+  <LoginContext.Consumer>
+    {(login) =>
+      <LocaleContext.Consumer>
+        {(locale) => <Ranking {...props} translate={locale.translate} world={login.world} game={login.game} ref={ref} />}
+      </LocaleContext.Consumer>
+    }
+  </LoginContext.Consumer>
+));

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import styles from './styles';
+import styles from './Signup.styles';
 
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 
 import * as themes from '@/themes';
 import * as locales from '@/locale';
@@ -12,10 +11,12 @@ import { breakpoints } from '@/constants';
 import { checkToken } from '@/api/auth';
 import { register } from '@/api/users';
 import {
-  Button,
-  Input,
-  Select
+  Button
 } from '@/components';
+import {
+  Settings,
+  UserInfo
+} from '@/components/forms';
 import {
   LocaleContext,
   LoginContext,
@@ -91,15 +92,6 @@ function Signup (props) {
     }
   }))();
 
-  function getInputType (field) {
-    switch (field) {
-      case 'email': return 'email';
-      case 'password':
-      case 'repeatPassword': return 'password';
-      default: return 'text';
-    }
-  }
-
   const handleUserChange = name => event => {
     setUserValues({ ...userValues, [name]: event.target.value });
   };
@@ -111,10 +103,6 @@ function Signup (props) {
     setLocale(event.target.value);
     changeLocale(event.target.value);
   };
-
-  function hasError (field) {
-    return errors.includes(field);
-  }
 
   // TODO: Improve validation in real time integrated in TextField
   // Also add email and extra checks
@@ -157,51 +145,36 @@ function Signup (props) {
     value: key
   }));
 
-  // TODO: Extract forms into Components to reuse them at Config menu
-  // TODO: Avatar uploading or src at least
+  function hasError (field) {
+    return errors.includes(field);
+  }
+
   return (
     <div className={clsx('Signup', className)} {...other}>
       {checked && <div className={clsx(classes.root)}>
         <div className={clsx(classes.forms, moreClasses.forms)}>
-          <form className={clsx(classes.form, {
-            [moreClasses.form]: size.width < breakpoints.l
-          })} noValidate>
-            <Typography className={clsx(classes.formTitle)} variant="h5">{translate('signup.userInfo')}</Typography>
-            {userForm.map((field) => (
-              <Input
-                key={field}
-                id={field}
-                label={translate(`user.${field}`)}
-                value={userValues[field]}
-                onChange={handleUserChange(field)}
-                type={getInputType(field)}
-                required
-                error={hasError(field)}
-                inputProps={field === 'password' ? {
-                  autoComplete: "new-password"
-                } : {}}
-              />
-            ))}
-          </form>
+          <UserInfo
+            className={{
+              [moreClasses.form]: size.width < breakpoints.l
+            }}
+            handleUserChange={handleUserChange}
+            setErrors={setErrors}
+            hasError={hasError}
+            fields={userForm}
+            values={userValues}
+          />
 
-          <form className={clsx(classes.form, {
-            [moreClasses.form]: size.width < breakpoints.l
-          })} noValidate>
-            <Typography className={clsx(classes.formTitle)} variant="h5">{translate('sections.settings')}</Typography>
-            <Select
-              label={translate('settings.theme')}
-              items={themeItems}
-              value={theme}
-              onChange={handleThemeChange}
-            />
-            <Select
-              label={translate('settings.locale')}
-              items={localeItems}
-              value={locale}
-              onChange={handleLocaleChange}
-            />
-          </form>
-
+          <Settings
+            className={{
+              [ moreClasses.form]: size.width < breakpoints.l
+            }}
+            themeItems={themeItems}
+            theme={theme}
+            handleThemeChange={handleThemeChange}
+            localeItems={localeItems}
+            locale={locale}
+            handleLocaleChange={handleLocaleChange}
+          />
         </div>
 
         <Button className={clsx(moreClasses.button)} color="primary" variant="contained" onClick={clickSignup}>

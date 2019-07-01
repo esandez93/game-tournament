@@ -28,8 +28,8 @@
     "styled-components": "^4.2.0"
   },
   "scripts": {
-    "start": "npm-run-all generate-db start-mockapi-noblock start-no-db",
-    "start-no-db": "react-app-rewired start",
+    "start": "react-app-rewired start",
+    "start-fake": "npm-run-all generate-db start-mockapi-noblock start-no-db",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",

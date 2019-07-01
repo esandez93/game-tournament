@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styles from './styles.js';
+import styles from './Select.styles';
 
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -10,9 +10,13 @@ import {
   MenuItem,
   Input,
   FilledInput,
-  OutlinedInput
+  OutlinedInput,
+  Typography,
+  Divider
 } from '@material-ui/core';
 import MuiSelect from '@material-ui/core/Select';
+
+import { Avatar } from '@/components';
 
 const useStyles = makeStyles(styles);
 
@@ -29,7 +33,11 @@ function Select (props) {
     placeholder,
     children,
     margin,
-    required
+    renderValue,
+    required,
+    inputProps,
+    multiple,
+    dividers
   } = props;
 
   let selectMargin = 1;
@@ -38,7 +46,7 @@ function Select (props) {
 
   const classes = useStyles();
   const moreClasses = makeStyles((theme) => ({
-    formControl: {
+    root: {
       marginTop: `${theme.spacing(selectMargin)}px`,
       marginBottom: `${theme.spacing(selectMargin)}px`
     }
@@ -46,9 +54,44 @@ function Select (props) {
 
   const inputLabel = useRef(null);
   const [ labelWidth, setLabelWidth ] = useState(0);
+  const [ menuItems, setMenuItems ] = useState([]);
+
   useEffect(() => {
     setLabelWidth(inputLabel.current.offsetWidth);
   }, []);
+
+  useEffect(() => {
+    let _menuItems = [];
+
+    if (items) {
+      items.forEach((item, index) => {
+        _menuItems.push(
+          <MenuItem className={clsx(classes.item)} key={index+item.text} value={item.value}>
+            {item.avatar &&
+              <Avatar
+                className={clsx(classes.itemAvatar)}
+                src={item.avatar === true ? null : item.avatar}
+                name={item.avatarName}
+                size={item.avatarSize || 'small'}
+                alt={`${item.avatarName || item.text} avatar`}
+              />
+            }
+            {item.image && <img className={clsx(classes.itemImage)} src={item.image} alt="logo" />}
+            <Typography>{item.text}</Typography>
+          </MenuItem>
+        );
+        if (dividers && index < items.length-1) {
+          _menuItems.push(
+            <Divider key={index} />
+          );
+        }
+      });
+    } else if (children) {
+      _menuItems = children;
+    }
+
+    setMenuItems(_menuItems);
+  }, [ items ]);
 
   function getInput () {
     let Comp = null
@@ -58,28 +101,29 @@ function Select (props) {
       default: Comp = Input; break;
     }
 
-    return <Comp labelWidth={labelWidth} name={label} id={id || label.replace(' ', '')} />
+    return <Comp
+      inputProps={{ ...inputProps, className: clsx(classes.innerInput, inputProps.className) }}
+      labelWidth={labelWidth} name={label} id={id || label.replace(' ', '')} />
   }
 
   return (
-    <FormControl className={clsx(className, classes.formControl, moreClasses.formControl)} variant={variant}>
+    <FormControl className={clsx(className, classes.root, moreClasses.root)} variant={variant}>
       <InputLabel ref={inputLabel} id={id || label.replace(' ', '')}>
         {label}
       </InputLabel>
       <MuiSelect
-        value={value}
         onChange={onChange}
         input={getInput()}
+        value={value || ''}
+        multiple={multiple}
+        renderValue={renderValue}
       >
         {!required && placeholder &&
           <MenuItem value="">
             {placeholder}
           </MenuItem>
         }
-        {items.map((item, index) => (
-          <MenuItem key={index} value={item.value}>{item.text}</MenuItem>
-        ))}
-        {!items && children}
+        {menuItems}
       </MuiSelect>
     </FormControl>
   );
@@ -88,15 +132,26 @@ function Select (props) {
 Select.propTypes = {
   id: PropTypes.string,
   label: PropTypes.string,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.bool,
+    PropTypes.array,
+    PropTypes.object
+  ]),
   variant: PropTypes.oneOf([ 'standard', 'outlined', 'filled' ]),
   margin: PropTypes.oneOf([ 'none', 'dense', 'normal' ]),
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  items: PropTypes.array,
+  inputProps: PropTypes.object,
+  multiple: PropTypes.bool
 };
 Select.defaultProps = {
   variant: 'outlined',
   type: 'text',
-  margin: 'normal'
+  margin: 'normal',
+  inputProps: {},
+  multiple: false
 };
 
 export default Select;

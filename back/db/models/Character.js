@@ -4,6 +4,11 @@ const mongoose = require('mongoose');
 const schema = new mongoose.Schema({
   name: { type: String, required: true },
   avatar: { type: String, required: true },
+  game: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Game',
+    required: true
+  }
 });
 schema.index({ id: 1 });
 
@@ -14,7 +19,8 @@ function populate (data) {
 
   return new model({
     name: data.name,
-    avatar: data.avatar
+    avatar: data.avatar,
+    game: data.game
   });
 }
 

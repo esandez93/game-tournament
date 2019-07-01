@@ -2,8 +2,6 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.1.1/workbox-sw.js');
 workbox.setConfig({ debug: true });
 
-console.log(workbox)
-
 // workbox.core.setLogLevel(workbox.core.LOG_LEVELS.debug);
 /*
 workbox.clientsClaim();

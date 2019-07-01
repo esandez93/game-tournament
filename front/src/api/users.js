@@ -1,28 +1,40 @@
 import { url } from './config';
-import { get, post } from '@/utils';
+import { get, put, post } from '@/utils';
 
 const endpoint = 'users';
 
-function getUsers() {
+/* function getUsers() {
   return get(`${url}/${endpoint}`);
-}
+} */
 
 function getUserById(id) {
   return get(`${url}/${endpoint}/${id}`);
 }
 
-function getRanking() {
-  // TODO: Add Ranking endpoint
-  return get(`${url}/${endpoint}`);
+function getUserRelationships(id) {
+  return get(`${url}/${endpoint}/${id}/relationships`);
+}
+
+// TODO: Change to PUT
+function updateUser(id, user) {
+  return post(`${url}/${endpoint}/${id}`, user);
 }
 
 function register(user) {
   return post(`${url}/${endpoint}`, user);
 }
 
+function checkPassword(id, password) {
+  return post(`${url}/${endpoint}/${id}/checkPassword`, {
+    password
+  });
+}
+
 export {
-  getUsers,
+  checkPassword,
+  // getUsers,
   getUserById,
-  getRanking,
+  getUserRelationships,
+  updateUser,
   register
 };

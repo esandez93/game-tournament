@@ -19,6 +19,22 @@ In a common workflow, every push or PR to master will trigger the CI of Netlify 
 
 This is only needed if the common packages are modified.
 
-  - First of all, you need to instal `lerna` globally using `npm install --global lerna`. 
+  - First of all, you need to instal `lerna` globally using `npm install --global lerna`.
   - You will have to commit and push the changes to the git repo.
   - Then you can use `lerna-publish` if you have access to the npmjs organization and publish the changes there.
+
+
+### GENERAL TODOs
+  - Assign real points on matches
+  - Style and position nicely the World and Game selectors
+  - User profile config view (Merge Settings with Profile menu points ?)
+  - Error management on both BE and FE
+  - Review login and logout FE logic on invalid token (check User field in localStorage)
+  - Do some sketch of the Home view (d3.js ?)
+  - Notification (and permission?) on match created with your user (email, app ...?)
+  - Check Matches view on wide screens (>1980px ?)
+  - Admin views:
+    - Create worlds
+    - Create games
+    - Assign games to worlds
+    - Assign worlds to users

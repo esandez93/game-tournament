@@ -1,6 +1,6 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Login.scss';
-import styles from './styles';
+import styles from './Login.styles';
 
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
