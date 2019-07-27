@@ -6,6 +6,18 @@ const schema = new mongoose.Schema({
   logos: {
     favicon: { type: String },
     banner: { type: String }
+  },
+  world: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'World'
+  },
+  creationDate: {
+    type: Date,
+    required: true
+  },
+  lastUpdate: {
+    type: Date,
+    required: true
   }
 });
 schema.index({ id: 1 });
@@ -17,7 +29,9 @@ function populate (data) {
 
   return new model({
     name: data.name,
-    logos: data.logos
+    logos: data.logos,
+    creationDate: data.creationDate,
+    lastUpdate: data.lastUpdate
   });
 }
 

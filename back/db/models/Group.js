@@ -15,7 +15,15 @@ const schema = new mongoose.Schema({
   admins: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  creationDate: {
+    type: Date,
+    required: true
+  },
+  lastUpdate: {
+    type: Date,
+    required: true
+  }
 });
 schema.index({ id: 1 });
 
@@ -26,7 +34,9 @@ function populate (data) {
 
   return new model({
     name: data.name,
-    avatar: data.avatar
+    avatar: data.avatar,
+    creationDate: data.creationDate,
+    lastUpdate: data.lastUpdate
   });
 }
 

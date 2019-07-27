@@ -27,6 +27,14 @@ const schema = new mongoose.Schema({
   settings: {
     theme: { type: String, required: true },
     locale: { type: String, required: true }
+  },
+  creationDate: {
+    type: Date,
+    required: true
+  },
+  lastUpdate: {
+    type: Date,
+    required: true
   }
 });
 schema.index({ id: 1 });
@@ -59,7 +67,7 @@ schema.methods.isCorrectPassword = function(password) {
       }
     });
   });
-}
+};
 
 const model = mongoose.model('User', schema);
 
@@ -82,8 +90,10 @@ function populate (data) {
     settings: {
       theme: data.settings.theme || 'defaultDark',
       locale: data.settings.locale || 'en',
-    }
-  })
+    },
+    creationDate: data.creationDate,
+    lastUpdate: data.lastUpdate
+  });
 }
 
 module.exports = {
