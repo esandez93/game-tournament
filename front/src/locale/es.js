@@ -62,7 +62,8 @@ export default {
   app: {
     errors: {
       noWorld: 'No hay ningún Mundo seleccionado',
-      currentWorldHasNoGames: 'El Mundo seleccionado no tiene Juegos asignados'
+      currentWorldHasNoGames: 'El Mundo seleccionado no tiene Juegos asignados',
+      noGame: 'No hay ningún Juego seleccionado'
     }
   },
   forms: {
@@ -72,6 +73,7 @@ export default {
   worlds: {
     newWorld: 'Nuevo Mundo',
     users: 'Usuarios',
+    admins: 'Administradores'
   },
   world: {
     name: 'Nombre',

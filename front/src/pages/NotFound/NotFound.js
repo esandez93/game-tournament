@@ -1,16 +1,20 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import './NotFound.scss';
 
 import clsx from 'clsx';
 
-class NotFound extends Component {
-  render() {
-    return (
-      <div className={clsx('NotFound', this.props.className)}>
-        NotFound Page
-      </div>
-    );
-  }
+function NotFound (props) {
+  const {
+    className
+  } = props;
+
+  return (
+    <div className={clsx('NotFound', className)}>
+      {
+        //NotFound Page
+      }
+    </div>
+  );
 }
 
 export default NotFound;

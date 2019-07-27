@@ -40,7 +40,7 @@ function Form (props) {
   }
 
   function handleSubmit () {
-    // Check errors
+    // TODO: Check errors
     onSubmit();
   }
 

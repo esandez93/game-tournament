@@ -9,10 +9,13 @@ module.exports = (app) => {
     );
   }
 
-  app.use((err, req, res, next) =>
-    res.status(err.status || 500)
+  app.use((err, req, res, next) => {
+    console.log('Unexpected error:', err);
+
+    return res.status(err.status || 500)
       .send({
         message: err.message
       })
+    }
   );
 };

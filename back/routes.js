@@ -7,6 +7,10 @@ const worlds = require('./routes/worlds');
 const matches = require('./routes/matches');
 const characters = require('./routes/characters');
 
+// TODO: Check for param errors in all the endpoints.
+//       Build custom error handler ?
+//         Add logger ?
+
 module.exports = (app) => {
   app.get('/', (req, res, next) => {
     res.status(200).send(`Welcome to the Tekken Tournament API!`);

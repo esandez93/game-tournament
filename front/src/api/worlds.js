@@ -11,6 +11,10 @@ function getWorldById(id) {
   return get(`${url}/${endpoint}/${id}`);
 }
 
+function createWorld(world) {
+  return post(`${url}/${endpoint}`, world);
+}
+
 
 // GAMES
 function getGames(world, params) {
@@ -53,6 +57,7 @@ function getUserById(world, id) {
 export {
   getWorlds,
   getWorldById,
+  createWorld,
 
   getGames,
   getGameById,

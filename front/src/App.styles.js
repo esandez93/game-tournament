@@ -5,7 +5,7 @@ export default (theme) => ({
   },
   selectors: {
     position: 'absolute',
-    right: `${theme.spacing(2)}px`,
+    right: `${theme.spacing(4)}px`,
     top: 0
   },
   selector: {

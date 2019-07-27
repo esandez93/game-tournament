@@ -1,29 +1,51 @@
 const express = require('express');
+const debug = require('debug')('route.worlds');
 const withAuth = require('../middleware/withAuth');
 const router = express.Router();
 
-// const WorldController = require('../../controllers/worlds.js');
 const World = require('../db/models/World');
 const User = require('../db/models/User');
 const Game = require('../db/models/Game');
+
+const UserController = require('../db/controllers/user.ctrl');
+const WorldController = require('../db/controllers/world.ctrl');
 const MatchController = require('../db/controllers/match.ctrl');
 
+// WORLDS
+
 router.get('/', withAuth, (req, res) => {
-  World.model.find(req.query).exec()
+  WorldController.find(req.query)
     .then(worlds => res.status(200).json(worlds))
     .catch(err => res.status(500).send(err));
 });
 
 router.get('/:id', withAuth, (req, res) => {
-  World.model.findById(req.params.id).exec()
+  WorldController.findById(req.params.id)
     .then(world => res.status(200).json(world))
     .catch(err => res.status(500).send(err));
 });
 
 router.post('/', withAuth, (req, res) => {
-  let world = World.populate(req.body);
-  world.save()
-    .then(comp => res.status(200).json(comp))
+  WorldController.create(req.body)
+    .then(world => {
+      debug('post: created world');
+      // TODO: Should this be async and send the response while updateing the users in background ?
+
+      WorldController.updateUsers(world)
+        .then(() => res.status(200).json(world))
+        .catch(err => res.status(500).json(err))
+    })
+    .catch(err => res.status(500).json(err));
+});
+
+router.put('/:id', withAuth, (req, res) => {
+  WorldController.update(req.params.id, req.body)
+    .then(world => {
+      // TODO: Should this be async and send the response while updateing the users in background ?
+      WorldController.updateUsers(world)
+        .then(() => res.status(200).json(world))
+        .catch(err => res.status(500).json(err))
+    })
     .catch(err => res.status(500).json(err));
 });
 
@@ -31,7 +53,7 @@ router.post('/', withAuth, (req, res) => {
 // USERS
 
 router.get('/:world/users', withAuth, (req, res) => {
-  User.model.find({ worlds: req.params.world }).populate('world')
+  UserController.findByWorld(req.params.world)
     .then(users => res.status(200).json(users))
     .catch(err => res.status(500).send(err));
 });
@@ -42,20 +64,19 @@ router.get('/:world/users/:id', withAuth, (req, res) => {
     world
   } = req.params;
 
-  User.model.find({ id, world }).populate('world')
+  UserController.findByWorld(world, { _id: id })
     .then(user => res.status(200).json(user))
     .catch(err => res.status(500).send(err));
 });
 
-// TODO: DIFF if new user or just assigning a world. NOT WORKING NOW
-router.post('/:world/users', (req, res) => {
-  let user = User.populate({
-    ...req.body,
-    worlds: req.params.world
-  });
-
-  user.save()
-    .then(usr => res.status(200).json(usr))
+router.put('/:id/users', withAuth, (req, res) => {
+  WorldController.update(req.params.id, req.body)
+    .then(world => {
+      // TODO: Should this be async and send the response while updateing the users in background ?
+      WorldController.updateUsers(world)
+        .then(() => res.status(200).json(world))
+        .catch(err => res.status(500).json(err))
+    })
     .catch(err => res.status(500).json(err));
 });
 
@@ -82,7 +103,7 @@ router.get('/:world/matches/:id', withAuth, (req, res) => {
 });
 
 router.post('/:world/matches', withAuth, (req, res) => {
-  MatchController.save({
+  MatchController.create({
     ...req.body,
     world: req.params.world
   }).then(match => res.status(200).json(match))
@@ -117,18 +138,10 @@ router.get('/:world/games/:id', withAuth, (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
-// TODO: REDO FROM 0. NOT WORKING
-router.post('/:world/games', withAuth, (req, res) => {
-  /* let game = Game.populate({
-    ...req.body,
-    world: req.params.world
-  });
-
-  Game.model.save({
-    ...req.body,
-    world: req.params.world
-  }).then(game => res.status(200).json(game))
-    .catch(err => res.status(500).send(err)); */
+router.put('/:world/games', withAuth, (req, res) => {
+  WorldController.updateGames(req.params.world, req.body)
+    .then(games => res.status(200).json(games))
+    .catch(err => res.status(500).send(err));
 });
 
 
@@ -139,7 +152,7 @@ router.get('/:world/games/:id/ranking', withAuth, (req, res) => {
   } = req.params;
 
   // TODO: Create real Ranking find function
-  User.model.find({ worlds: world }).populate('world')
+  UserController.findByWorld(world)
     .then(user => res.status(200).json(user))
     .catch(err => res.status(500).send(err));
 });

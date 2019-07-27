@@ -67,7 +67,8 @@ export default {
 
     errors: {
       noWorld: 'No World selected',
-      currentWorldHasNoGames: 'The selected World has not any Games assigned'
+      currentWorldHasNoGames: 'The selected World has not any Games assigned',
+      noGame: 'No Game selected'
     }
   },
   forms: {
@@ -76,7 +77,8 @@ export default {
   },
   worlds: {
     newWorld: 'New World',
-    users: 'Users'
+    users: 'Users',
+    admins: 'Administrators'
   },
   world: {
     name: 'Nombre',

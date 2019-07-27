@@ -197,7 +197,7 @@ function App (props) {
     icon: MatchesIcon,
     text: t('sections.matches'),
     url: '/matches',
-    hasError: () => !isWorldSelected() || !worldHasGames(),
+    hasError: () => !isWorldSelected() || !worldHasGames() || !isGameSelected(),
     onClick: () => {
       let nav = true;
 
@@ -213,6 +213,12 @@ function App (props) {
           message: t('app.errors.currentWorldHasNoGames')
         });
         nav = false;
+      } else if (!isGameSelected()) {
+        setSnackbar({
+          open: true,
+          message: t('app.errors.noGame')
+        });
+        nav = false;
       }
 
       return nav;
@@ -226,17 +232,23 @@ function App (props) {
   }];
 
   function changeUser (user) {
-    setLoginContext((state) => ({
-      ...state,
-      user: {
-        ...state.user,
-        ...user,
-        settings: {
-          ...state.user.settings,
-          ...user.settings
+    setLoginContext((state) => {
+      const newUser = {
+        ...state,
+        user: {
+          ...state.user,
+          ...user,
+          settings: {
+            ...state.user.settings,
+            ...user.settings
+          }
         }
-      }
-    }));
+      };
+
+      localStorage.setItem('user', newUser);
+
+      return newUser
+    });
   }
 
   function changeLocale (locale) {
@@ -325,15 +337,16 @@ function App (props) {
 
     if (user && loginContext.world) {
       let found = false;
-      // console.log(loginContext.world)
+
       user.worlds.forEach((world) => {
         if (world.id === loginContext.world) {
-          createGameItems(world);
+          createGameItems(world.games);
           found = true;
         }
       });
 
       if (!found) {
+        createGameItems([]);
         selectDefaults();
       }
     } else {
@@ -341,13 +354,15 @@ function App (props) {
     }
   }
 
-  function createGameItems (world) {
+  function createGameItems (games = []) {
+    if (!games) return;
+
     let items = [{
       value: 'null',
       text: <em>{t('app.selectGame')}</em>
     }];
 
-    world.games.forEach((game) => {
+    games.forEach((game) => {
       items.push({
         value: game.id,
         text: game.name,
@@ -361,6 +376,30 @@ function App (props) {
     });
 
     setGames([ ...items ]);
+  }
+
+  function createWorldItems (worlds = []) {
+    if (!worlds) return;
+
+    let items = [{
+      value: 'null',
+      text: <em>{t('app.selectWorld')}</em>
+    }];
+
+    worlds.forEach((world) => {
+      items.push({
+        value: world.id,
+        text: world.name,
+        image: world.avatar
+      });
+    });
+
+    items.push({
+      value: 'new',
+      text: <strong>{t('app.createNewWorld')}</strong>
+    });
+
+    setWorlds([ ...items ]);
   }
 
   function doLogin ({ username, password }) {
@@ -404,6 +443,10 @@ function App (props) {
       .catch(console.error);
   }
 
+  function isGameSelected () {
+    return loginContext.game && loginContext.game !== 'null' && loginContext.game !== 'new';
+  }
+
   function isWorldSelected () {
     return loginContext.world && loginContext.world !== 'null' && loginContext.world !== 'new';
   }
@@ -425,39 +468,19 @@ function App (props) {
   }
 
   useEffect(() => {
-    if (!loginContext.user.worlds) return;
-
-    let items = [{
-      value: 'null',
-      text: <em>{t('app.selectWorld')}</em>
-    }];
-
-    loginContext.user.worlds.forEach((world) => {
-      items.push({
-        value: world.id,
-        text: world.name,
-        image: world.avatar
-      });
-    });
-
-    items.push({
-      value: 'new',
-      text: <strong>{t('app.createNewWorld')}</strong>
-    });
-
-    setWorlds([ ...items ]);
+    createWorldItems(loginContext.user.worlds);
   }, [ loginContext.user.worlds ]);
 
   useEffect(() => {
-    if (!loginContext.user.worlds
-      || !loginContext.world
-      || loginContext.world === 'null'
-      || loginContext.world === 'new'
-    ) { return; }
+    if (!loginContext.user.worlds || !isWorldSelected()) { return; }
 
     loginContext.user.worlds.forEach((world) => {
       if (world.id === loginContext.world) {
-        createGameItems(world);
+        createGameItems(world.games);
+
+        if (!world.games || world.games.length === 0) {
+          selectGame('null');
+        }
       }
     });
   }, [ loginContext.world, loginContext.user.worlds ]);
@@ -490,8 +513,13 @@ function App (props) {
 
     const _routed = routes.map((route, index) => {
       const Routed = route.auth ? withAuth(route.component, setLogin) : route.component;
+      let params = {};
 
-      return <Route key={index} exact path={route.path} component={Routed} />
+      if (route.path.includes('/worlds')) {
+        params.createWorldItems = createWorldItems;
+      }
+
+      return <Route key={index} exact path={route.path} render={(props) => <Routed {...props} {...params} />} />
     });
 
     setRouted(_routed);
@@ -533,8 +561,9 @@ function App (props) {
         color: themeContext.theme.palette.text.primary
       }}>
         {appContext.offline && <OfflineBadge />}
-        {loginContext.logged && <Route render={(props) => <SideMenu toggleOpen={toggleSideMenu} items={menuItems} {...props} />}/>}
-
+        {loginContext.logged && <Route render={(props) =>
+          <SideMenu toggleOpen={toggleSideMenu} items={menuItems} {...props} />
+        }/>}
         <Snackbar
           variant="error"
           direction="up"
@@ -557,7 +586,7 @@ function App (props) {
               onChange={(e) => selectWorld(e.target.value)}
               inputProps={{ className: classes.selectorInput }}
             />}
-            {games && games.length > 0 && <Select
+            {games && games.length > 0 && isWorldSelected() && <Select
               className={clsx(classes.selector)}
               label={localeContext.translate('entities.game')}
               items={games}

@@ -1,3 +1,5 @@
+const debug = require('debug')('users.routes');
+
 const express = require('express');
 const withAuth = require('../middleware/withAuth');
 const router = express.Router();
@@ -45,6 +47,7 @@ router.get('/:id/relationships', withAuth, (req, res) => {
     .then(user => {
       let users = [];
       let usr = { ...user.toJSON() };
+      let ids = [ usr.id ];
 
       if (!usr.friends) {
         usr.friends = [];
@@ -56,15 +59,17 @@ router.get('/:id/relationships', withAuth, (req, res) => {
       }
 
       usr.friends.forEach((friend) => {
-        if (!users.includes(friend)) {
+        if (!ids.includes(friend.id)) {
           users.push(friend);
+          ids.push(friend.id);
         }
       });
 
-      usr.worlds.forEach((world) => {
-        world.users.forEach((worldUser) => {
-          if (!users.includes(worldUser)) {
+      usr.worlds.forEach((world, wIndex) => {
+        world.users.forEach((worldUser, uIndex) => {
+          if (!ids.includes(worldUser.id)) {
             users.push(worldUser);
+            ids.push(worldUser.id);
           }
         });
       });

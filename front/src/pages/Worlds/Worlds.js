@@ -22,7 +22,8 @@ import {
   LoginContext
 } from '@/context';
 import {
-  getWorlds
+  getWorlds,
+  createWorld
 } from '@/api/worlds';
 import {
   getUserRelationships
@@ -30,23 +31,24 @@ import {
 
 const useStyles = makeStyles(styles);
 
-let usersItems = [];
-
 function Worlds (props) {
   const {
     user,
+    createWorldItems,
+    changeUser,
     translate
   } = props;
 
   const classes = useStyles();
+  const [ init, setInit ] = useState(false);
   const [ worlds, setWorlds ] = useState([]);
-  const [ createWorld, setCreateWorld ] = useState(false);
   const [ newWorld, setNewWorld ] = useState({
     avatar: '',
     name: ''
   });
   const [ newWorldUsers, setNewWorldUsers ] = useState([]);
   const [ newWorldAdmins, setNewWorldAdmins ] = useState([]);
+  const [ usersItems, setUsersItems ] = useState([]);
 
   const handleWorldChange = field => event => {
     setNewWorld({ ...newWorld, [field]: event.target.value });
@@ -91,17 +93,19 @@ function Worlds (props) {
 
   useEffect(() => {
     getWorlds({
-      users: user
+      users: user.id
     }).then((wrlds) => {
       setWorlds(wrlds);
+      createWorldItems(wrlds);
     }).catch((err) => {
       console.log(err);
     });
 
-    getUserRelationships(user)
+    getUserRelationships(user.id)
       .then((rels) => {
+        const items = [];
         rels.forEach((rel) => {
-          usersItems.push({
+          items.push({
             avatar: rel.avatar || true,
             avatarName: rel.name,
             value: rel.id,
@@ -109,31 +113,41 @@ function Worlds (props) {
           });
         });
 
-        if (usersItems && usersItems.length > 0) {
+        setUsersItems([ ...items ]);
+
+        if (items && items.length > 0) {
           worldForm[2].disabled = true;
           worldForm[3].disabled = true;
         }
+
+        setInit(true);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
-  function clickCreateWorld (...args) {
-    console.log(args);
-
+  function clickCreateWorld () {
     createWorld({
       ...newWorld,
       users: [ user.id, ...newWorldUsers ],
       admins: [ user.id, ...newWorldAdmins ]
     }).then((world) => {
+      changeUser({
+        ...user,
+        worlds: [
+          ...user,
+          world
+        ]
+      });
 
+       // TODO: Select new world and redirect to /worlds
     }).catch((err) => {
-
+      console.log(err);
     });
   }
 
-  // TODO:
+  // TODO: On Worlds list
   // * Number of users
   // * Number of games
   // * Number of played games
@@ -155,13 +169,13 @@ function Worlds (props) {
         )} />
         <Route exact path={'/worlds/new'} render={(props) => (
           <div className={clsx(classes.forms)}>
-            <Form
+            {init && <Form
               className={clsx(classes.form)}
               title={translate('worlds.newWorld')}
               fields={worldForm}
               onSubmit={clickCreateWorld}
               submitText={translate('forms.create')}
-            />
+            />}
           </div>
         )} />
       </Switch>
@@ -173,7 +187,7 @@ export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>
     {(login) =>
       <LocaleContext.Consumer>
-        {(locale) => <Worlds {...props} translate={locale.translate} user={login.user.id} currentWorld={login.world} ref={ref} />}
+        {(locale) => <Worlds {...props} translate={locale.translate} user={login.user} changeUser={login.changeUser} currentWorld={login.world} ref={ref} />}
       </LocaleContext.Consumer>
     }
   </LoginContext.Consumer>
