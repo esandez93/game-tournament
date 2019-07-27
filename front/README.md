@@ -30,8 +30,6 @@ This steps will probably have some changes in the moment the real backend and DB
         + Group
 
 - General TODO:
-    * RESPONSIVE [VERY VERY VERY VERY VERY IMPORTANT]
-    * Profile management (info and settings)
     * User list
 
 - Unassigned:
@@ -48,6 +46,9 @@ This steps will probably have some changes in the moment the real backend and DB
         + Message received
         + Message posted on own match or another match you commented on
         + Match created
+        
+- Pending Refactor:
+    * Match Component
 
 
 ### Goals
