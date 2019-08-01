@@ -4,6 +4,7 @@ import Card from './Card';
 import CharacterAvatar from './CharacterAvatar';
 import ContextMenu from './ContextMenu';
 import Form from './Form';
+import Header from './Header';
 import Input from './Input';
 import Loading from './Loading';
 import Match from './Match';
@@ -20,6 +21,7 @@ export {
   CharacterAvatar,
   ContextMenu,
   Form,
+  Header,
   Input,
   Loading,
   Match,

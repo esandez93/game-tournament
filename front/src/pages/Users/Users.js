@@ -28,11 +28,13 @@ function Users (props) {
   const [ users, setUsers ] = useState([]);
 
   useEffect(() => {
-    getUsers(world).then(
-      (data) => setUsers(data),
-      (error) => console.error(error)
-    );
-  }, []);
+    getUsers(world)
+      .then(setUsers)
+      .catch((error) => {
+        setUsers([]);
+        console.error(error)
+      });
+  }, [ world ]);
 
   function getCardHeader(user) {
     return {
@@ -57,7 +59,6 @@ function Users (props) {
     </div>
   );
 }
-
 
 export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>

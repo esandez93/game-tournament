@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import './App.scss';
 import styles from './App.styles';
 
@@ -34,6 +34,9 @@ import {
   AppContext,
   WorkaroundContext
 } from '@/context';
+import {
+  loginReducer
+} from '@/reducers';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
 import * as languages from '@/locale';
@@ -41,9 +44,9 @@ import * as themes from '@/themes';
 import { NotFound } from '@/pages';
 import { withAuth } from '@/hoc';
 import {
+  Header,
   OfflineBadge,
   SideMenu,
-  Select,
   Snackbar
 } from '@/components';
 import { login, logout } from '@/api/auth';
@@ -52,14 +55,6 @@ import { setInvalidTokenCallback } from '@/utils';
 // const DEV_MODE = process.env.NODE_ENV === 'development';
 
 const useStyles = makeStyles(styles);
-
-const initialLoginContext = {
-  logged: false,
-  user: {},
-  worlds: [],
-  world: localStorage.getItem('world') || 'null',
-  game: localStorage.getItem('game') || 'null',
-};
 
 function MultiProvider (props) {
   const {
@@ -78,7 +73,7 @@ function MultiProvider (props) {
           <LocaleContext.Provider value={localeContext}>
             <LoginContext.Provider value={loginContext}>
               <AppContext.Provider value={appContext}>
-                {children}
+                <Route render={(props) => children } />
               </AppContext.Provider>
             </LoginContext.Provider>
           </LocaleContext.Provider>
@@ -90,6 +85,14 @@ function MultiProvider (props) {
 
 const localeExists = (locale) => languages[locale] ? true : false;
 const themeExists = (theme) => themes[theme] ? true : false;
+
+const initialLoginContext = {
+  logged: false,
+  user: {},
+  worlds: [],
+  world: localStorage.getItem('world') || 'null',
+  game: localStorage.getItem('game') || 'null',
+};
 
 function App (props) {
   const {
@@ -116,13 +119,20 @@ function App (props) {
     translate: t
   });
 
-  const [ loginContext, setLoginContext ] = useState({
+  const [ loginContext, loginDispatch ] = useReducer(loginReducer, {
     ...initialLoginContext,
     changeUser,
     login: doLogin,
     logout: doLogout
   });
+  /* const [ loginContext, setLoginContext ] = useState({
+    ...initialLoginContext,
+    changeUser,
+    login: doLogin,
+    logout: doLogout
+  }); */
   const [ appContext, setAppContext ] = useState({
+    page: 'home',
     offline: false,
     sideMenu: {
       isOpen: window.innerWidth > 960
@@ -142,113 +152,99 @@ function App (props) {
   const [ worlds, setWorlds ] = useState([]);
 
   // TODO: Add the error checks also on each view and redirect to home with error alert
-  const menuItems = [{
-    icon: HomeIcon,
-    text: t('sections.home'),
-    url: '/'
-  }, {
-    icon: ProfileIcon,
-    text: t('sections.profile'),
-    url: '/profile',
-    disabled: true
-  }, {
-    icon: WorldsIcon,
-    text: t('sections.worlds'),
-    url: '/worlds'
-  }, {
-    separator: true
-  }, {
-    icon: UsersIcon,
-    text: t('sections.users'),
-    url: '/users',
-    hasError: () => !isWorldSelected(),
-    onClick: () => {
-      let nav = true;
+  const menuItems = [
+    {
+      icon: HomeIcon,
+      text: t('sections.home'),
+      url: '/'
+    }, {
+      icon: ProfileIcon,
+      text: t('sections.profile'),
+      url: '/profile',
+      disabled: true
+    }, {
+      icon: WorldsIcon,
+      text: t('sections.worlds'),
+      url: '/worlds'
+    }, {
+      separator: true
+    }, {
+      icon: UsersIcon,
+      text: t('sections.users'),
+      url: '/users',
+      hasError: () => !isWorldSelected(),
+      onClick: () => {
+        let nav = true;
 
-      if (!isWorldSelected()) {
-        setSnackbar({
-          open: true,
-          message: t('app.errors.noWorld')
-        });
-        nav = false;
+        if (!isWorldSelected()) {
+          setSnackbar({
+            open: true,
+            message: t('app.errors.noWorld')
+          });
+          nav = false;
+        }
+
+        return nav;
       }
+    }, {
+      icon: RankingIcon,
+      text: t('sections.ranking'),
+      url: '/ranking',
+      hasError: () => !isWorldSelected(),
+      onClick: () => {
+        let nav = true;
 
-      return nav;
-    }
-  }, {
-    icon: RankingIcon,
-    text: t('sections.ranking'),
-    url: '/ranking',
-    hasError: () => !isWorldSelected(),
-    onClick: () => {
-      let nav = true;
+        if (!isWorldSelected()) {
+          setSnackbar({
+            open: true,
+            message: t('app.errors.noWorld')
+          });
+          nav = false;
+        }
 
-      if (!isWorldSelected()) {
-        setSnackbar({
-          open: true,
-          message: t('app.errors.noWorld')
-        });
-        nav = false;
+        return nav;
       }
+    }, {
+      icon: MatchesIcon,
+      text: t('sections.matches'),
+      url: '/matches',
+      hasError: () => !isWorldSelected() || !worldHasGames() || !isGameSelected(),
+      onClick: () => {
+        let nav = true;
 
-      return nav;
-    }
-  }, {
-    icon: MatchesIcon,
-    text: t('sections.matches'),
-    url: '/matches',
-    hasError: () => !isWorldSelected() || !worldHasGames() || !isGameSelected(),
-    onClick: () => {
-      let nav = true;
+        if (!isWorldSelected()) {
+          setSnackbar({
+            open: true,
+            message: t('app.errors.noWorld')
+          });
+          nav = false;
+        } else if (!worldHasGames()) {
+          setSnackbar({
+            open: true,
+            message: t('app.errors.currentWorldHasNoGames')
+          });
+          nav = false;
+        } else if (!isGameSelected()) {
+          setSnackbar({
+            open: true,
+            message: t('app.errors.noGame')
+          });
+          nav = false;
+        }
 
-      if (!isWorldSelected()) {
-        setSnackbar({
-          open: true,
-          message: t('app.errors.noWorld')
-        });
-        nav = false;
-      } else if (!worldHasGames()) {
-        setSnackbar({
-          open: true,
-          message: t('app.errors.currentWorldHasNoGames')
-        });
-        nav = false;
-      } else if (!isGameSelected()) {
-        setSnackbar({
-          open: true,
-          message: t('app.errors.noGame')
-        });
-        nav = false;
+        return nav;
       }
-
-      return nav;
+    }, {
+      separator: true
+    }, {
+      icon: SettingsIcon,
+      text: t('sections.settings'),
+      url: '/settings'
     }
-  }, {
-    separator: true
-  }, {
-    icon: SettingsIcon,
-    text: t('sections.settings'),
-    url: '/settings'
-  }];
+  ];
 
   function changeUser (user) {
-    setLoginContext((state) => {
-      const newUser = {
-        ...state,
-        user: {
-          ...state.user,
-          ...user,
-          settings: {
-            ...state.user.settings,
-            ...user.settings
-          }
-        }
-      };
-
-      localStorage.setItem('user', newUser);
-
-      return newUser
-    });
+    loginDispatch({ type: 'changeUser', user });
   }
 
   function changeLocale (locale) {
@@ -289,39 +285,11 @@ function App (props) {
   }
 
   function selectWorld (world) {
-    if (world === 'new') {
-      localStorage.removeItem('world');
-      history.push('/worlds/new');
-    } else if (world === 'null') {
-      localStorage.removeItem('world');
-    } else {
-      localStorage.setItem('world', world);
-    }
-
-    if (world !== 'new') {
-      setLoginContext({
-        ...loginContext,
-        world
-      });
-    }
+    loginDispatch({ type: 'changeWorld', world, history });
   }
 
   function selectGame (game) {
-    if (game === 'new') {
-      localStorage.removeItem('game');
-      // history.push('/games/new');
-    } else if (game === 'null') {
-      localStorage.removeItem('game');
-    } else {
-      localStorage.setItem('game', game);
-    }
-
-    if (game !== 'new') {
-      setLoginContext({
-        ...loginContext,
-        game
-      });
-    }
+    loginDispatch({ type: 'changeGame', game, history });
   }
 
   function initUserValues(user) {
@@ -413,11 +381,7 @@ function App (props) {
 
         localStorage.setItem('user', JSON.stringify(_user));
 
-        setLoginContext({
-          ...loginContext,
-          logged: true,
-          user: _user
-        });
+        loginDispatch({ type: 'login', user: _user });
 
         changeLocale(_user.settings.locale);
         changeTheme(_user.settings.theme);
@@ -434,11 +398,6 @@ function App (props) {
         localStorage.removeItem('game'); */
 
         history.push('/login');
-        setLoginContext({
-          ...loginContext,
-          user: {},
-          logged: false
-        });
       })
       .catch(console.error);
   }
@@ -472,18 +431,33 @@ function App (props) {
   }, [ loginContext.user.worlds ]);
 
   useEffect(() => {
-    if (!loginContext.user.worlds || !isWorldSelected()) { return; }
+    if (!loginContext.user.worlds || !isWorldSelected()) {
+      createGameItems([]);
+      selectGame('null');
+    } else {
+      loginContext.user.worlds.forEach((world) => {
+        if (world.id === loginContext.world) {
+          createGameItems(world.games);
 
-    loginContext.user.worlds.forEach((world) => {
-      if (world.id === loginContext.world) {
-        createGameItems(world.games);
-
-        if (!world.games || world.games.length === 0) {
-          selectGame('null');
+          if (!world.games || world.games.length === 0) {
+            selectGame('null');
+          }
         }
-      }
-    });
+      });
+    }
   }, [ loginContext.world, loginContext.user.worlds ]);
+
+  useEffect(() => {
+    if (JSON.stringify(loginContext.user) === '{}') {
+      const user = localStorage.getItem('user');
+
+      if (user && user[0] === '{') {
+        loginDispatch({ type: 'login', user: JSON.parse(user) });
+      } else if (loginContext.logged) {
+        doLogout();
+      }
+    }
+  }, [ loginContext.user, localStorage.getItem('user') ]);
 
   useEffect(() => {
     window.addEventListener('online', setOfflineStatus);
@@ -504,16 +478,14 @@ function App (props) {
       if (loginContext.logged !== value && (value === true || value === false)) {
 
         // TODO: Maybe do a get user?
-        setLoginContext({
-          ...loginContext,
-          logged: value
-        });
+        loginDispatch({ type: 'setLogged', logged: value });
       }
     }
 
     const _routed = routes.map((route, index) => {
       const Routed = route.auth ? withAuth(route.component, setLogin) : route.component;
-      let params = {};
+      let params = {
+      };
 
       if (route.path.includes('/worlds')) {
         params.createWorldItems = createWorldItems;
@@ -531,22 +503,6 @@ function App (props) {
       window.removeEventListener('offline', setOfflineStatus);
     }
   }, []);
-
-  useEffect(() => {
-    if (JSON.stringify(loginContext.user) === '{}') {
-      const user = localStorage.getItem('user');
-
-      if (user && user[0] === '{') {
-        setLoginContext({
-          ...loginContext,
-          logged: true,
-          user: JSON.parse(user)
-        });
-      } else if (loginContext.logged) {
-        doLogout();
-      }
-    }
-  }, [ loginContext.user, localStorage.getItem('user') ]);
 
   return (
     <MultiProvider
@@ -577,24 +533,18 @@ function App (props) {
           }}
         />
         <div className={clsx(classes.container)}>
-          {loginContext.logged && <div className={clsx(classes.selectors)}>
-            {worlds && worlds.length > 0 && <Select
-              className={clsx(classes.selector)}
-              label={localeContext.translate('entities.world')}
-              items={worlds}
-              value={loginContext.world}
-              onChange={(e) => selectWorld(e.target.value)}
-              inputProps={{ className: classes.selectorInput }}
-            />}
-            {games && games.length > 0 && isWorldSelected() && <Select
-              className={clsx(classes.selector)}
-              label={localeContext.translate('entities.game')}
-              items={games}
-              value={loginContext.game}
-              onChange={(e) => selectGame(e.target.value)}
-              inputProps={{ className: classes.selectorInput }}
-            />}
-          </div>}
+          <Route render={(props) =>
+            <Header
+              logged={loginContext.logged}
+              toggleSideMenu={toggleSideMenu}
+              title={t(`sections.${appContext.page}`)}
+              worlds={worlds}
+              selectWorld={selectWorld}
+              games={games}
+              selectGame={selectGame}
+              {...props}
+            />
+          } />
           <Switch>
             {routed}
             <Route component={NotFound} />

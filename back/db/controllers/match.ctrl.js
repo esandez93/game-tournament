@@ -24,7 +24,7 @@ function findById (id, world, game) {
 function create (body) {
   return new Promise((resolve, reject) => {
     let match = Match.populate(body);
-    match.creationDate = moment.now().utc();
+    match.creationDate = moment().utc();
     match.lastUpdate = match.creationDate;
     match.save()
       .then(newMatch => {

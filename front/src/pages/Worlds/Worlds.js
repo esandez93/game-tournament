@@ -9,10 +9,12 @@ import {
 
 import { makeStyles } from '@material-ui/core/styles';
 import {
+  Chip,
   Typography
 } from '@material-ui/core';
 
 import {
+  Avatar,
   Button,
   Card,
   Form
@@ -50,10 +52,23 @@ function Worlds (props) {
   const [ newWorldAdmins, setNewWorldAdmins ] = useState([]);
   const [ usersItems, setUsersItems ] = useState([]);
 
+  const chipRenderValue = (selected) => (
+    <div className={classes.chips}>
+      {selected.map(value => (
+        <Chip
+          key={value.id}
+          className={classes.chip}
+          label={value.name}
+          avatar={<Avatar className={classes.chipAvatar} src={value.avatar} name={value.name} />}
+        />
+      ))}
+    </div>
+  );
+
   const handleWorldChange = field => event => {
     setNewWorld({ ...newWorld, [field]: event.target.value });
   };
-  // TODO: Change renderValue to use Chips. Update Select component to allow it.
+
   const worldForm = [{
     type: 'input',
     inputType: 'text',
@@ -74,7 +89,7 @@ function Worlds (props) {
     label: translate('worlds.users'),
     items: usersItems,
     value: newWorldUsers,
-    renderValue: (selected) => selected.join(', '),
+    renderValue: chipRenderValue,
     onChange: event => {
       setNewWorldUsers(event.target.value);
     }
@@ -85,7 +100,7 @@ function Worlds (props) {
     label: translate('worlds.admins'),
     items: usersItems,
     value: newWorldAdmins,
-    renderValue: (selected) => selected.join(', '),
+    renderValue: chipRenderValue,
     onChange: event => {
       setNewWorldAdmins(event.target.value);
     }
@@ -108,7 +123,7 @@ function Worlds (props) {
           items.push({
             avatar: rel.avatar || true,
             avatarName: rel.name,
-            value: rel.id,
+            value: rel,
             text: <span><strong>{rel.name}</strong>  -  <em>{rel.username}</em></span>
           });
         });
@@ -128,10 +143,18 @@ function Worlds (props) {
   }, []);
 
   function clickCreateWorld () {
+    console.log(newWorldUsers);
+    console.log(newWorldAdmins);
+    const users = newWorldUsers.map(usr => usr.id);
+    const admins = newWorldAdmins.map(admin => admin.id);
+
+    console.log(users);
+    console.log(admins)
+
     createWorld({
       ...newWorld,
-      users: [ user.id, ...newWorldUsers ],
-      admins: [ user.id, ...newWorldAdmins ]
+      users: [ user.id, ...users ],
+      admins: [ user.id, ...admins ]
     }).then((world) => {
       changeUser({
         ...user,

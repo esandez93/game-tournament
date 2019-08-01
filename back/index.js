@@ -9,6 +9,8 @@ const modules = [
   './middleware',
   './routes',
   './server',
+
+  // The error handler is always the last
   './error-handler'
 ]
 

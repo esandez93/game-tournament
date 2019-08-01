@@ -25,7 +25,7 @@ function findById (id) {
 function create (body) {
   return new Promise((resolve, reject) => {
     let user = User.populate(body);
-    user.creationDate = moment.now().utc();
+    user.creationDate = moment().utc();
     user.lastUpdate = user.creationDate;
     user.save()
       .then(newUser => {
@@ -41,7 +41,7 @@ function update (id, body) {
   return new Promise((resolve, reject) => {
     findById(id)
       .then(user => {
-        body.lastUpdate = moment.now().utc();
+        body.lastUpdate = moment().utc();
         user.update(body)
           .then(resolve)
           .catch(reject);

@@ -35,7 +35,9 @@ router.post('/', withAuth, (req, res) => {
         .then(() => res.status(200).json(world))
         .catch(err => res.status(500).json(err))
     })
-    .catch(err => res.status(500).json(err));
+    .catch(err => {
+      // return res.status(500).send(err);
+    });
 });
 
 router.put('/:id', withAuth, (req, res) => {

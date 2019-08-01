@@ -25,16 +25,31 @@ function findById (id) {
 function create (body) {
   // TODO: Check that every admin is also a user
   return new Promise((resolve, reject) => {
+    body.creationDate = moment().utc();
+    body.lastUpdate = body.creationDate;
+
     let world = World.populate(body);
-    world.creationDate = moment.now().utc();
-    world.lastUpdate = world.creationDate;
-    world.save()
-      .then(newWorld => {
-        findById(newWorld._id)
-          .then(resolve)
-          .catch(reject);
-      })
-      .catch(reject);
+
+    const result = world.save((error) => {
+      console.log(JSON.stringify(error))
+      // TODO: Create Mongoose Error handling (ValidationError)
+      if (error.name === 'ValidationError') {
+        // reject(new ValidationError(''));
+      }
+
+      debug.extend('error')(error);
+      reject(error);
+    })
+
+    if (result) {
+      result.then(newWorld => {
+          debug(newWorld)
+          findById(newWorld._id)
+            .then(resolve)
+            .catch(reject);
+        })
+        .catch(reject);
+    }
   });
 }
 
@@ -43,7 +58,7 @@ function update (id, body) {
   return new Promise((resolve, reject) => {
     findById(id)
       .then(world => {
-        body.lastUpdate = moment.now().utc();
+        body.lastUpdate = moment().utc();
         world.update(body)
           .then(resolve)
           .catch(reject);
