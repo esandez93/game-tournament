@@ -32,7 +32,7 @@ function Users (props) {
       .then(setUsers)
       .catch((error) => {
         setUsers([]);
-        console.error(error)
+        console.error(error);
       });
   }, [ world ]);
 

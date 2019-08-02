@@ -71,15 +71,14 @@ function loginReducer (state, action) {
         ...state,
         user: {
           ...state.user,
-          ...action.user,
-          settings: {
-            ...state.user.settings,
-            ...action.user.settings
-          }
+          ...action.user
         }
       };
 
-      localStorage.setItem('user', newUser);
+      localStorage.setItem('user', JSON.stringify({
+        ...state.user,
+        ...action.user
+      }));
       return {
         ...newUser
       };

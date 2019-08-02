@@ -90,7 +90,7 @@ router.post('/', (req, res) => {
 router.post('/:id', (req, res) => {
   const { id } = req.params;
 
-  User.model.update({ _id: id }, { ...req.body })
+  User.model.updateOne({ _id: id }, { ...req.body })
     .then((res) =>
       User.model.findById(id).populate({
         path: 'worlds',

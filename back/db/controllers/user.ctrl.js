@@ -27,6 +27,7 @@ function create (body) {
     let user = User.populate(body);
     user.creationDate = moment().utc();
     user.lastUpdate = user.creationDate;
+
     user.save()
       .then(newUser => {
         findById(newUser._id)
@@ -42,7 +43,7 @@ function update (id, body) {
     findById(id)
       .then(user => {
         body.lastUpdate = moment().utc();
-        user.update(body)
+        user.updateOne(body)
           .then(resolve)
           .catch(reject);
       })

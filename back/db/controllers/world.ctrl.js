@@ -30,26 +30,22 @@ function create (body) {
 
     let world = World.populate(body);
 
-    const result = world.save((error) => {
-      console.log(JSON.stringify(error))
-      // TODO: Create Mongoose Error handling (ValidationError)
-      if (error.name === 'ValidationError') {
-        // reject(new ValidationError(''));
-      }
+    world.save()
+      .then((newWorld) => findById(newWorld._id))
+      .then((newWorld) => {
+        updateUsers(newWorld)
+          .then(() => resolve(newWorld));
+      })
+      .catch((error) => {
+        console.log(JSON.stringify(error))
+        // TODO: Create Mongoose Error handling (ValidationError)
+        if (error && error.name === 'ValidationError') {
+          // reject(new ValidationError(''));
+        }
 
-      debug.extend('error')(error);
-      reject(error);
-    })
-
-    if (result) {
-      result.then(newWorld => {
-          debug(newWorld)
-          findById(newWorld._id)
-            .then(resolve)
-            .catch(reject);
-        })
-        .catch(reject);
-    }
+        debug.extend('error')(error);
+        reject(error);
+      });
   });
 }
 
@@ -59,7 +55,7 @@ function update (id, body) {
     findById(id)
       .then(world => {
         body.lastUpdate = moment().utc();
-        world.update(body)
+        world.updateOne(body)
           .then(resolve)
           .catch(reject);
       })
@@ -83,20 +79,17 @@ function updateUsers (world) {
 
     Object.keys(people).forEach((userId) => {
       let worlds = [ ...people[userId].worlds ];
-      if (!worlds.includes(world.id))
+      if (!worlds.includes(world.id)) {
         worlds.push(world.id);
+      }
 
-      debug('updating user', userId);
-      UserController.update(userId, {})
+      UserController.update(userId, { worlds })
         .then((user) => {
           users.push(user);
-          debug('updated user');
-          debug(user)
         })
         .catch(reject);
     });
 
-    debug('end')
     resolve(users);
   });
 }

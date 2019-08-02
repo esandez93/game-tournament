@@ -89,7 +89,6 @@ const themeExists = (theme) => themes[theme] ? true : false;
 const initialLoginContext = {
   logged: false,
   user: {},
-  worlds: [],
   world: localStorage.getItem('world') || 'null',
   game: localStorage.getItem('game') || 'null',
 };
@@ -453,7 +452,7 @@ function App (props) {
 
       if (user && user[0] === '{') {
         loginDispatch({ type: 'login', user: JSON.parse(user) });
-      } else if (loginContext.logged) {
+      } else {
         doLogout();
       }
     }
@@ -489,6 +488,7 @@ function App (props) {
 
       if (route.path.includes('/worlds')) {
         params.createWorldItems = createWorldItems;
+        params.selectWorld = selectWorld;
       }
 
       return <Route key={index} exact path={route.path} render={(props) => <Routed {...props} {...params} />} />

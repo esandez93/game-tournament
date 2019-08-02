@@ -38,7 +38,10 @@ function Worlds (props) {
     user,
     createWorldItems,
     changeUser,
-    translate
+    translate,
+    selectWorld,
+    history,
+    ...other
   } = props;
 
   const classes = useStyles();
@@ -143,28 +146,29 @@ function Worlds (props) {
   }, []);
 
   function clickCreateWorld () {
-    console.log(newWorldUsers);
-    console.log(newWorldAdmins);
     const users = newWorldUsers.map(usr => usr.id);
     const admins = newWorldAdmins.map(admin => admin.id);
-
-    console.log(users);
-    console.log(admins)
 
     createWorld({
       ...newWorld,
       users: [ user.id, ...users ],
       admins: [ user.id, ...admins ]
     }).then((world) => {
+      setWorlds([
+        ...worlds,
+        world
+      ]);
+
       changeUser({
         ...user,
         worlds: [
-          ...user,
+          ...user.worlds,
           world
         ]
       });
 
-       // TODO: Select new world and redirect to /worlds
+      selectWorld(world.id);
+      history.push('/worlds');
     }).catch((err) => {
       console.log(err);
     });

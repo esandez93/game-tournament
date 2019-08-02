@@ -28,15 +28,10 @@ router.get('/:id', withAuth, (req, res) => {
 router.post('/', withAuth, (req, res) => {
   WorldController.create(req.body)
     .then(world => {
-      debug('post: created world');
-      // TODO: Should this be async and send the response while updateing the users in background ?
-
-      WorldController.updateUsers(world)
-        .then(() => res.status(200).json(world))
-        .catch(err => res.status(500).json(err))
+      return res.status(200).json(world);
     })
     .catch(err => {
-      // return res.status(500).send(err);
+      return res.status(500).send(err);
     });
 });
 
