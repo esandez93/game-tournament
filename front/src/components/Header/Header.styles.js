@@ -13,7 +13,7 @@ export default (theme) => ({
     top: 0
   },
   selector: {
-    zIndex: 1
+    marginTop: `${theme.spacing(1.5)}px`
   },
   selectorInput: {
     height: `${theme.spacing(6)}px`,

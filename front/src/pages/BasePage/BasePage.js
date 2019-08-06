@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { useEffect } from 'react';
 import styles from './BasePage.styles';
 
 import clsx from 'clsx';
@@ -6,12 +6,12 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 
 import {
-  LoginContext,
-  LocaleContext,
-  AppContext
+  AppContext,
+  LocaleContext
 } from '@/context';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
+import { cleanString } from '@/utils';
 
 const useStyles = makeStyles(styles);
 
@@ -19,7 +19,8 @@ function BasePage (props) {
   const {
     component: Component,
     name,
-    toggleSideMenu,
+    setTitle,
+    translate,
     WorldSelector,
     GameSelector,
     ...other
@@ -34,26 +35,23 @@ function BasePage (props) {
     }
   }))();
 
+  useEffect(() => {
+    setTitle(translate(`sections.${cleanString(name).toLowerCase()}`));
+  } ,[]);
+
   return (
-    <LoginContext.Consumer>
-      {(login) =>
-        <AppContext.Consumer>
-          {({ toggleSideMenu }) =>
-            <LocaleContext.Consumer>
-              {(locale) => (
-                <Fragment>
-                  <div className={classes.root}>
-                    <Component className={clsx('Page', moreClasses.page)} {...other} />
-                  </div>
-                </Fragment>
-                )
-              }
-            </LocaleContext.Consumer>
-          }
-        </AppContext.Consumer>
-      }
-    </LoginContext.Consumer>
+    <div className={classes.root}>
+      <Component className={clsx('Page', moreClasses.page)} {...other} />
+    </div>
   );
 }
 
-export default BasePage;
+export default React.forwardRef((props, ref) => (
+  <AppContext.Consumer>
+    {(app) =>
+      <LocaleContext.Consumer>
+        {(locale) => <BasePage {...props} setTitle={app.setTitle} translate={locale.translate} ref={ref} />}
+      </LocaleContext.Consumer>
+    }
+  </AppContext.Consumer>
+));

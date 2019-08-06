@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import styles from './Worlds.styles';
 
 import clsx from 'clsx';
@@ -185,17 +185,21 @@ function Worlds (props) {
     <div className={clsx('Worlds', className, classes.root)}>
       <Switch>
         <Route exact path={'/worlds'} render={(props) => (
-          <div className={clsx(classes.worlds)}>
+          <Fragment>
             <Card className={clsx(classes.card, classes.newWorldCard)}>
               <Button color="primary" onClick={() => history.push('/worlds/new')}>{translate('worlds.newWorld')}</Button>
             </Card>
-            {worlds.map((world) => (
-              <Card key={world.id} className={clsx(classes.card, classes.worldCard)}>
-                <Avatar src={world.avatar} name={world.name} />
-                <Typography>{world.name}</Typography>
-              </Card>
-            ))}
-          </div>
+
+            <div className={clsx(classes.worlds)}>
+              {worlds.map((world) => (
+                <Card key={world.id} className={clsx(classes.card, classes.worldCard)}>
+                  <Avatar src={world.avatar} name={world.name} />
+                  <Typography>{world.name}</Typography>
+                  <Button color="primary" onClick={() => history.push(`/worlds/${world.id}`)}>{translate('details')}</Button>
+                </Card>
+              ))}
+            </div>
+          </Fragment>
         )} />
         <Route exact path={'/worlds/new'} render={(props) => (
           <div className={clsx(classes.forms)}>
@@ -208,8 +212,7 @@ function Worlds (props) {
             />}
           </div>
         )} />
-        <Route exact path={'/worlds/:id'} component={WorldPage} />
-        {/*<Route exact path={'/worlds/:id/games'} component={GamesPage} />*/}
+        <Route exact path={'/worlds/:id/:tab?'} component={WorldPage} />
       </Switch>
     </div>
   );

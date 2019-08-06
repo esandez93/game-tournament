@@ -130,6 +130,8 @@ function App (props) {
   });
   const [ appContext, appDispatch ] = useReducer(appReducer, {
     ...initialAppContext,
+    setTitle,
+    setHeader,
     sideMenu: {
       ...initialAppContext.sideMenu,
       toggleSideMenu
@@ -262,6 +264,14 @@ function App (props) {
 
   function toggleSideMenu () {
     appDispatch({ type: 'toggleSideMenu' });
+  }
+
+  function setTitle (title) {
+    appDispatch({ type: 'setTitle', title });
+  }
+
+  function setHeader (header) {
+    appDispatch({ type: 'setHeader', header });
   }
 
   function setOfflineStatus () {

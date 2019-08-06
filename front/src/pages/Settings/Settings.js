@@ -77,7 +77,7 @@ function Settings (props) {
   const [ lastSavedTheme, setLastSavedTheme ] = useState(currentTheme);
   const [ lastSavedLocale, setLastSavedLocale ] = useState(currentLocale);
   const [ errors, setErrors ] = useState([]);
-  const [ tab, setTab ] = useState(match.params ? paths[match.params.tab] : 0);
+  const [ tab, setTab ] = useState(match.params && match.params.tab ? paths[match.params.tab] : 0);
   const [ snackbar, setSnackbar ] = useState({
     open: false,
     message: null
@@ -145,6 +145,7 @@ function Settings (props) {
   };
   const handleTabChange = (event, selected) => {
     setTab(selected);
+
     let page = null;
     switch (selected) {
       default:

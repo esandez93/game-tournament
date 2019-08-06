@@ -15,6 +15,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 
 import { Select } from '@/components';
 import {
+  AppContext,
   LocaleContext,
   LoginContext
 } from '@/context';
@@ -41,6 +42,7 @@ function Selectors (props) {
           {(login) => (
             <div className={clsx(classes.selectors)}>
               <Select
+                className={clsx(classes.selector)}
                 label={locale.translate('entities.world')}
                 items={worlds}
                 value={login.world}
@@ -50,6 +52,7 @@ function Selectors (props) {
               />
 
               <Select
+                className={clsx(classes.selector)}
                 label={locale.translate('entities.game')}
                 items={games}
                 value={login.game}
@@ -68,7 +71,6 @@ function Selectors (props) {
 function Header (props) {
   const {
     className,
-    // title,
     toggleSideMenu,
     logged,
     worlds,
@@ -77,28 +79,44 @@ function Header (props) {
     selectGame,
     staticContext,
     location,
+    title,
+    HeaderComp,
     ...other
   } = props;
 
   const classes = useStyles();
   const size = useWindowSize();
 
-  const [ title, setTitle ] = useState();
-
-  useEffect(() => {
-    const section = `sections.${cleanString(location.pathname.split('/')[1]) || 'home'}`;
-
-    if (section !== title) {
-      setTitle(section);
-    }
-  }, [ location.pathname ]);
-
   return logged ?
-    <LocaleContext.Consumer>
-      {(locale) => (
-        size.width > breakpoints.m ? (
-          <div className={clsx('Header', className, classes.header)} {...other}>
-            {title !== 'Login' && <Typography className={clsx(classes.title)} variant="h4">{locale.translate(title)}</Typography>}
+      size.width > breakpoints.m ? (
+        <div className={clsx('Header', className, classes.header)} {...other}>
+          {HeaderComp
+            ? <HeaderComp className={clsx(classes.title)} title={title} />
+            : <Typography className={clsx(classes.title)} variant="h4">{title}</Typography>
+          }
+
+          <Selectors
+            worlds={worlds}
+            selectWorld={selectWorld}
+            games={games}
+            selectGame={selectGame}
+          />
+        </div>
+      ) : (
+        <AppBar position="fixed" className={clsx('Header', className, classes.appBar)} {...other}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="Open drawer"
+              edge="start"
+              onClick={toggleSideMenu}
+              className={classes.menuButton}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap>
+              {title}
+            </Typography>
 
             <Selectors
               worlds={worlds}
@@ -106,35 +124,19 @@ function Header (props) {
               games={games}
               selectGame={selectGame}
             />
-          </div>
-        ) : (
-          <AppBar position="fixed" className={clsx('Header', className, classes.appBar)} {...other}>
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                aria-label="Open drawer"
-                edge="start"
-                onClick={toggleSideMenu}
-                className={classes.menuButton}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" noWrap>
-                {locale.translate(title)}
-              </Typography>
-
-              <Selectors
-                worlds={worlds}
-                selectWorld={selectWorld}
-                games={games}
-                selectGame={selectGame}
-              />
-            </Toolbar>
-          </AppBar>
-        )
-      )}
-    </LocaleContext.Consumer>
+          </Toolbar>
+        </AppBar>
+      )
     : <div></div>
 }
 
-export default Header;
+export default React.forwardRef((props, ref) => (
+  <AppContext.Consumer>
+    {(app) =>
+      <LocaleContext.Consumer>
+        {(locale) => <Header {...props} title={app.title} HeaderComp={app.header} ref={ref} />}
+      </LocaleContext.Consumer>
+    }
+  </AppContext.Consumer>
+));
+

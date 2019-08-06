@@ -27,6 +27,20 @@ function appReducer (state, action) {
       }
     }
 
+    case 'setHeader': {
+      return {
+        ...state,
+        header: action.header
+      }
+    }
+
+    case 'setTitle': {
+      return {
+        ...state,
+        title: action.title
+      }
+    }
+
     default: {
       break;
     }

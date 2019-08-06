@@ -21,19 +21,25 @@ const useStyles = makeStyles(styles);
 
 function Users (props) {
   const {
-    world
+    className,
+    world,
+    users: worldUsers
   } = props;
 
   const classes = useStyles();
-  const [ users, setUsers ] = useState([]);
+  const [ users, setUsers ] = useState(worldUsers || []);
 
   useEffect(() => {
-    getUsers(world)
-      .then(setUsers)
-      .catch((error) => {
-        setUsers([]);
-        console.error(error);
-      });
+    if (world) {
+      getUsers(world)
+        .then(setUsers)
+        .catch((error) => {
+          setUsers([]);
+          console.error(error);
+        });
+    } else if (!worldUsers) {
+      // TODO: Show error
+    }
   }, [ world ]);
 
   function getCardHeader(user) {
@@ -47,8 +53,10 @@ function Users (props) {
     };
   }
 
+  // TODO: Check if BasePage's styles can be overwritten easily from outside
+  // TODO: Create user detail page and enter from here
   return (
-    <div className={clsx('Users', props.className)}>
+    <div className={clsx('Users', className)}>
       {users.map((user) => (
         <Card
           className={clsx(classes.card)}

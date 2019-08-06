@@ -28,11 +28,17 @@ export default (theme) => ({
     height: `${theme.spacing(4)}px`,
     width: `${theme.spacing(4)}px`
   },
-  card: {
+  worlds: {
+    display: 'flex',
+    flexWrap: 'wrap',
 
   },
+  card: {
+    margin: `${theme.spacing(1)}px`
+  },
   worldCard: {
-
+    flex: '1',
+    minWidth: '300px'
   },
   newWorldCard: {
     display: 'flex',
