@@ -54,7 +54,7 @@ function Card (props) {
       <CardContent>
         {children}
       </CardContent>
-      <CardActions disableSpacing>
+      {actions && actions.length > 0 && <CardActions disableSpacing>
         {actions.map((action, index) => (
           <IconButton key={index} aria-label={action.title} onClick={action.onClick}>
             {action.icon}
@@ -72,7 +72,7 @@ function Card (props) {
             <ExpandMoreIcon />
           </IconButton>
         }
-      </CardActions>
+      </CardActions>}
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
 

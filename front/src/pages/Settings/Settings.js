@@ -87,10 +87,13 @@ function Settings (props) {
 
   const moreClasses = makeStyles((theme) => ({
     root: {
-      paddingTop: size.width < breakpoints.m ? theme.spacing(15) : theme.spacing(12)
+      paddingTop: size.width > breakpoints.m ? theme.spacing(8) : theme.spacing(15)
     },
     tabs: {
-      top: size.width > 600 ? theme.spacing(8) : theme.spacing(7)
+      // The hardcoded 600 is because MUI AppBar has a breakpoint at 600px
+      // where it has 8px more of height
+      top: size.width > breakpoints.m ? theme.spacing(0) :
+        size.width < 600 ? theme.spacing(7) : theme.spacing(8)
     },
     forms: {
       flexDirection: size.width >= breakpoints.l ? 'row' : 'column',

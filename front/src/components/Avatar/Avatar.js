@@ -17,6 +17,7 @@ function Avatar(props) {
     src,
     name,
     size,
+    shape,
     ...other
   } = props;
 
@@ -41,7 +42,8 @@ function Avatar(props) {
     <MuiAvatar className={clsx('Avatar', className, {
       [ classes.small ]: size === 'small',
       [ classes.default ]: size === 'default',
-      [ classes.big ]: size === 'big'
+      [ classes.big ]: size === 'big',
+      [ classes.square ]: shape === 'square'
     })} src={src} {...other}>
       {getFallback()}
     </MuiAvatar>

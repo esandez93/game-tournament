@@ -27,5 +27,15 @@ export default (theme) => ({
   chipAvatar: {
     height: `${theme.spacing(4)}px`,
     width: `${theme.spacing(4)}px`
+  },
+  card: {
+
+  },
+  worldCard: {
+
+  },
+  newWorldCard: {
+    display: 'flex',
+    justifyContent: 'center'
   }
 });

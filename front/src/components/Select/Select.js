@@ -67,13 +67,14 @@ function Select (props) {
       items.forEach((item, index) => {
         _menuItems.push(
           <MenuItem className={clsx(classes.item)} key={index+item.text} value={item.value}>
-            {item.avatar &&
+            {(item.avatar || item.avatarName) &&
               <Avatar
                 className={clsx(classes.itemAvatar)}
                 src={item.avatar === true ? null : item.avatar}
                 name={item.avatarName}
                 size={item.avatarSize || 'small'}
                 alt={`${item.avatarName || item.text} avatar`}
+                shape={item.shape || 'square'}
               />
             }
             {item.image && <img className={clsx(classes.itemImage)} src={item.image} alt="logo" />}

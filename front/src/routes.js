@@ -11,11 +11,6 @@ import {
 } from '@/pages';
 
 export default [{
-  path: '/',
-  tKey: 'home',
-  component: Home,
-  auth: true
-}, {
   path: '/login',
   tKey: 'login',
   component: Login
@@ -48,7 +43,12 @@ export default [{
   component: Users,
   auth: true
 }, {
-  path: '/worlds/:action?',
+  path: '/worlds',
   tKey: 'worlds',
   component: Worlds
+}, {
+  path: '/',
+  tKey: 'home',
+  component: Home,
+  auth: true
 }];

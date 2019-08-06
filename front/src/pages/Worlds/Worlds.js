@@ -30,18 +30,21 @@ import {
 import {
   getUserRelationships
 } from '@/api/users';
+import {
+  World as WorldPage
+} from '@/pages';
 
 const useStyles = makeStyles(styles);
 
 function Worlds (props) {
   const {
+    className,
     user,
     createWorldItems,
     changeUser,
     translate,
     selectWorld,
-    history,
-    ...other
+    history
   } = props;
 
   const classes = useStyles();
@@ -179,16 +182,16 @@ function Worlds (props) {
   // * Number of games
   // * Number of played games
   return (
-    <div className={clsx('Worlds', props.className, classes.root)}>
+    <div className={clsx('Worlds', className, classes.root)}>
       <Switch>
         <Route exact path={'/worlds'} render={(props) => (
           <div className={clsx(classes.worlds)}>
-            <Card className={clsx(classes.world)}>
-              <Button color="primary" onClick={() => props.history.push('/worlds/new')}>{translate('worlds.newWorld')}</Button>
+            <Card className={clsx(classes.card, classes.newWorldCard)}>
+              <Button color="primary" onClick={() => history.push('/worlds/new')}>{translate('worlds.newWorld')}</Button>
             </Card>
             {worlds.map((world) => (
-              <Card key={world.id} className={clsx(classes.world)}>
-                <img src={world.avatar} alt={`${world.name} avatar`} />
+              <Card key={world.id} className={clsx(classes.card, classes.worldCard)}>
+                <Avatar src={world.avatar} name={world.name} />
                 <Typography>{world.name}</Typography>
               </Card>
             ))}
@@ -205,6 +208,8 @@ function Worlds (props) {
             />}
           </div>
         )} />
+        <Route exact path={'/worlds/:id'} component={WorldPage} />
+        {/*<Route exact path={'/worlds/:id/games'} component={GamesPage} />*/}
       </Switch>
     </div>
   );

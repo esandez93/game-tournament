@@ -31,10 +31,10 @@ import {
   ThemeContext,
   LocaleContext,
   LoginContext,
-  AppContext,
-  WorkaroundContext
+  AppContext
 } from '@/context';
 import {
+  appReducer,
   loginReducer
 } from '@/reducers';
 import { useWindowSize } from '@/hooks';
@@ -58,7 +58,6 @@ const useStyles = makeStyles(styles);
 
 function MultiProvider (props) {
   const {
-    workaroundContext,
     themeContext,
     localeContext,
     loginContext,
@@ -67,19 +66,17 @@ function MultiProvider (props) {
   } = props;
 
   return (
-    <WorkaroundContext.Provider value={workaroundContext}>
-      <ThemeContext.Provider value={themeContext}>
-        <ThemeProvider theme={themeContext.theme}>
-          <LocaleContext.Provider value={localeContext}>
-            <LoginContext.Provider value={loginContext}>
-              <AppContext.Provider value={appContext}>
-                <Route render={(props) => children } />
-              </AppContext.Provider>
-            </LoginContext.Provider>
-          </LocaleContext.Provider>
-        </ThemeProvider>
-      </ThemeContext.Provider>
-    </WorkaroundContext.Provider>
+    <ThemeContext.Provider value={themeContext}>
+      <ThemeProvider theme={themeContext.theme}>
+        <LocaleContext.Provider value={localeContext}>
+          <LoginContext.Provider value={loginContext}>
+            <AppContext.Provider value={appContext}>
+              <Route render={(props) => children } />
+            </AppContext.Provider>
+          </LoginContext.Provider>
+        </LocaleContext.Provider>
+      </ThemeProvider>
+    </ThemeContext.Provider>
   );
 }
 
@@ -91,6 +88,14 @@ const initialLoginContext = {
   user: {},
   world: localStorage.getItem('world') || 'null',
   game: localStorage.getItem('game') || 'null',
+};
+
+const initialAppContext = {
+  page: 'home',
+  offline: false,
+  sideMenu: {
+    isOpen: window.innerWidth > 960
+  }
 };
 
 function App (props) {
@@ -106,7 +111,7 @@ function App (props) {
 
   const size = useWindowSize();
   const classes = useStyles();
-  const [ routed, setRouted ] = useState([]);
+
   const [ themeContext, setThemeContext ] = useState({
     name: storageTheme,
     theme: themes[storageTheme],
@@ -117,32 +122,21 @@ function App (props) {
     changeLocale,
     translate: t
   });
-
   const [ loginContext, loginDispatch ] = useReducer(loginReducer, {
     ...initialLoginContext,
     changeUser,
     login: doLogin,
     logout: doLogout
   });
-  /* const [ loginContext, setLoginContext ] = useState({
-    ...initialLoginContext,
-    changeUser,
-    login: doLogin,
-    logout: doLogout
-  }); */
-  const [ appContext, setAppContext ] = useState({
-    page: 'home',
-    offline: false,
+  const [ appContext, appDispatch ] = useReducer(appReducer, {
+    ...initialAppContext,
     sideMenu: {
-      isOpen: window.innerWidth > 960
+      ...initialAppContext.sideMenu,
+      toggleSideMenu
     }
   });
-  // TODO: It has to be another solution. The issue is with closure-related if it's put in appContext.sideMenu
-  //       It seems the destructuring holds the initial values
-  const [ workaroundContext/*, setWorkaroundContext*/ ] = useState({
-    toggleSideMenu
-  });
 
+  const [ routed, setRouted ] = useState([]);
   const [ snackbar, setSnackbar ] = useState({
     open: false,
     message: null
@@ -267,20 +261,11 @@ function App (props) {
   }
 
   function toggleSideMenu () {
-    setAppContext({
-      ...appContext,
-      sideMenu: {
-        ...appContext.sideMenu,
-        isOpen: !appContext.sideMenu.isOpen
-      }
-    });
+    appDispatch({ type: 'toggleSideMenu' });
   }
 
   function setOfflineStatus () {
-    setAppContext({
-      ...appContext,
-      offline: !navigator.onLine
-    });
+    appDispatch({ type: 'setIsOffline', offline: !navigator.onLine });
   }
 
   function selectWorld (world) {
@@ -357,7 +342,8 @@ function App (props) {
       items.push({
         value: world.id,
         text: world.name,
-        image: world.avatar
+        avatar: world.avatar,
+        avatarName: world.name
       });
     });
 
@@ -491,7 +477,7 @@ function App (props) {
         params.selectWorld = selectWorld;
       }
 
-      return <Route key={index} exact path={route.path} render={(props) => <Routed {...props} {...params} />} />
+      return <Route key={index} path={route.path} render={(props) => <Routed {...props} {...params} />} />
     });
 
     setRouted(_routed);
@@ -510,7 +496,6 @@ function App (props) {
       localeContext={localeContext}
       loginContext={loginContext}
       appContext={appContext}
-      workaroundContext={workaroundContext}
     >
       <div className="App" style={{
         backgroundColor: themeContext.theme.palette.background.default,

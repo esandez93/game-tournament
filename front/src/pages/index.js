@@ -28,14 +28,18 @@ Loadable important things [ https://github.com/jamiebuilds/react-loadable ]
   });
 */
 
-function getLoadable(name, loader) {
+function getLoadable(name, loader, isBasePage = true) {
   const Component = Loadable({
     loader,
     loading: Loading,
     modules: [ name ],
     render(loaded, props) {
       const Component = loaded.namedExport ? loaded.namedExport : loaded.default;
-      return <BasePage component={Component} name={name} {...props} />
+      if (isBasePage) {
+        return <BasePage component={Component} name={name} {...props} />
+      } else {
+        return <Component {...props} />
+      }
     }
   });
   Component.showName = `Loadable(${name})`
@@ -53,6 +57,8 @@ const ThemeTest = getLoadable('ThemeTest', () => import(/* webpackChunkName: "Th
 const Users = getLoadable('Users', () => import(/* webpackChunkName: "Users" */ './Users'));
 const Worlds = getLoadable('Worlds', () => import(/* webpackChunkName: "Worlds" */ './Worlds'));
 
+const World = getLoadable('World', () => import(/* webpackChunkName: "World" */ './Worlds/World'), false);
+
 const NotFound = (props) => <BasePage component={_NotFound} name={'NotFound'} {...props} />;
 //const NotFound = getLoadable('NotFound', () => import(/* webpackChunkName: "NotFound" */ './NotFound'));
 
@@ -66,5 +72,6 @@ export {
   Signup,
   ThemeTest,
   Users,
-  Worlds
+  Worlds,
+  World
 };

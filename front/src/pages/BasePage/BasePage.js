@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
   LoginContext,
   LocaleContext,
-  WorkaroundContext
+  AppContext
 } from '@/context';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
@@ -37,7 +37,7 @@ function BasePage (props) {
   return (
     <LoginContext.Consumer>
       {(login) =>
-        <WorkaroundContext.Consumer>
+        <AppContext.Consumer>
           {({ toggleSideMenu }) =>
             <LocaleContext.Consumer>
               {(locale) => (
@@ -50,7 +50,7 @@ function BasePage (props) {
               }
             </LocaleContext.Consumer>
           }
-        </WorkaroundContext.Consumer>
+        </AppContext.Consumer>
       }
     </LoginContext.Consumer>
   );

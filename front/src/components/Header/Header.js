@@ -29,8 +29,7 @@ function Selectors (props) {
     worlds,
     selectWorld,
     games,
-    selectGame,
-    ...other
+    selectGame
   } = props;
 
   const classes = useStyles();

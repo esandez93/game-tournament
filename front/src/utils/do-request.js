@@ -27,7 +27,7 @@ function resolveRequest (promise) {
 
             reject({
               code: res.status,
-              message: `${res.status} ${res.statusText}: ${error}`
+              ...error
             });
           });
         } else {

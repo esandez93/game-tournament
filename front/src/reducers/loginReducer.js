@@ -1,4 +1,11 @@
-function loginReducer (state, action) {
+const initialLoginContext = {
+  logged: false,
+  user: {},
+  world: localStorage.getItem('world') || 'null',
+  game: localStorage.getItem('game') || 'null',
+};
+
+function loginReducer (state = initialLoginContext, action) {
   switch(action.type) {
     case 'login': {
       return {

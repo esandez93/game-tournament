@@ -19,10 +19,14 @@ router.get('/', withAuth, (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
-router.get('/:id', withAuth, (req, res) => {
+router.get('/:id', withAuth, (req, res, next) => {
   WorldController.findById(req.params.id)
     .then(world => res.status(200).json(world))
-    .catch(err => res.status(500).send(err));
+    .catch(err => {
+      debug.extend('err')(new Error(err.message));
+      next(err);
+      // res.status(500).json(err)
+    });
 });
 
 router.post('/', withAuth, (req, res) => {
