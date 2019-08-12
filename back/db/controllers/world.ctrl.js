@@ -52,6 +52,8 @@ function create (body) {
 function update (id, body) {
   // TODO: Check that every admin is also a user
   return new Promise((resolve, reject) => {
+    debug(id)
+    debug(body)
     findById(id)
       .then(world => {
         body.lastUpdate = moment().utc();

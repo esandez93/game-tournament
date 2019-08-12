@@ -7,6 +7,7 @@ export default {
     ranking: 'Ranking',
     matches: 'Partidas',
     users: 'Usuarios',
+    games: 'Juegos',
     settings: 'Configuración',
     notfound: 'No encontrada',
     worlds: 'Mundos'

@@ -17,13 +17,14 @@ import {
 } from '@material-ui/core';
 
 import {
-  Person as ProfileIcon,
   Home as HomeIcon,
+  Person as ProfileIcon,
+  Public as WorldsIcon,
+  Group as UsersIcon,
+  Gamepad as GamesIcon,
   ShowChart as RankingIcon,
   Storage as MatchesIcon,
-  Group as UsersIcon,
   Settings as SettingsIcon,
-  Public as WorldsIcon
 } from '@material-ui/icons';
 
 import routes from '@/routes';
@@ -50,6 +51,7 @@ import {
   Snackbar
 } from '@/components';
 import { login, logout } from '@/api/auth';
+import { getGames } from '@/api/games';
 import { setInvalidTokenCallback } from '@/utils';
 
 // const DEV_MODE = process.env.NODE_ENV === 'development';
@@ -182,6 +184,24 @@ function App (props) {
         return nav;
       }
     }, {
+      icon: GamesIcon,
+      text: t('sections.games'),
+      url: '/games',
+      hasError: () => !isWorldSelected(),
+      onClick: () => {
+        let nav = true;
+
+        if (!isWorldSelected()) {
+          setSnackbar({
+            open: true,
+            message: t('app.errors.noWorld')
+          });
+          nav = false;
+        }
+
+        return nav;
+      }
+    }, {
       icon: RankingIcon,
       text: t('sections.ranking'),
       url: '/ranking',
@@ -203,7 +223,7 @@ function App (props) {
       icon: MatchesIcon,
       text: t('sections.matches'),
       url: '/matches',
-      hasError: () => !isWorldSelected() || !worldHasGames() || !isGameSelected(),
+      hasError: () => !isWorldSelected() || !isGameSelected(),
       onClick: () => {
         let nav = true;
 
@@ -211,12 +231,6 @@ function App (props) {
           setSnackbar({
             open: true,
             message: t('app.errors.noWorld')
-          });
-          nav = false;
-        } else if (!worldHasGames()) {
-          setSnackbar({
-            open: true,
-            message: t('app.errors.currentWorldHasNoGames')
           });
           nav = false;
         } else if (!isGameSelected()) {
@@ -332,12 +346,27 @@ function App (props) {
       });
     });
 
-    items.push({
-      value: 'new',
-      text: <strong>{t('app.createNewGame')}</strong>
-    });
+    getGames()
+    .then((gms) => {
+      gms.forEach((game) => {
+        items.push({
+          value: game.id,
+          text: game.name,
+          image: game.logos.favicon
+        });
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+    })
+    .finally(() => {
+      items.push({
+        value: 'new',
+        text: <strong>{t('app.createNewGame')}</strong>
+      });
 
-    setGames([ ...items ]);
+      setGames([ ...items ]);
+    });
   }
 
   function createWorldItems (worlds = []) {
@@ -405,26 +434,11 @@ function App (props) {
     return loginContext.world && loginContext.world !== 'null' && loginContext.world !== 'new';
   }
 
-  function worldHasGames () {
-    let hasGames = false;
-
-    if (loginContext.world && loginContext.user.worlds) {
-      const world = loginContext.user.worlds.find((item) => {
-        return item.id === loginContext.world;
-      });
-
-      if (world && world.games && world.games.length > 0) {
-        hasGames = true;
-      }
-    };
-
-    return hasGames;
-  }
-
   useEffect(() => {
     createWorldItems(loginContext.user.worlds);
   }, [ loginContext.user.worlds ]);
 
+  // TODO: Fix Game initial auto select
   useEffect(() => {
     if (!loginContext.user.worlds || !isWorldSelected()) {
       createGameItems([]);
@@ -470,8 +484,7 @@ function App (props) {
         doLogout();
       }
 
-      if (loginContext.logged !== value && (value === true || value === false)) {
-
+      if (![true, false].includes(loginContext.logged)) {
         // TODO: Maybe do a get user?
         loginDispatch({ type: 'setLogged', logged: value });
       }

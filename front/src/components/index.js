@@ -11,7 +11,9 @@ import Match from './Match';
 import OfflineBadge from './OfflineBadge';
 import Select from './Select';
 import SideMenu from './SideMenu';
+import Stat from './Stat';
 import Snackbar from './Snackbar';
+import Switch from './Switch';
 import Tabs from './Tabs';
 
 export {
@@ -28,6 +30,8 @@ export {
   OfflineBadge,
   Select,
   SideMenu,
+  Stat,
   Snackbar,
+  Switch,
   Tabs
 };

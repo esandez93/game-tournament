@@ -55,6 +55,7 @@ const Settings = getLoadable('Settings', () => import(/* webpackChunkName: "Sett
 const Signup = getLoadable('Signup', () => import(/* webpackChunkName: "Signup" */ './Signup'));
 const ThemeTest = getLoadable('ThemeTest', () => import(/* webpackChunkName: "ThemeTest" */ './ThemeTest'));
 const Users = getLoadable('Users', () => import(/* webpackChunkName: "Users" */ './Users'));
+const Games = getLoadable('Games', () => import(/* webpackChunkName: "Games" */ './Games'));
 const Worlds = getLoadable('Worlds', () => import(/* webpackChunkName: "Worlds" */ './Worlds'));
 
 const World = getLoadable('World', () => import(/* webpackChunkName: "World" */ './Worlds/World'), false);
@@ -63,6 +64,7 @@ const NotFound = (props) => <BasePage component={_NotFound} name={'NotFound'} {.
 //const NotFound = getLoadable('NotFound', () => import(/* webpackChunkName: "NotFound" */ './NotFound'));
 
 export {
+  Games,
   Home,
   Login,
   NotFound,

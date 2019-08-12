@@ -5,7 +5,6 @@ module.exports = (app) => {
       console.log(JSON.stringify(err));
       res.status(err.status || 500)
         .json({
-          a: 'aaaa',
           message: err.message,
           error: err
         })

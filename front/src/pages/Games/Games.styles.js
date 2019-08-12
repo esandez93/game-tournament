@@ -28,19 +28,45 @@ export default (theme) => ({
     height: `${theme.spacing(4)}px`,
     width: `${theme.spacing(4)}px`
   },
-  worlds: {
+  games: {
     display: 'flex',
     flexWrap: 'wrap',
   },
   card: {
     margin: `${theme.spacing(1)}px`
   },
-  worldCard: {
-    flex: '1',
-    minWidth: '300px'
-  },
-  newWorldCard: {
+  newGameCard: {
     display: 'flex',
     justifyContent: 'center'
-  }
+  },
+  gameCard: {
+    minWidth: '350px'
+  },
+  cardContent: {
+    '&:last-child': {
+      paddingBottom: `${theme.spacing(2)}px`
+    }
+  },
+  cardHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingBottom: `${theme.spacing(1)}px`,
+    marginBottom: `${theme.spacing(2)}px`,
+    //borderBottom: `1px solid ${theme.palette.text.secondary}`
+  },
+  cardAvatar: {
+    marginRight: `${theme.spacing(2)}px`
+  },
+  cardStats: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: `${theme.spacing(2)}px`
+  },
+  cardFooter: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingTop: `${theme.spacing(2)}px`,
+    marginTop: `${theme.spacing(1)}px`,
+    //borderTop: `1px solid ${theme.palette.text.secondary}`
+  },
 });

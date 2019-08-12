@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styles from './Header.styles';
 
 import clsx from 'clsx';
@@ -21,7 +21,6 @@ import {
 } from '@/context';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
-import { cleanString } from '@/utils';
 
 const useStyles = makeStyles(styles);
 

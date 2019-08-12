@@ -8,16 +8,8 @@ import {
 } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Chip,
-  Typography
-} from '@material-ui/core';
 
 import {
-  Avatar,
-  Button,
-  Card,
-  Form,
   Tabs
 } from '@/components';
 import {
@@ -28,7 +20,10 @@ import {
 import {
   getWorldById
 } from '@/api/worlds';
-import { Users } from '@/pages';
+import {
+  Games,
+  Users
+} from '@/pages';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
 
@@ -49,8 +44,6 @@ const paths = {
 
 function World (props) {
   const {
-    user,
-    translate,
     setHeader,
     history,
     match
@@ -85,6 +78,7 @@ function World (props) {
       })
   }, [ match.params.id ]);
 
+  // TODO: Review Header. It's not working
   useEffect(() => {
     if (!match.params.tab) {
       history.push(`/worlds/${match.params.id}/users`);
@@ -132,11 +126,11 @@ function World (props) {
 
       <Switch>
         <Route exact path={'/worlds/:id/users'} render={(props) => (
-          <Users className={clsx(classes.users)} users={world.users} />
+          <Users className={clsx(classes.users)} users={world.users} {...props} />
         )} />
 
         <Route exact path={'/worlds/:id/games'} render={(props) => (
-          <div>games</div>
+          <Games className={clsx(classes.games)} users={world.games} {...props} />
         )} />
 
         <Route exact path={'/worlds/:id/settings'} render={(props) => (

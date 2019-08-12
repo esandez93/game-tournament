@@ -13,7 +13,11 @@ export default (theme) => ({
     top: 0
   },
   selector: {
-    marginTop: `${theme.spacing(1.5)}px`
+    marginTop: `${theme.spacing(1.5)}px`,
+
+    '&:last-child': {
+      marginLeft: `${theme.spacing(2)}px`
+    }
   },
   selectorInput: {
     height: `${theme.spacing(6)}px`,

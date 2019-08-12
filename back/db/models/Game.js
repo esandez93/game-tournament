@@ -7,6 +7,10 @@ const schema = new mongoose.Schema({
     favicon: { type: String },
     banner: { type: String }
   },
+  characters: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Character'
+  }],
   world: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'World'
@@ -30,6 +34,8 @@ function populate (data) {
   return new model({
     name: data.name,
     logos: data.logos,
+    world: data.world,
+    characters: data.characters || [],
     creationDate: data.creationDate,
     lastUpdate: data.lastUpdate
   });

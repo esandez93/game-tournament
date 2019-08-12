@@ -2,7 +2,8 @@
   "name": "root",
   "private": false,
   "scripts": {
-    "mongo": "../mongodb-osx-x86_64-4.0.9/bin/mongod --dbpath=./db"
+    "mongo": "../mongodb-osx-x86_64-4.0.9/bin/mongod --dbpath=./db",
+    "lerna": "lerna exec npm install"
   },
   "devDependencies": {
     "lerna": "^3.14.1"

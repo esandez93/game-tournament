@@ -7,6 +7,7 @@ export default {
     ranking: 'Ranking',
     matches: 'Matches',
     users: 'Users',
+    games: 'Games',
     settings: 'Settings',
     notfound: 'Not found',
     worlds: 'Worlds'

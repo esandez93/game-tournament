@@ -43,6 +43,7 @@ router.put('/:id', withAuth, (req, res) => {
   WorldController.update(req.params.id, req.body)
     .then(world => {
       // TODO: Should this be async and send the response while updateing the users in background ?
+      // TODO: Only should update users if needed
       WorldController.updateUsers(world)
         .then(() => res.status(200).json(world))
         .catch(err => res.status(500).json(err))

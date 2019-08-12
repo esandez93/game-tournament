@@ -7,6 +7,7 @@ import {
   Signup,
   ThemeTest,
   Users,
+  Games,
   Worlds
 } from '@/pages';
 
@@ -43,9 +44,15 @@ export default [{
   component: Users,
   auth: true
 }, {
+  path: '/games',
+  tKey: 'games',
+  component: Games,
+  auth: true
+}, {
   path: '/worlds',
   tKey: 'worlds',
-  component: Worlds
+  component: Worlds,
+  auth: true
 }, {
   path: '/',
   tKey: 'home',
