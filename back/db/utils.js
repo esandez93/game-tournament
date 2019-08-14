@@ -61,6 +61,6 @@ module.exports = {
       req = req.populate(pop);
     });
 
-    return req.exec();
+    return req;
   }
 }

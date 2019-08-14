@@ -18,7 +18,6 @@ function findById (id) {
     populate
   };
 
-  debug(`finding id ${id}`)
   return utils.prepareMongooseReq(User.model, 'findById', options);
 }
 
@@ -27,6 +26,10 @@ function create (body) {
     let user = User.populate(body);
     user.creationDate = moment().utc();
     user.lastUpdate = user.creationDate;
+
+    if (!user.worlds) {
+      user.worlds = [];
+    }
 
     user.save()
       .then(newUser => {

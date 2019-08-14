@@ -89,9 +89,20 @@ function put (url, body = {}, options = {}) {
   return resolveRequest(fetch(url, _options));
 }
 
+function remove (url, body = {}, options = {}) {
+  const _options = {
+    ...getOptions(options),
+    method: 'DELETE',
+    body: JSON.stringify(body)
+  };
+
+  return resolveRequest(fetch(url, _options));
+}
+
 export {
   setInvalidTokenCallback,
   get,
   post,
-  put
+  put,
+  remove
 };

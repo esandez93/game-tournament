@@ -7,6 +7,7 @@ import {
   get,
   put,
   post,
+  remove
 } from './do-request';
 
 export {
@@ -15,6 +16,7 @@ export {
   get,
   put,
   post,
+  remove,
   getDisplayName,
   getPropTypes,
   getDefaultProps

@@ -38,15 +38,25 @@ function loginReducer (state = initialLoginContext, action) {
     }
 
     case 'changeWorld': {
-      const world = action.world;
+      const {
+        world,
+        history
+       } = action;
 
       if (world === 'new') {
         localStorage.removeItem('world');
-        action.history.push('/worlds/new');
+        history.push('/worlds/new');
       } else if (world === 'null') {
         localStorage.removeItem('world');
       } else {
         localStorage.setItem('world', world);
+
+        if (history.location.pathname.includes('worlds')) {
+          let url = history.location.pathname.split('/');
+          url[2] = world;
+
+          history.push(url.join('/'));
+        }
       }
 
       return {

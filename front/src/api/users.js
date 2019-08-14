@@ -15,9 +15,8 @@ function getUserRelationships(id) {
   return get(`${url}/${endpoint}/${id}/relationships`);
 }
 
-// TODO: Change to PUT
 function updateUser(id, user) {
-  return post(`${url}/${endpoint}/${id}`, user);
+  return put(`${url}/${endpoint}/${id}`, user);
 }
 
 function register(user) {

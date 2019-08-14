@@ -25,6 +25,8 @@ export default (theme) => ({
     height: 24,
   },
   track: {
+    height: '60%',
+    margin: 'auto',
     borderRadius: 26 / 2,
     border: `1px solid ${theme.palette.grey[400]}`,
     backgroundColor: theme.palette.grey[50],

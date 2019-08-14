@@ -8,6 +8,10 @@ const schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Game'
   }],
+  enabledGames: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Game'
+  }],
   users: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -36,6 +40,7 @@ function populate (data) {
     name: data.name,
     avatar: data.avatar,
     games: data.games,
+    enabledGames: data.enabledGames,
     users: data.users,
     admins: data.admins,
     creationDate: data.creationDate,

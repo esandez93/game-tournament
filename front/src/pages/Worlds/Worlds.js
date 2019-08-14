@@ -178,9 +178,9 @@ function Worlds (props) {
   }
 
   // TODO: On Worlds list
-  // * Number of users
-  // * Number of games
-  // * Number of played games
+  // * Number of users (world.users.length)
+  // * Number of games (enabledGames)
+  // * Number of played games (Matches count)
   return (
     <div className={clsx('Worlds', className, classes.root)}>
       <Switch>
@@ -195,7 +195,7 @@ function Worlds (props) {
                 <Card key={world.id} className={clsx(classes.card, classes.worldCard)}>
                   <Avatar src={world.avatar} name={world.name} />
                   <Typography>{world.name}</Typography>
-                  <Button color="primary" onClick={() => history.push(`/worlds/${world.id}`)}>{translate('details')}</Button>
+                  <Button color="primary" onClick={() => history.push(`/worlds/${world.id}/users`)}>{translate('details')}</Button>
                 </Card>
               ))}
             </div>

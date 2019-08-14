@@ -31,16 +31,65 @@ import {
   LoginContext
 } from '@/context';
 import {
-  getGames as getAvailableGames
-} from '@/api/games';
-import {
   getWorldById,
   getGames as getWorldGames,
-  updateWorld,
-  createGame
+  createGame,
+  enableGame,
+  disableGame
 } from '@/api/worlds';
 
 const useStyles = makeStyles(styles);
+
+function GameCard (props) {
+  const {
+    game,
+    enabled,
+    toggleEnabled,
+    history,
+    location,
+    translate,
+    isAdmin
+  } = props;
+
+  const classes = useStyles();
+
+  return (
+    <Card key={game.id} className={clsx(classes.card, classes.gameCard)} contentClass={clsx(classes.cardContent)}>
+      <div className={clsx(classes.cardHeader)}>
+        <Avatar className={clsx(classes.cardAvatar)} src={game.logos.favicon} name={game.name} />
+        <Typography variant="h6">{game.name}</Typography>
+      </div>
+
+      <div className={clsx(classes.cardStats)}>
+        <Stat
+          title="GAMES PLAYED"
+          label={Math.floor(Math.random() * 100)}
+          Icon={VGAssetIcon}
+        />
+
+        <Stat
+          title="PLAYERS"
+          label={Math.floor(Math.random() * 100)}
+          Icon={PersonIcon}
+        />
+
+        <Stat
+          title="CHARACTERS"
+          label={game.characters.length}
+          Icon={FaceIcon}
+        />
+      </div>
+
+      <div className={clsx(classes.cardFooter)}>
+        {isAdmin
+          ? <SwitchControl checked={enabled} onChange={() => toggleEnabled(game)}></SwitchControl>
+          : <div></div>
+        }
+        <Button color="primary" onClick={() => history.push(`${location.pathname}/${game.id}`)}>{translate('details')}</Button>
+      </div>
+    </Card>
+  );
+}
 
 function Games (props) {
   const {
@@ -49,12 +98,12 @@ function Games (props) {
     history,
     location,
     user,
-    currentWorld
+    currentWorld,
+    selectedWorld
   } = props;
 
   const classes = useStyles();
   const [ init, setInit ] = useState(false);
-  const [ games, setGames ] = useState([]);
   const [ newGame, setNewGame ] = useState({
     name: '',
     avatar: '',
@@ -110,57 +159,56 @@ function Games (props) {
 
   useEffect(() => {
     setIsAdmin(false);
-    let worldGames = [];
 
-    getWorldById(currentWorld)
-    .then((world) => {
-      setWorld(world);
+    const id = selectedWorld || currentWorld;
 
-      world.admins.forEach((admin) => {
+    getWorldById(id)
+    .then((wrld) => {
+      setWorld(wrld);
+
+      wrld.admins.forEach((admin) => {
         if (admin.id === user) {
           setIsAdmin(true);
         }
       });
     }).catch((err) => {
       console.error(err);
-    });
-
-    getWorldGames(currentWorld)
-    .then((gms) => {
-      worldGames = gms;
-      return getAvailableGames();
-    }).then((gms) => {
-      setGames([ ...worldGames, ...gms ]);
-    }).catch((err) => {
-      console.log(err);
-    }).finally(() => {
+    })
+    .finally(() => {
       setInit(true);
     });
-  }, [ currentWorld ]);
+  }, [ currentWorld, selectedWorld ]);
 
   function clickCreateGame () {
     createGame(newGame)
     .then((game) => {
-      setGames([
-        ...games,
-        game
-      ]);
+      setWorld({
+        ...world,
+        games: [
+          ...world.games,
+          game
+        ]
+      });
       history.push(`${location.pathname.replace('\\new', '')}`);
     }).catch((err) => {
       console.log(err);
     });
   }
 
-  function toggleEnabled (game) {
-    updateWorld(world.id, {
-      games: world.games.map((gm) => {
-        if (gm.id !== game.id) {
-          gm.enabled = !gm.enabled;
-        }
+  function isEnabled (id) {
+    if (isAdmin) {
+      return world.enabledGames.find((game) => game.id === id) !== undefined;
+    } else {
+      return world.games.find((game) => game.id === id) !== undefined;
+    }
+  }
 
-        return gm
-      })
-    });
+  function toggleEnabled (game) {
+    if (isEnabled(game.id)) {
+      disableGame(world.id, game.id);
+    } else {
+      enableGame(world.id, game.id);
+    }
   }
 
   // TODO: Create filters
@@ -175,40 +223,17 @@ function Games (props) {
             </Card>
 
             <div className={clsx(classes.games)}>
-              {games.map((game) => (
-                <Card key={game.id} className={clsx(classes.card, classes.gameCard)} contentClass={clsx(classes.cardContent)}>
-                  <div className={clsx(classes.cardHeader)}>
-                    <Avatar className={clsx(classes.cardAvatar)} src={game.logos.favicon} name={game.name} />
-                    <Typography variant="h6">{game.name}</Typography>
-                  </div>
-
-                  <div className={clsx(classes.cardStats)}>
-                    <Stat
-                      title="GAMES PLAYED"
-                      label={Math.floor(Math.random() * 100)}
-                      Icon={VGAssetIcon}
-                    />
-
-                    <Stat
-                      title="PLAYERS"
-                      label={Math.floor(Math.random() * 100)}
-                      Icon={PersonIcon}
-                    />
-
-                    <Stat
-                      title="CHARACTERS"
-                      label={game.characters.length}
-                      Icon={FaceIcon}
-                    />
-                  </div>
-
-                  <div className={clsx(classes.cardFooter)}>
-                    {isAdmin &&
-                      <SwitchControl checked={game.enabled} onChange={() => toggleEnabled(game)}></SwitchControl>
-                    }
-                    <Button color="primary" onClick={() => history.push(`${location.pathname}/${game.id}`)}>{translate('details')}</Button>
-                  </div>
-                </Card>
+              {world && world.games.map((game) => (
+                <GameCard
+                  key={game.id}
+                  game={game}
+                  enabled={isEnabled(game.id)}
+                  toggleEnabled={toggleEnabled}
+                  history={history}
+                  location={location}
+                  translate={translate}
+                  isAdmin={isAdmin}
+                />
               ))}
             </div>
           </Fragment>

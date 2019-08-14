@@ -11,44 +11,47 @@ const UserController = require('../db/controllers/user.ctrl');
 const WorldController = require('../db/controllers/world.ctrl');
 const MatchController = require('../db/controllers/match.ctrl');
 
+const utils = require('../utils');
+
 // WORLDS
 
-router.get('/', withAuth, (req, res) => {
-  WorldController.find(req.query)
+router.get('/', withAuth, (req, res, next) => {
+  WorldController.find(req.query, req.headers.cookie.replace('token=', ''))
     .then(worlds => res.status(200).json(worlds))
-    .catch(err => res.status(500).send(err));
+    .catch(next);
 });
 
 router.get('/:id', withAuth, (req, res, next) => {
-  WorldController.findById(req.params.id)
+  WorldController.findById(req.params.id, req.headers.cookie.replace('token=', ''))
     .then(world => res.status(200).json(world))
-    .catch(err => {
-      debug.extend('err')(new Error(err.message));
-      next(err);
-      // res.status(500).json(err)
-    });
+    .catch(next);
 });
 
-router.post('/', withAuth, (req, res) => {
-  WorldController.create(req.body)
-    .then(world => {
-      return res.status(200).json(world);
-    })
-    .catch(err => {
-      return res.status(500).send(err);
-    });
+router.post('/', withAuth, (req, res, next) => {
+  WorldController.create(req.body, req.headers.cookie.replace('token=', ''))
+    .then(world => res.status(200).json(world))
+    .catch(next);
 });
 
 router.put('/:id', withAuth, (req, res) => {
-  WorldController.update(req.params.id, req.body)
-    .then(world => {
-      // TODO: Should this be async and send the response while updateing the users in background ?
-      // TODO: Only should update users if needed
-      WorldController.updateUsers(world)
-        .then(() => res.status(200).json(world))
-        .catch(err => res.status(500).json(err))
-    })
+  WorldController.update(req.params.id, req.body, req.headers.cookie.replace('token=', ''))
+    .then(world => res.status(200).json(world))
     .catch(err => res.status(500).json(err));
+});
+
+router.delete('/:id', withAuth, (req, res, next) => {
+  utils.isAdmin(req.headers.cookie.replace('token=', ''), req.params.id)
+    .then(isAdmin => {
+      if (isAdmin) {
+        return WorldController.remove(req.params.id);
+      } else {
+        return res.status(401).json({
+          message: 'Only admins can delete a world'
+        });
+      }
+    })
+    .then(() => res.status(200))
+    .catch((err) => res.status(500).json(err));
 });
 
 
@@ -72,7 +75,7 @@ router.get('/:world/users/:id', withAuth, (req, res) => {
 });
 
 router.put('/:id/users', withAuth, (req, res) => {
-  WorldController.update(req.params.id, req.body)
+  WorldController.update(req.params.id, req.body, req.headers.cookie.replace('token=', ''))
     .then(world => {
       // TODO: Should this be async and send the response while updateing the users in background ?
       WorldController.updateUsers(world)
@@ -116,8 +119,27 @@ router.post('/:world/matches', withAuth, (req, res) => {
 // GAMES
 
 router.get('/:world/games', withAuth, (req, res) => {
-  World.model.findById(req.params.world).populate('games')
-    .then(world => res.status(200).json(world.games))
+  let games = {
+    all: null,
+    enabled: null
+  };
+
+  WorldController.findById(req.params.world, req.headers.cookie.replace('token=', ''))
+    .then(world => {
+      games = {
+        all: world.games,
+        enabled: world.enabledGames
+      };
+
+      return utils.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world);
+    })
+    .then(isAdmin => {
+      if (isAdmin) {
+        res.status(200).json(games.all);
+      } else {
+        res.status(200).json(games.enabled);
+      }
+    })
     .catch(err => res.status(500).send(err));
 });
 
@@ -127,9 +149,9 @@ router.get('/:world/games/:id', withAuth, (req, res) => {
     id
   } = req.params;
 
-  World.model.findById(world).populate('games')
+  WorldController.findById(world, req.headers.cookie.replace('token=', ''))
     .then(world => {
-      let game = world.games.find((item) => item.id === id);
+      let game = world.games.find(item => item.id === id);
 
       if (game) {
         return res.status(200).json(game);
@@ -140,9 +162,31 @@ router.get('/:world/games/:id', withAuth, (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
-router.put('/:world/games', withAuth, (req, res) => {
-  WorldController.updateGames(req.params.world, req.body)
-    .then(games => res.status(200).json(games))
+router.post('/:world/games/:id', withAuth, (req, res) => {
+  utils.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world)
+    .then(isAdmin => {
+      if (isAdmin) {
+        WorldController.enableGame(req.params.world, req.params.id, req.headers.cookie.replace('token=', ''))
+          .then(games => res.status(200).json(games))
+          .catch(err => res.status(500).send(err));
+      } else {
+        res.status(401).send({ message: 'Operation only allowed to the World\'s admins' });
+      }
+    })
+    .catch(err => res.status(500).send(err));
+});
+
+router.delete('/:world/games/:id', withAuth, (req, res) => {
+  utils.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world)
+    .then(isAdmin => {
+      if (isAdmin) {
+        WorldController.disableGame(req.params.world, req.params.id, req.headers.cookie.replace('token=', ''))
+          .then(games => res.status(200).json(games))
+          .catch(err => res.status(500).send(err));
+      } else {
+        res.status(401).send({ message: 'Operation only allowed to the World\'s admins' });
+      }
+    })
     .catch(err => res.status(500).send(err));
 });
 

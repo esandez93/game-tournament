@@ -25,6 +25,7 @@ import {
   ShowChart as RankingIcon,
   Storage as MatchesIcon,
   Settings as SettingsIcon,
+  PowerSettingsNew as PowerSettingsIcon
 } from '@material-ui/icons';
 
 import routes from '@/routes';
@@ -51,7 +52,7 @@ import {
   Snackbar
 } from '@/components';
 import { login, logout } from '@/api/auth';
-import { getGames } from '@/api/games';
+import { getGames } from '@/api/worlds';
 import { setInvalidTokenCallback } from '@/utils';
 
 // const DEV_MODE = process.env.NODE_ENV === 'development';
@@ -249,6 +250,10 @@ function App (props) {
       icon: SettingsIcon,
       text: t('sections.settings'),
       url: '/settings'
+    }, {
+      icon: PowerSettingsIcon,
+      text: t('sections.logout'),
+      onClick: doLogout
     }
   ];
 
@@ -331,7 +336,7 @@ function App (props) {
   }
 
   function createGameItems (games = []) {
-    if (!games) return;
+    if (!games || !loginContext.world) return;
 
     let items = [{
       value: 'null',
@@ -342,31 +347,30 @@ function App (props) {
       items.push({
         value: game.id,
         text: game.name,
-        image: game.logos.favicon
+        image: game.logos ? game.logos.favicon: null
       });
     });
 
-    getGames()
-    .then((gms) => {
-      gms.forEach((game) => {
-        items.push({
-          value: game.id,
-          text: game.name,
-          image: game.logos.favicon
+    let found = false;
+
+    if (loginContext.user.worlds) {
+      loginContext.user.worlds.forEach((world) => {
+        world.admins.forEach((admin) => {
+          if (admin === loginContext.user.id) {
+            found = true;
+          }
         });
       });
-    })
-    .catch((error) => {
-      console.error(error);
-    })
-    .finally(() => {
+    }
+
+    if (found) {
       items.push({
         value: 'new',
         text: <strong>{t('app.createNewGame')}</strong>
       });
+    }
 
-      setGames([ ...items ]);
-    });
+    setGames([ ...items ]);
   }
 
   function createWorldItems (worlds = []) {
@@ -420,6 +424,7 @@ function App (props) {
         localStorage.removeItem('user');
         /* localStorage.removeItem('world');
         localStorage.removeItem('game'); */
+        loginDispatch({ type: 'setLogged', logged: false });
 
         history.push('/login');
       })
@@ -540,7 +545,7 @@ function App (props) {
             horizontal: size.width > breakpoints.m ? 'right' : 'center'
           }}
         />
-        <div className={clsx(classes.container)}>
+        <div className={clsx(classes.app)}>
           <Route render={(props) =>
             <Header
               logged={loginContext.logged}
@@ -553,10 +558,12 @@ function App (props) {
               {...props}
             />
           } />
-          <Switch>
-            {routed}
-            <Route component={NotFound} />
-          </Switch>
+          <div className={clsx(classes.container)}>
+            <Switch>
+              {routed}
+              <Route component={NotFound} />
+            </Switch>
+          </div>
         </div>
       </div>
     </MultiProvider>

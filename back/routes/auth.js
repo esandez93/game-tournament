@@ -29,8 +29,8 @@ router.post('/login', (req, res) => {
                 });
             } else {
               // Issue token
-              const token = jwt.sign({ username }, process.env.AUTH_SECRET, {
-                expiresIn: '1h'
+              const token = jwt.sign({ username, id: user.id }, process.env.AUTH_SECRET, {
+                expiresIn: '4h'
               });
               const options = {
                 httpOnly: true

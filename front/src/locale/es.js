@@ -10,7 +10,8 @@ export default {
     games: 'Juegos',
     settings: 'Configuración',
     notfound: 'No encontrada',
-    worlds: 'Mundos'
+    worlds: 'Mundos',
+    logout: 'Logout'
   },
   entities: {
     user: 'Usuario',

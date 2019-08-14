@@ -130,7 +130,7 @@ function World (props) {
         )} />
 
         <Route exact path={'/worlds/:id/games'} render={(props) => (
-          <Games className={clsx(classes.games)} users={world.games} {...props} />
+          <Games className={clsx(classes.games)} selectedWorld={world.id} {...props} />
         )} />
 
         <Route exact path={'/worlds/:id/settings'} render={(props) => (

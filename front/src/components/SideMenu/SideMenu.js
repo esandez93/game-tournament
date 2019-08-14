@@ -15,7 +15,6 @@ import {
   ListItemText,
   ListItemIcon
 } from '@material-ui/core';
-import PowerSettingsIcon from '@material-ui/icons/PowerSettingsNew';
 
 import { LoginContext, LocaleContext, AppContext } from '@/context';
 import { useWindowSize } from '@/hooks';
@@ -31,8 +30,7 @@ function SideMenu (props) {
     avatar,
     name,
     username,
-    items,
-    logout
+    items
   } = props;
 
   const classes = useStyles();
@@ -83,7 +81,7 @@ function SideMenu (props) {
           } else {
             return (
               <ListItem className={clsx({ [ classes.error ]: item.hasError && item.hasError() })} button disabled={item.disabled} key={index}
-                selected={item.url.slice(1).toLowerCase() === currentSection}
+                selected={item.url ? item.url.slice(1).toLowerCase() === currentSection : false}
                 onClick={() => {
                   if (item.onClick) {
                     if (item.onClick()) {
@@ -100,10 +98,6 @@ function SideMenu (props) {
             );
           }
         })}
-        <ListItem button onClick={logout}>
-          <ListItemIcon><PowerSettingsIcon /></ListItemIcon>
-          <ListItemText primary="Logout" />
-        </ListItem>
       </List>
     </Drawer>
   );
@@ -131,7 +125,6 @@ export default React.forwardRef((props, ref) => (
                 ref={ref}
                 open={app.sideMenu.isOpen}
                 toggleOpen={app.sideMenu.toggle}
-                logout={login.logout}
                 {...props}
               />
             }

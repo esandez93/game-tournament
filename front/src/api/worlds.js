@@ -1,5 +1,5 @@
 import { url } from './config';
-import { get, post, put } from '@/utils';
+import { get, post, put, remove } from '@/utils';
 
 const endpoint = 'worlds';
 
@@ -31,6 +31,14 @@ function getGameById(world, id) {
 
 function createGame(world, body) {
   return post(`${url}/${endpoint}/${world}/games`, body);
+}
+
+function enableGame(world, game) {
+  return post(`${url}/${endpoint}/${world}/games/${game}`);
+}
+
+function disableGame(world, game) {
+  return remove(`${url}/${endpoint}/${world}/games/${game}`);
 }
 
 function getRanking(world, game) {
@@ -72,6 +80,8 @@ export {
   getGameById,
   getRanking,
   createGame,
+  enableGame,
+  disableGame,
 
   getMatches,
   getMatchById,
