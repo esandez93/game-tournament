@@ -40,7 +40,7 @@ router.put('/:id', withAuth, (req, res) => {
 });
 
 router.delete('/:id', withAuth, (req, res, next) => {
-  utils.isAdmin(req.headers.cookie.replace('token=', ''), req.params.id)
+  WorldController.isAdmin(req.headers.cookie.replace('token=', ''), req.params.id)
     .then(isAdmin => {
       if (isAdmin) {
         return WorldController.remove(req.params.id);
@@ -131,7 +131,7 @@ router.get('/:world/games', withAuth, (req, res) => {
         enabled: world.enabledGames
       };
 
-      return utils.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world);
+      return WorldController.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world);
     })
     .then(isAdmin => {
       if (isAdmin) {
@@ -140,6 +140,12 @@ router.get('/:world/games', withAuth, (req, res) => {
         res.status(200).json(games.enabled);
       }
     })
+    .catch(err => res.status(500).send(err));
+});
+
+router.post('/:world/games', withAuth, (req, res) => {
+  WorldController.createGame(req.params.world, req.body)
+    .then(game => res.status(200).json(game))
     .catch(err => res.status(500).send(err));
 });
 
@@ -163,7 +169,7 @@ router.get('/:world/games/:id', withAuth, (req, res) => {
 });
 
 router.post('/:world/games/:id', withAuth, (req, res) => {
-  utils.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world)
+  WorldController.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world)
     .then(isAdmin => {
       if (isAdmin) {
         WorldController.enableGame(req.params.world, req.params.id, req.headers.cookie.replace('token=', ''))
@@ -177,7 +183,7 @@ router.post('/:world/games/:id', withAuth, (req, res) => {
 });
 
 router.delete('/:world/games/:id', withAuth, (req, res) => {
-  utils.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world)
+  WorldController.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world)
     .then(isAdmin => {
       if (isAdmin) {
         WorldController.disableGame(req.params.world, req.params.id, req.headers.cookie.replace('token=', ''))

@@ -6,6 +6,7 @@ import ContextMenu from './ContextMenu';
 import Form from './Form';
 import Header from './Header';
 import Input from './Input';
+import LoadableLoading from './LoadableLoading';
 import Loading from './Loading';
 import Match from './Match';
 import OfflineBadge from './OfflineBadge';
@@ -25,6 +26,7 @@ export {
   Form,
   Header,
   Input,
+  LoadableLoading,
   Loading,
   Match,
   OfflineBadge,

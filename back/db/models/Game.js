@@ -33,7 +33,7 @@ function populate (data) {
 
   return new model({
     name: data.name,
-    logos: data.logos,
+    logos: data.logos || {},
     world: data.world,
     characters: data.characters || [],
     creationDate: data.creationDate,

@@ -1,46 +1,34 @@
-import React, { Component } from 'react';
-import './Loading.scss';
+import React from 'react';
+import styles from './Loading.styles';
+import svg from '@/assets/img/loading.svg';
 
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core/styles';
 
-class Loading extends Component {
-  render() {
-    // All this props are injected by Loadable
-    const {
-      error,
-      retry,
-      timedOut,
-      pastDelay
-    } = this.props;
+const useStyles = makeStyles(styles);
 
-    if (error) {
-      // When the loader has errored
-      return <div>Error! <button onClick={ retry }>Retry</button></div>;
-    } else if (timedOut) {
-      // When the loader has taken longer than the timeout
-      return <div>Taking a long time... <button onClick={ retry }>Retry</button></div>;
-    } else if (pastDelay) {
-      // When the loader has taken longer than the delay
-      return <div>Loading...</div>;
-    } else {
-      // When the loader has just started
-      return null;
-    }
-  }
+function Loading (props) {
+  const {
+    className,
+    type,
+    loading,
+    ...other
+  } = props;
+
+  const classes = useStyles();
+
+  return (
+    <img className={clsx(className, classes.root, { 'hidden': !loading })} src={svg} alt="loading" {...other} />
+  );
 }
 
 Loading.propTypes = {
-  error: PropTypes.oneOfType([
-    PropTypes.object, // Error object
-    PropTypes.number // null
-  ]),
-  retry: PropTypes.func.isRequired,
-  timedOut: PropTypes.bool.isRequired,
-  pastDelay: PropTypes.bool.isRequired,
-  isLoading: PropTypes.bool.isRequired,
+  type: PropTypes.string,
+  loading: PropTypes.bool
 };
 Loading.defaultProps = {
-
+  loading: true
 };
 
 export default Loading;

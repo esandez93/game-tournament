@@ -23,6 +23,7 @@ import {
   Button,
   Card,
   Form,
+  Loading,
   Stat,
   Switch as SwitchControl
 } from '@/components';
@@ -56,7 +57,7 @@ function GameCard (props) {
   return (
     <Card key={game.id} className={clsx(classes.card, classes.gameCard)} contentClass={clsx(classes.cardContent)}>
       <div className={clsx(classes.cardHeader)}>
-        <Avatar className={clsx(classes.cardAvatar)} src={game.logos.favicon} name={game.name} />
+        <Avatar className={clsx(classes.cardAvatar)} src={game.logos ? game.logos.favicon : null} name={game.name} />
         <Typography variant="h6">{game.name}</Typography>
       </div>
 
@@ -75,7 +76,7 @@ function GameCard (props) {
 
         <Stat
           title="CHARACTERS"
-          label={game.characters.length}
+          label={game.characters ? game.characters.length : 0}
           Icon={FaceIcon}
         />
       </div>
@@ -113,6 +114,7 @@ function Games (props) {
   const [ newGameCharacters, setNewGameCharacters ] = useState([]);
   const [ world, setWorld ] = useState(null);
   const [ isAdmin, setIsAdmin ] = useState(false);
+  const [ isLoading, setIsLoading ] = useState(true);
 
   const chipRenderValue = (selected) => (
     <div className={classes.chips}>
@@ -176,11 +178,12 @@ function Games (props) {
     })
     .finally(() => {
       setInit(true);
+      setIsLoading(false);
     });
   }, [ currentWorld, selectedWorld ]);
 
   function clickCreateGame () {
-    createGame(newGame)
+    createGame(world.id, newGame)
     .then((game) => {
       setWorld({
         ...world,
@@ -189,7 +192,7 @@ function Games (props) {
           game
         ]
       });
-      history.push(`${location.pathname.replace('\\new', '')}`);
+      history.push(`${location.pathname.replace('/new', '')}`);
     }).catch((err) => {
       console.log(err);
     });
@@ -204,11 +207,17 @@ function Games (props) {
   }
 
   function toggleEnabled (game) {
+    let call = null;
+
     if (isEnabled(game.id)) {
-      disableGame(world.id, game.id);
+      call = disableGame;
     } else {
-      enableGame(world.id, game.id);
+      call = enableGame;
     }
+
+    call(world.id, game.id)
+      .then(setWorld)
+      .catch(console.log);
   }
 
   // TODO: Create filters
@@ -223,6 +232,7 @@ function Games (props) {
             </Card>
 
             <div className={clsx(classes.games)}>
+              <Loading loading={isLoading} />
               {world && world.games.map((game) => (
                 <GameCard
                   key={game.id}

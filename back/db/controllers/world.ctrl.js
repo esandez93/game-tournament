@@ -10,19 +10,6 @@ const config = require('../../config');
 
 const populate = [ 'users', 'admins', 'games', 'enabledGames' ];
 
-function isAdmin(token, admins) {
-  return new Promise((resolve, reject) => {
-    utils.decryptToken(token)
-      .then(({ id }) => {
-        return UserController.findById(id);
-      })
-      .then(user => {
-        resolve(admins.find(admin => admin.id === user.id) !== undefined);
-      })
-      .catch(reject);
-  });
-}
-
 function find (options = {}, token) {
   return new Promise((resolve, reject) => {
     options.populate = populate;
@@ -33,14 +20,14 @@ function find (options = {}, token) {
       .then(wrlds => {
         worlds = wrlds;
 
-        return Promise.all(worlds.map(world => isAdmin(token, world.admins)));
+        return Promise.all(worlds.map(world => isAdmin(token, world.id)));
       })
-      .then((isAdmin) => {
+      .then((admin) => {
         resolve(worlds.map((world, index) => {
           return {
             ...world.toJSON(),
-            games: isAdmin[index] ? world.games : world.enabledGames,
-            enabledGames: isAdmin[index] ? world.enabledGames : undefined
+            games: admin[index] ? world.games : world.enabledGames,
+            enabledGames: admin[index] ? world.enabledGames : undefined
           };
         }));
       })
@@ -62,7 +49,7 @@ function findById (id, token, options = { populate }) {
           resolve(wrld);
         } else {
           world = wrld;
-          return isAdmin(token, world.admins);
+          return isAdmin(token, world.id);
         }
       })
       .then(isAdmin => {
@@ -124,13 +111,10 @@ function update (id, body, token) {
 
         return world.updateOne(body);
       })
-      .then(world => {
-        return updateUsers(world);
-      })
       .then(() => findById(id, token))
-      .then(world => {
-        resolve(world);
-      })
+      .then((world) => updateUsers(world))
+      .then(() => findById(id, token))
+      .then(resolve)
       .catch(reject);
   });
 }
@@ -172,6 +156,8 @@ function updateUsers (world) {
     let users = [];
     let people = {};
 
+    debug(world)
+
     world.users.forEach((user) => {
       if (!people[user.id])
         people[user.id] = user;
@@ -180,6 +166,8 @@ function updateUsers (world) {
       if (!people[admin.id])
         people[admin.id] = admin;
     });
+
+    debug(1)
 
     Object.keys(people).forEach((userId) => {
       let worlds = [ ...people[userId].worlds ];
@@ -194,6 +182,8 @@ function updateUsers (world) {
         .catch(reject);
     });
 
+    debug(2)
+
     resolve(users);
   });
 }
@@ -207,10 +197,10 @@ function getGames (id, token) {
           enabled: world.enabledGames
         };
 
-        return utils.isAdmin(token, id);
+        return isAdmin(token, id);
       })
-      .then(isAdmin => {
-        if (isAdmin) {
+      .then(admin => {
+        if (admin) {
           resolve(games);
         } else {
           resolve(games.enabled);
@@ -220,34 +210,101 @@ function getGames (id, token) {
   });
 }
 
-function enableGame (id, game, token) {
+function createGame (id, body) {
   return new Promise((resolve, reject) => {
-    findById(id, token)
-      .then(world => {
+    body.creationDate = moment().utc();
+    body.lastUpdate = body.creationDate;
 
+    let game = Game.populate({
+      world: id,
+      logos: {},
+      ...body
+    });
+
+    game.save()
+      .then(newGame => dbUtils.prepareMongooseReq(Game.model, 'findById', { id: newGame._id }))
+      .then(newGame => {
+        return Promise.all([
+          updateGames(id, newGame),
+          enableGame(id, newGame.id)
+        ]);
       })
+      .then(([ updated, world ]) => resolve(world))
+      .catch(e => {
+        debug(e)
+        reject(e);
+      });
+  });
+}
+
+function enableGame (id, gameId) {
+  return new Promise((resolve, reject) => {
+    findById(id, null, {})
+      .then(world => {
+        return update(id, {
+          enabledGames: [ ...world.enabledGames, gameId ]
+        }, null);
+      })
+      .then(resolve)
+      .catch(reject);
+  });
+}
+
+function disableGame (id, gameId) {
+  return new Promise((resolve, reject) => {
+    findById(id, null, {})
+      .then(world => {
+        return update(id, {
+          enabledGames: world.enabledGames.filter(game => game != gameId)
+        }, null);
+      })
+      .then(resolve)
       .catch(reject);
   });
 }
 
 function updateGames (id, reqGames, token) {
   return new Promise((resolve, reject) => {
-    let games = [];
-
-    if (array.isArray(reqGames)) {
-      games = [ ...reqGames ];
-    } else {
-      games = [ reqGames ];
-    }
-
-    update(id, { games })
+    findById(id, token)
       .then(world => {
-        return getGames(id, token)
+        let games = [ ...world.games ];
+
+        if (Array.isArray(reqGames)) {
+          games = [ ...games, ...reqGames ];
+        } else {
+          games = [ ...games, reqGames ];
+        }
+
+        return update(id, { games })
       })
+      .then(() => getGames(id, token))
       .then((games) => {
         resolve(Array.isArray(games) ? games : games.all);
       })
       .catch(reject);
+  });
+}
+
+function isAdmin (token, worldId) {
+  return new Promise((resolve, reject) => {
+    if (!token || !worldId) {
+      debug('no token or world id');
+      resolve(false);
+    }
+
+    utils.decryptToken(token)
+      .then(({ id }) => {
+        return Promise.all([
+          UserController.findById(id),
+          findById(worldId, null, {})
+        ]);
+      })
+      .then(([ user, world ]) => {
+        resolve(world.admins.includes(user.id));
+      })
+      .catch((e) => {
+        reject(e)
+      });
   });
 }
 
@@ -261,5 +318,10 @@ module.exports = {
   updateUsers,
 
   getGames,
-  updateGames
+  createGame,
+  updateGames,
+  enableGame,
+  disableGame,
+
+  isAdmin
 };

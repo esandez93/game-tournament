@@ -40,7 +40,8 @@ export default (theme) => ({
     justifyContent: 'center'
   },
   gameCard: {
-    minWidth: '350px'
+    minWidth: '350px',
+    flex: 1
   },
   cardContent: {
     '&:last-child': {

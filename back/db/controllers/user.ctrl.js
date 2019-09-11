@@ -2,14 +2,14 @@ const debug = require('debug')('user.ctrl');
 const moment = require('moment');
 
 const User = require('../models/User');
-const utils = require('../utils');
+const dbUtils = require('../utils');
 
 const populate = [ 'world' ];
 
 function find (options = {}) {
   options.populate = populate;
 
-  return utils.prepareMongooseReq(User.model, 'find', options);
+  return dbUtils.prepareMongooseReq(User.model, 'find', options);
 }
 
 function findById (id) {
@@ -18,7 +18,7 @@ function findById (id) {
     populate
   };
 
-  return utils.prepareMongooseReq(User.model, 'findById', options);
+  return dbUtils.prepareMongooseReq(User.model, 'findById', options);
 }
 
 function create (body) {

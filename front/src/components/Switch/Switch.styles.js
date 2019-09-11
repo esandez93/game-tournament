@@ -33,6 +33,8 @@ export default (theme) => ({
     opacity: 1,
     transition: theme.transitions.create(['background-color', 'border']),
   },
-  checked: {},
+  checked: {
+    transform: 'translateX(65%) !important'
+  },
   focusVisible: {},
 });

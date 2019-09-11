@@ -1,15 +1,15 @@
 import React from 'react';
 import Loadable from 'react-loadable';
 
-import { Loading } from '@/components';
+import { LoadableLoading } from '@/components';
 import BasePage from './BasePage';
 import _NotFound from './NotFound';
 
 /*
 Loadable important things [ https://github.com/jamiebuilds/react-loadable ]
 
-- timeout property to define when Loadable will change its prop to true (handled at Loading component) (is disabled by default)
-- delay property to define when Loadable will actually show the component to avoid flashing the Loading component for just a few ms. (default is 200ms)
+- timeout property to define when Loadable will change its prop to true (handled at LoadableLoading component) (is disabled by default)
+- delay property to define when Loadable will actually show the component to avoid flashing the LoadableLoading component for just a few ms. (default is 200ms)
 - loader prop can be anything as long as it returns a Promise with the content to render.
 - preload function that will start preloading if called (ex: Home.preload())
 - Multiload using Loadable.Map. Requires a render function.
@@ -31,7 +31,7 @@ Loadable important things [ https://github.com/jamiebuilds/react-loadable ]
 function getLoadable(name, loader, isBasePage = true) {
   const Component = Loadable({
     loader,
-    loading: Loading,
+    loading: LoadableLoading,
     modules: [ name ],
     render(loaded, props) {
       const Component = loaded.namedExport ? loaded.namedExport : loaded.default;
