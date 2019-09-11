@@ -12,6 +12,7 @@ import {
 import {
   Button,
   Input,
+  Loading,
   Select
 } from '@/components';
 
@@ -25,6 +26,7 @@ function Form (props) {
     setError,
     onSubmit,
     submitText,
+    isLoading,
     ...other
   } = props;
 
@@ -85,12 +87,15 @@ function Form (props) {
       <div className={clsx(classes.actions)}>
         {onSubmit && <Button color="primary" onClick={handleSubmit}>{submitText || 'Submit'}</Button>}
       </div>
+
+      <Loading className={clsx(classes.loading)} isLoading={isLoading} />
     </form>
   );
 }
 
 Form.propTypes = {
-  fields: PropTypes.arrayOf(PropTypes.object).isRequired
+  fields: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isLoading: PropTypes.bool
 };
 
 Form.defaultProps = {

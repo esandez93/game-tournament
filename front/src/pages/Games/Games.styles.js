@@ -31,6 +31,7 @@ export default (theme) => ({
   games: {
     display: 'flex',
     flexWrap: 'wrap',
+    justifyContent: 'center'
   },
   card: {
     margin: `${theme.spacing(1)}px`
@@ -41,6 +42,7 @@ export default (theme) => ({
   },
   gameCard: {
     minWidth: '350px',
+    maxWidth: '500px',
     flex: 1
   },
   cardContent: {
@@ -52,8 +54,7 @@ export default (theme) => ({
     display: 'flex',
     alignItems: 'center',
     paddingBottom: `${theme.spacing(1)}px`,
-    marginBottom: `${theme.spacing(2)}px`,
-    //borderBottom: `1px solid ${theme.palette.text.secondary}`
+    marginBottom: `${theme.spacing(2)}px`
   },
   cardAvatar: {
     marginRight: `${theme.spacing(2)}px`
@@ -67,7 +68,9 @@ export default (theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     paddingTop: `${theme.spacing(2)}px`,
-    marginTop: `${theme.spacing(1)}px`,
-    //borderTop: `1px solid ${theme.palette.text.secondary}`
+    marginTop: `${theme.spacing(1)}px`
   },
+  loading: {
+    marginTop: `${theme.spacing(8)}px`
+  }
 });

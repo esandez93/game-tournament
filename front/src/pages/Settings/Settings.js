@@ -194,7 +194,8 @@ function Settings (props) {
               if (!usr) {
                 throw new Error(translate('settings.errors.updateUser'));
               } else {
-                localStorage.setItem('user', JSON.stringify(usr));
+                localStorage.setItem('locale', usr.settings.locale);
+                localStorage.setItem('theme', usr.settings.theme);
                 changeUser(usr);
               }
             })
@@ -231,7 +232,8 @@ function Settings (props) {
         if (!usr) {
           throw new Error(translate('settings.errors.updateUser'));
         } else {
-          localStorage.setItem('user', JSON.stringify(usr));
+          localStorage.setItem('locale', usr.settings.locale);
+          localStorage.setItem('theme', usr.settings.theme);
           changeUser(usr);
         }
       })

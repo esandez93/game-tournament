@@ -12,23 +12,25 @@ function Loading (props) {
   const {
     className,
     type,
-    loading,
+    isLoading,
     ...other
   } = props;
 
   const classes = useStyles();
 
   return (
-    <img className={clsx(className, classes.root, { 'hidden': !loading })} src={svg} alt="loading" {...other} />
+    <div className={clsx(className, classes.root, { 'hidden': !isLoading })} {...other}>
+      <img className={clsx(classes.loading)} src={svg} alt="loading" />
+    </div>
   );
 }
 
 Loading.propTypes = {
   type: PropTypes.string,
-  loading: PropTypes.bool
+  isLoading: PropTypes.bool
 };
 Loading.defaultProps = {
-  loading: true
+  isLoading: true
 };
 
 export default Loading;

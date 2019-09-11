@@ -52,6 +52,7 @@ import {
   Snackbar
 } from '@/components';
 import { login, logout } from '@/api/auth';
+import { getOwnUser } from '@/api/users';
 import { getGames } from '@/api/worlds';
 import { setInvalidTokenCallback } from '@/utils';
 
@@ -108,9 +109,8 @@ function App (props) {
     history
   } = props;
 
-  const storageUser = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null;
-  const storageTheme = storageUser ? storageUser.settings.theme : 'defaultDark';
-  const storageLocale = storageUser ? storageUser.settings.locale : 'en';
+  const storageTheme = localStorage.getItem('theme') || 'defaultDark';
+  const storageLocale = localStorage.getItem('locale') || 'en';
 
   const size = useWindowSize();
   const classes = useStyles();
@@ -128,6 +128,7 @@ function App (props) {
   const [ loginContext, loginDispatch ] = useReducer(loginReducer, {
     ...initialLoginContext,
     changeUser,
+    selectWorld,
     login: doLogin,
     logout: doLogout
   });
@@ -407,9 +408,9 @@ function App (props) {
 
         initUserValues(user);
 
-        localStorage.setItem('user', JSON.stringify(_user));
-
         loginDispatch({ type: 'login', user: _user });
+
+        console.log('doLogin')
 
         changeLocale(_user.settings.locale);
         changeTheme(_user.settings.theme);
@@ -421,9 +422,9 @@ function App (props) {
   function doLogout () {
     logout()
       .then((res) => {
-        localStorage.removeItem('user');
         /* localStorage.removeItem('world');
         localStorage.removeItem('game'); */
+
         loginDispatch({ type: 'setLogged', logged: false });
 
         history.push('/login');
@@ -445,44 +446,31 @@ function App (props) {
 
   // TODO: Fix Game initial auto select
   useEffect(() => {
+    console.log('useEffect world');
     if (!loginContext.user.worlds || !isWorldSelected()) {
       createGameItems([]);
       selectGame('null');
     } else {
       loginContext.user.worlds.forEach((world) => {
         if (world.id === loginContext.world) {
-          createGameItems(world.games);
+          getGames(world.id)
+            .then(games => {
+              console.log(games)
+              createGameItems(games);
 
-          if (!world.games || world.games.length === 0) {
-            selectGame('null');
-          }
+              if (!games || games.length === 0) {
+                selectGame('null');
+              }
+            })
+            .catch(console.error);
         }
       });
     }
   }, [ loginContext.world, loginContext.user.worlds ]);
 
   useEffect(() => {
-    if (JSON.stringify(loginContext.user) === '{}') {
-      const user = localStorage.getItem('user');
-
-      if (user && user[0] === '{') {
-        loginDispatch({ type: 'login', user: JSON.parse(user) });
-      } else {
-        doLogout();
-      }
-    }
-  }, [ loginContext.user, localStorage.getItem('user') ]);
-
-  useEffect(() => {
     window.addEventListener('online', setOfflineStatus);
     window.addEventListener('offline', setOfflineStatus);
-
-    const user = localStorage.getItem('user');
-    if (user && user[0] === '{') {
-      const usr = JSON.parse(localStorage.getItem('user'));
-      initUserValues(usr);
-      i18n.changeLanguage(usr.settings.locale);
-    }
 
     function setLogin (value) {
       if (value === false) {
@@ -511,6 +499,12 @@ function App (props) {
     setRouted(_routed);
 
     setInvalidTokenCallback(doLogout);
+
+    getOwnUser()
+      .then(user => {
+        loginDispatch({ type: 'login', user });
+      })
+      .catch(console.error)
 
     return () => {
       window.removeEventListener('online', setOfflineStatus);

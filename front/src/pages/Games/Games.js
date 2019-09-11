@@ -100,7 +100,8 @@ function Games (props) {
     location,
     user,
     currentWorld,
-    selectedWorld
+    selectedWorld,
+    changeWorld
   } = props;
 
   const classes = useStyles();
@@ -183,18 +184,17 @@ function Games (props) {
   }, [ currentWorld, selectedWorld ]);
 
   function clickCreateGame () {
+    setIsLoading(true);
+
     createGame(world.id, newGame)
-    .then((game) => {
-      setWorld({
-        ...world,
-        games: [
-          ...world.games,
-          game
-        ]
-      });
+    .then((updated) => {
+      setWorld(updated);
       history.push(`${location.pathname.replace('/new', '')}`);
     }).catch((err) => {
       console.log(err);
+    })
+    .finally(() => {
+      setIsLoading(false);
     });
   }
 
@@ -232,7 +232,7 @@ function Games (props) {
             </Card>
 
             <div className={clsx(classes.games)}>
-              <Loading loading={isLoading} />
+              <Loading className={clsx(classes.loading)} isLoading={isLoading} />
               {world && world.games.map((game) => (
                 <GameCard
                   key={game.id}
@@ -256,6 +256,7 @@ function Games (props) {
               fields={gameForm}
               onSubmit={clickCreateGame}
               submitText={translate('forms.create')}
+              isLoading={isLoading}
             />}
           </div>
         )} />
@@ -268,7 +269,7 @@ export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>
     {(login) =>
       <LocaleContext.Consumer>
-        {(locale) => <Games {...props} translate={locale.translate} user={login.user.id} currentWorld={login.world} ref={ref} />}
+        {(locale) => <Games {...props} translate={locale.translate} user={login.user.id} currentWorld={login.world} changeWorld={login.selectWorld} ref={ref} />}
       </LocaleContext.Consumer>
     }
   </LoginContext.Consumer>

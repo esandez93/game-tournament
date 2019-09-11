@@ -92,10 +92,9 @@ function loginReducer (state = initialLoginContext, action) {
         }
       };
 
-      localStorage.setItem('user', JSON.stringify({
-        ...state.user,
-        ...action.user
-      }));
+      localStorage.setItem('locale', newUser.settings.locale);
+      localStorage.setItem('theme', newUser.settings.theme);
+
       return {
         ...newUser
       };

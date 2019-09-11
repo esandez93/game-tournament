@@ -7,6 +7,10 @@ const endpoint = 'users';
   return get(`${url}/${endpoint}`);
 } */
 
+function getOwnUser() {
+  return get(`${url}/${endpoint}/own`);
+}
+
 function getUserById(id) {
   return get(`${url}/${endpoint}/${id}`);
 }
@@ -31,6 +35,7 @@ function checkPassword(id, password) {
 
 export {
   checkPassword,
+  getOwnUser,
   // getUsers,
   getUserById,
   getUserRelationships,
