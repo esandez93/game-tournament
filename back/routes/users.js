@@ -4,14 +4,25 @@ const express = require('express');
 const withAuth = require('../middleware/withAuth');
 const router = express.Router();
 
-// const UserController = require('../../controllers/users.js');
+const UserController = require('../db/controllers/user.ctrl');
 const User = require('../db/models/User');
+
+const utils = require('../utils');
+
+// TODO: Change routes to use UserController
 
 router.get('/', withAuth, (req, res) => {
   User.model.find({}).populate({
     path: 'worlds',
     populate: { path: 'games' }
   }).then(users => res.status(200).json(users))
+    .catch(err => res.status(500).send(err));
+});
+
+router.get('/own', withAuth, (req, res) => {
+  utils.decryptToken(req.headers.cookie.replace('token=', ''))
+    .then(({ id }) => UserController.findById(id))
+    .then(user => res.status(200).json(user))
     .catch(err => res.status(500).send(err));
 });
 

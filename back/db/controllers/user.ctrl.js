@@ -4,7 +4,7 @@ const moment = require('moment');
 const User = require('../models/User');
 const dbUtils = require('../utils');
 
-const populate = [ 'world' ];
+const populate = [ 'worlds' ];
 
 function find (options = {}) {
   options.populate = populate;

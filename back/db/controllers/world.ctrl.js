@@ -156,22 +156,26 @@ function updateUsers (world) {
     let users = [];
     let people = {};
 
-    debug(world)
-
-    world.users.forEach((user) => {
+    world.users.forEach(user => {
       if (!people[user.id])
         people[user.id] = user;
     });
-    world.admins.forEach((admin) => {
+    world.admins.forEach(admin => {
       if (!people[admin.id])
         people[admin.id] = admin;
     });
 
-    debug(1)
-
-    Object.keys(people).forEach((userId) => {
+    Object.keys(people).forEach(userId => {
       let worlds = [ ...people[userId].worlds ];
-      if (!worlds.includes(world.id)) {
+      let found = false;
+
+      worlds.forEach(prevWorld => {
+        if (prevWorld._id == world.id) {
+          found = true;
+        }
+      });
+
+      if (!found) {
         worlds.push(world.id);
       }
 
@@ -181,8 +185,6 @@ function updateUsers (world) {
         })
         .catch(reject);
     });
-
-    debug(2)
 
     resolve(users);
   });
@@ -231,7 +233,7 @@ function createGame (id, body) {
       })
       .then(([ updated, world ]) => resolve(world))
       .catch(e => {
-        debug(e)
+        //debug(e)
         reject(e);
       });
   });
