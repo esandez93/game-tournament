@@ -98,16 +98,16 @@ router.post('/', (req, res) => {
 });
 
 // TODO: Change to PUT
-router.post('/:id', (req, res) => {
+router.put('/:id', (req, res) => {
   const { id } = req.params;
 
   User.model.updateOne({ _id: id }, { ...req.body })
-    .then((res) =>
-      User.model.findById(id).populate({
+    .then((res) => {
+      return User.model.findById(id).populate({
         path: 'worlds',
         populate: { path: 'games' }
-      })
-    )
+      });
+    })
     .then((usr) => res.status(200).json(usr))
     .catch(err => res.status(500).json(err));
 });

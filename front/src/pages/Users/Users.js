@@ -37,7 +37,7 @@ function Users (props) {
 
     getUsers(id)
       .then(setUsers)
-      .catch((error) => {
+      .catch(error => {
         setUsers([]);
         console.error(error);
       })
@@ -61,7 +61,7 @@ function Users (props) {
   // TODO: Create user detail page and enter from here
   return (
     <div className={clsx('Users', className)}>
-      {users.map((user) => (
+      {users.map(user => (
         <Card
           className={clsx(classes.card)}
           key={user.id}

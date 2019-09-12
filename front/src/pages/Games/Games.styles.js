@@ -72,5 +72,16 @@ export default (theme) => ({
   },
   loading: {
     marginTop: `${theme.spacing(8)}px`
+  },
+  switchLabel: {
+    fontWeight: 'bold',
+    fontSize: theme.typography.fontSize,
+    textTransform: 'uppercase'
+  },
+  enabledLabel: {
+    color: '#52d869'
+  },
+  disabledLabel: {
+    color: theme.palette.grey[400]
   }
 });

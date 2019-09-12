@@ -31,7 +31,7 @@ function resolveRequest (promise) {
     promise
       .then(res => {
         if(hasError(res.status)) {
-          res.json().then((error) => {
+          res.json().then(error => {
             if (res.status === 401 && error.error.includes('token') && invalidTokenCallback) {
               invalidTokenCallback();
             }

@@ -7,8 +7,10 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import {
   AppContext,
-  LocaleContext
+  LocaleContext,
+  LoginContext
 } from '@/context';
+import { Loading } from '@/components';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
 import { cleanString } from '@/utils';
@@ -21,8 +23,10 @@ function BasePage (props) {
     name,
     setTitle,
     translate,
+    logged,
     WorldSelector,
     GameSelector,
+    location,
     ...other
   } = props;
 
@@ -39,19 +43,29 @@ function BasePage (props) {
     setTitle(translate(`sections.${cleanString(name).toLowerCase()}`));
   } ,[]);
 
-  return (
-    <div className={classes.root}>
-      <Component className={clsx('Page', moreClasses.page)} {...other} />
-    </div>
-  );
+  if (!logged && location.pathname !== '/login') {
+    return (
+      <div className={clsx(classes.loading)}>
+        <Loading isLoading={!logged} />
+      </div>
+    );
+  } else {
+    return <Component className={clsx('Page', moreClasses.page)} location={location} {...other} />;
+  }
 }
 
 export default React.forwardRef((props, ref) => (
   <AppContext.Consumer>
     {(app) =>
-      <LocaleContext.Consumer>
-        {(locale) => <BasePage {...props} setTitle={app.setTitle} translate={locale.translate} ref={ref} />}
-      </LocaleContext.Consumer>
+      <LoginContext.Consumer>
+        {(login) =>
+          <LocaleContext.Consumer>
+            {(locale) =>
+              <BasePage {...props} setTitle={app.setTitle} translate={locale.translate} logged={login.logged} ref={ref} />
+            }
+          </LocaleContext.Consumer>
+        }
+      </LoginContext.Consumer>
     }
   </AppContext.Consumer>
 ));

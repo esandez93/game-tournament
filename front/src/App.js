@@ -401,7 +401,7 @@ function App (props) {
 
   function doLogin ({ username, password }) {
     login(username, password)
-      .then((user) => {
+      .then(user => {
         const _user = {
           ...user
         };
@@ -553,7 +553,7 @@ function App (props) {
           <div className={clsx(classes.container)}>
             <Switch>
               {routed}
-              <Route component={NotFound} />
+              <Route logged={loginContext.logged} component={NotFound} />
             </Switch>
           </div>
         </div>

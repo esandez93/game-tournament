@@ -85,5 +85,9 @@ export default {
   world: {
     name: 'Nombre',
     avatar: 'Avatar'
+  },
+  controls: {
+    enabled: 'Enabled',
+    disabled: 'Disabled'
   }
 };

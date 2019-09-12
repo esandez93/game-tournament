@@ -127,7 +127,7 @@ function Signup (props) {
           theme,
           locale
         }
-      }).then((user) => {
+      }).then(user => {
         login({
           username: userValues.username,
           password: userValues.password

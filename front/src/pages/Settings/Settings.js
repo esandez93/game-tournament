@@ -77,6 +77,7 @@ function Settings (props) {
   const [ lastSavedTheme, setLastSavedTheme ] = useState(currentTheme);
   const [ lastSavedLocale, setLastSavedLocale ] = useState(currentLocale);
   const [ errors, setErrors ] = useState([]);
+  const [ isLoading, setIsLoading ] = useState(false);
   const [ tab, setTab ] = useState(match.params && match.params.tab ? paths[match.params.tab] : 0);
   const [ snackbar, setSnackbar ] = useState({
     open: false,
@@ -174,12 +175,16 @@ function Settings (props) {
   }
 
   function saveUserSettings () {
-    const _user = {
+    let _user = {
       ...user,
       name: userValues.name,
       username: userValues.username,
-      email: userValues.email
+      email: userValues.email,
+      worlds: []
     };
+    user.worlds.forEach(world => {
+      _user.worlds.push(world.id);
+    });
 
     if (userValues.password === '') {
       setSnackbar({
@@ -187,10 +192,11 @@ function Settings (props) {
         message: translate('settings.errors.noPassword')
       });
     } else {
+      setIsLoading(true);
       checkPassword(user.id, userValues.password)
         .then(() => {
           updateUser(user.id, _user)
-            .then((usr) => {
+            .then(usr => {
               if (!usr) {
                 throw new Error(translate('settings.errors.updateUser'));
               } else {
@@ -199,33 +205,42 @@ function Settings (props) {
                 changeUser(usr);
               }
             })
-            .catch((err) => {
+            .catch(err => {
               setSnackbar({
                 open: true,
                 message: translate('settings.errors.updateUser')
               });
             });
         })
-        .catch((err) => {
+        .catch(err => {
           setSnackbar({
             open: true,
             message: translate('settings.errors.checkPassword')
           });
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
   }
 
   function saveAppSettings () {
+    setIsLoading(true);
+
     const _user = {
       ...user,
       settings: {
         theme,
         locale
-      }
+      },
+      worlds: []
     };
+    user.worlds.forEach(world => {
+      _user.worlds.push(world.id);
+    });
 
     updateUser(user.id, _user)
-      .then((usr) => {
+      .then(usr => {
         setLastSavedLocale(locale);
         setLastSavedTheme(theme);
 
@@ -237,11 +252,14 @@ function Settings (props) {
           changeUser(usr);
         }
       })
-      .catch((err) => {
+      .catch(err => {
         setSnackbar({
           open: true,
           message: translate('settings.errors.updateUser')
         });
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }
 
@@ -330,6 +348,7 @@ function Settings (props) {
             fields={userForm}
             onSubmit={saveUserSettings}
             submitText={translate('forms.save')}
+            isLoading={isLoading}
           />
         )} />
 
@@ -341,6 +360,7 @@ function Settings (props) {
             fields={settingsForm}
             onSubmit={saveAppSettings}
             submitText={translate('forms.save')}
+            isLoading={isLoading}
           />
         )} />
       </Switch>

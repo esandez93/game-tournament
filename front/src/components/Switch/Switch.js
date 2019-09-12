@@ -8,13 +8,16 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import {
   FormControlLabel,
-  Switch as MuiSwitch
+  Switch as MuiSwitch,
+  Typography
 } from '@material-ui/core';
 
 const useStyles = makeStyles(styles);
 
 function Switch (props) {
   const {
+    className,
+    classLabel,
     checked,
     label,
     onChange,
@@ -25,6 +28,7 @@ function Switch (props) {
 
   return (
     <FormControlLabel
+      className={className}
       control={
         <MuiSwitch
           focusVisibleClassName={classes.focusVisible}
@@ -41,7 +45,7 @@ function Switch (props) {
           value={value}
         />
       }
-      label={label}
+      label={<Typography className={clsx(classLabel)}>{label}</Typography>}
     />
   );
 }

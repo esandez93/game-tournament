@@ -83,7 +83,12 @@ function GameCard (props) {
 
       <div className={clsx(classes.cardFooter)}>
         {isAdmin
-          ? <SwitchControl checked={enabled} onChange={() => toggleEnabled(game)}></SwitchControl>
+          ? <SwitchControl
+              label={enabled ? translate('controls.enabled') : translate('controls.disabled')}
+              classLabel={clsx(enabled ? classes.enabledLabel : classes.disabledLabel, classes.switchLabel)}
+              checked={enabled}
+              onChange={() => toggleEnabled(game)}
+            ></SwitchControl>
           : <div></div>
         }
         <Button color="primary" onClick={() => history.push(`${location.pathname}/${game.id}`)}>{translate('details')}</Button>
@@ -174,7 +179,7 @@ function Games (props) {
           setIsAdmin(true);
         }
       });
-    }).catch((err) => {
+    }).catch(err => {
       console.error(err);
     })
     .finally(() => {
@@ -212,7 +217,7 @@ function Games (props) {
         });
 
         history.push(`${location.pathname.replace('/new', '')}`);
-      }).catch((err) => {
+      }).catch(err => {
         console.log(err);
       })
       .finally(() => {
@@ -246,7 +251,7 @@ function Games (props) {
   // TODO: Create and add real stats
   return (
     <div className={clsx('Games', className, classes.root)}>
-      <Switch>
+
         <Route exact path={'*/games'} render={(props) => (
           <Fragment>
             <Card className={clsx(classes.card, classes.newGameCard)}>
@@ -270,7 +275,7 @@ function Games (props) {
             </div>
           </Fragment>
         )} />
-        <Route exact path={'*/games/new'} render={(props) => (
+        <Route path={'*/games/new'} render={(props) => (
           <div className={clsx(classes.forms)}>
             {init && <Form
               className={clsx(classes.form)}
@@ -282,7 +287,7 @@ function Games (props) {
             />}
           </div>
         )} />
-      </Switch>
+
     </div>
   );
 }

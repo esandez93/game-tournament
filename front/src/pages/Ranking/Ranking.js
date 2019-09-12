@@ -43,7 +43,7 @@ function Ranking (props) {
   useEffect(() => {
     getRanking(world, game)
       .then(setRanking)
-      .catch((error) => {
+      .catch(error => {
         setRanking([]);
         console.error(error);
       });

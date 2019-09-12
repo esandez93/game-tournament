@@ -129,7 +129,7 @@ function Worlds (props) {
     }).then((wrlds) => {
       setWorlds(wrlds);
       createWorldItems(wrlds);
-    }).catch((err) => {
+    }).catch(err => {
       console.log(err);
     }).finally(() => {
       setIsLoading(false);
@@ -156,7 +156,7 @@ function Worlds (props) {
 
         setInit(true);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }, [ user ]);
@@ -186,7 +186,7 @@ function Worlds (props) {
 
       selectWorld(world.id);
       history.push('/worlds');
-    }).catch((err) => {
+    }).catch(err => {
       console.log(err);
     }).finally(() => {
       setIsLoading(false);
@@ -241,7 +241,7 @@ function Worlds (props) {
             />}
           </div>
         )} />
-        <Route exact path={'/worlds/:id/:tab?'} component={WorldPage} />
+        <Route exact path={'/worlds/:id/:tab?/*'} component={WorldPage} />
       </Switch>
     </div>
   );

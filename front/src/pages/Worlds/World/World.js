@@ -10,6 +10,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 
 import {
+  Form,
   Tabs
 } from '@/components';
 import {
@@ -18,7 +19,8 @@ import {
   LoginContext
 } from '@/context';
 import {
-  getWorldById
+  getWorldById,
+  updateWorld
 } from '@/api/worlds';
 import {
   Games,
@@ -45,6 +47,9 @@ const paths = {
 function World (props) {
   const {
     setHeader,
+    user,
+    changeUser,
+    translate,
     history,
     match
   } = props;
@@ -65,14 +70,36 @@ function World (props) {
   }))();
 
   const [ world, setWorld ] = useState({});
+  const [ newWorld, setNewWorld ] = useState({});
   const [ tab, setTab ] = useState(match.params && match.params.tab ? paths[match.params.tab] : 0);
+  const [ isLoading, setIsLoading ] = useState(false);
+
+  const handleWorldChange = field => event => {
+    setNewWorld({ ...newWorld, [field]: event.target.value });
+  };
+
+  const worldForm = [{
+    type: 'input',
+    inputType: 'text',
+    label: translate('world.name'),
+    value: newWorld.name,
+    onChange: handleWorldChange('name'),
+    required: true
+  }, {
+    type: 'input',
+    inputType: 'text',
+    label: translate('world.avatar'),
+    value: newWorld.avatar,
+    onChange: handleWorldChange('avatar')
+  }];
 
   useEffect(() => {
     getWorldById(match.params.id)
       .then((world) => {
         setWorld(world);
+        setNewWorld(world);
       })
-      .catch((error) => {
+      .catch(error => {
         console.error('world not found', error);
         history.push('/worlds');
       })
@@ -114,6 +141,32 @@ function World (props) {
     history.push(`/worlds/${match.params.id}/${page}`);
   };
 
+  function clickEditWorld () {
+    setIsLoading(true);
+
+    updateWorld(world.id, {
+      ...world,
+      name: newWorld.name,
+      avatar: newWorld.avatar || world.avatar
+    }).then(updated => {
+      let worlds = [ ...user.worlds ];
+      worlds.forEach((wrld, index) => {
+        if (wrld.id === updated.id) {
+          wrld = { ...updated };
+        }
+      });
+
+      changeUser({
+        ...user,
+        worlds
+      });
+    }).catch(error => {
+      console.error(error);
+    }).finally(() => {
+      setIsLoading(false);
+    });
+  }
+
   return (
     <div className={clsx('World', classes.root, moreClasses.root)}>
       <Tabs
@@ -129,12 +182,23 @@ function World (props) {
           <Users className={clsx(classes.users)} users={world.users} {...props} />
         )} />
 
-        <Route exact path={'/worlds/:id/games'} render={(props) => (
+        <Route path={'/worlds/:id/games'} render={(props) => (
+          <Games className={clsx(classes.games)} selectedWorld={world.id} {...props} />
+        )} />
+        <Route path={'/worlds/:id/games/new'} render={(props) => (
           <Games className={clsx(classes.games)} selectedWorld={world.id} {...props} />
         )} />
 
         <Route exact path={'/worlds/:id/settings'} render={(props) => (
-          <div>settings</div>
+          newWorld.name && <div className={clsx(classes.forms)}>
+            <Form
+              className={clsx(classes.form)}
+              fields={worldForm}
+              onSubmit={clickEditWorld}
+              submitText={translate('forms.save')}
+              isLoading={isLoading}
+            />
+          </div>
         )} />
       </Switch>
     </div>
@@ -148,7 +212,7 @@ export default React.forwardRef((props, ref) => (
         {(locale) => (
           <AppContext.Consumer>
             {(app) => (
-              <World {...props} setHeader={app.setHeader} translate={locale.translate} user={login.user} ref={ref} />
+              <World {...props} setHeader={app.setHeader} translate={locale.translate} user={login.user} changeUser={login.changeUser} ref={ref} />
             )}
           </AppContext.Consumer>
         )}
