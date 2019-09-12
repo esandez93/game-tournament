@@ -9,7 +9,8 @@ import PersonIcon from '@material-ui/icons/Person';
 
 import {
   Avatar,
-  Card
+  Card,
+  Loading
 } from '@/components';
 import { getUsers } from '@/api/worlds';
 import {
@@ -23,23 +24,26 @@ function Users (props) {
   const {
     className,
     world,
-    users: worldUsers
+    users: worldUsers,
+    match
   } = props;
 
   const classes = useStyles();
   const [ users, setUsers ] = useState(worldUsers || []);
+  const [ isLoading, setIsLoading ] = useState(true);
 
   useEffect(() => {
-    if (world) {
-      getUsers(world)
-        .then(setUsers)
-        .catch((error) => {
-          setUsers([]);
-          console.error(error);
-        });
-    } else if (!worldUsers) {
-      // TODO: Show error
-    }
+    const id = world || match.params.id;
+
+    getUsers(id)
+      .then(setUsers)
+      .catch((error) => {
+        setUsers([]);
+        console.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [ world ]);
 
   function getCardHeader(user) {
@@ -64,6 +68,7 @@ function Users (props) {
           header={getCardHeader(user)}
         ></Card>
       ))}
+      <Loading isLoading={isLoading} />
     </div>
   );
 }

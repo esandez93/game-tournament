@@ -17,7 +17,8 @@ import {
   Avatar,
   Button,
   Card,
-  Form
+  Form,
+  Loading
 } from '@/components';
 import {
   LocaleContext,
@@ -44,7 +45,8 @@ function Worlds (props) {
     changeUser,
     translate,
     selectWorld,
-    history
+    history,
+    location
   } = props;
 
   const classes = useStyles();
@@ -57,6 +59,7 @@ function Worlds (props) {
   const [ newWorldUsers, setNewWorldUsers ] = useState([]);
   const [ newWorldAdmins, setNewWorldAdmins ] = useState([]);
   const [ usersItems, setUsersItems ] = useState([]);
+  const [ isLoading, setIsLoading ] = useState(true);
 
   const chipRenderValue = (selected) => (
     <div className={classes.chips}>
@@ -113,6 +116,14 @@ function Worlds (props) {
   }];
 
   useEffect(() => {
+    if (Object.entries(user).length === 0) return;
+
+    if (location.pathname === '/worlds/new') {
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+    }
+
     getWorlds({
       users: user.id
     }).then((wrlds) => {
@@ -120,6 +131,8 @@ function Worlds (props) {
       createWorldItems(wrlds);
     }).catch((err) => {
       console.log(err);
+    }).finally(() => {
+      setIsLoading(false);
     });
 
     getUserRelationships(user.id)
@@ -146,9 +159,10 @@ function Worlds (props) {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [ user ]);
 
   function clickCreateWorld () {
+    setIsLoading(true);
     const users = newWorldUsers.map(usr => usr.id);
     const admins = newWorldAdmins.map(admin => admin.id);
 
@@ -174,7 +188,20 @@ function Worlds (props) {
       history.push('/worlds');
     }).catch((err) => {
       console.log(err);
+    }).finally(() => {
+      setIsLoading(false);
     });
+  }
+
+  function goNewWorld () {
+    setIsLoading(false);
+    history.push(`/worlds/new`);
+  }
+
+  function goDetail (id) {
+    setIsLoading(false);
+    selectWorld(id);
+    history.push(`/worlds/${id}/users`);
   }
 
   // TODO: On Worlds list
@@ -187,7 +214,7 @@ function Worlds (props) {
         <Route exact path={'/worlds'} render={(props) => (
           <Fragment>
             <Card className={clsx(classes.card, classes.newWorldCard)}>
-              <Button color="primary" onClick={() => history.push('/worlds/new')}>{translate('worlds.newWorld')}</Button>
+              <Button color="primary" onClick={goNewWorld}>{translate('worlds.newWorld')}</Button>
             </Card>
 
             <div className={clsx(classes.worlds)}>
@@ -195,9 +222,10 @@ function Worlds (props) {
                 <Card key={world.id} className={clsx(classes.card, classes.worldCard)}>
                   <Avatar src={world.avatar} name={world.name} />
                   <Typography>{world.name}</Typography>
-                  <Button color="primary" onClick={() => history.push(`/worlds/${world.id}/users`)}>{translate('details')}</Button>
+                  <Button color="primary" onClick={() => goDetail(world.id)}>{translate('details')}</Button>
                 </Card>
               ))}
+              <Loading className={clsx(classes.loading)} isLoading={isLoading} />
             </div>
           </Fragment>
         )} />
@@ -209,6 +237,7 @@ function Worlds (props) {
               fields={worldForm}
               onSubmit={clickCreateWorld}
               submitText={translate('forms.create')}
+              isLoading={isLoading}
             />}
           </div>
         )} />

@@ -101,7 +101,7 @@ function Games (props) {
     user,
     currentWorld,
     selectedWorld,
-    changeWorld
+    changeUser
   } = props;
 
   const classes = useStyles();
@@ -170,7 +170,7 @@ function Games (props) {
       setWorld(wrld);
 
       wrld.admins.forEach((admin) => {
-        if (admin.id === user) {
+        if (admin.id === user.id) {
           setIsAdmin(true);
         }
       });
@@ -187,15 +187,37 @@ function Games (props) {
     setIsLoading(true);
 
     createGame(world.id, newGame)
-    .then((updated) => {
-      setWorld(updated);
-      history.push(`${location.pathname.replace('/new', '')}`);
-    }).catch((err) => {
-      console.log(err);
-    })
-    .finally(() => {
-      setIsLoading(false);
-    });
+      .then((updated) => {
+        setWorld(updated);
+
+        let worlds = [];
+
+        user.worlds.forEach(wrld => {
+          if (wrld.id === updated.id) {
+            worlds.push({
+              ...wrld,
+              games: [
+                ...wrld.games,
+                updated
+              ]
+            });
+          } else {
+            worlds.push(wrld);
+          }
+        });
+
+        changeUser({
+          ...user,
+          worlds
+        });
+
+        history.push(`${location.pathname.replace('/new', '')}`);
+      }).catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   function isEnabled (id) {
@@ -269,7 +291,17 @@ export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>
     {(login) =>
       <LocaleContext.Consumer>
-        {(locale) => <Games {...props} translate={locale.translate} user={login.user.id} currentWorld={login.world} changeWorld={login.selectWorld} ref={ref} />}
+        {(locale) =>
+          <Games
+            {...props}
+            translate={locale.translate}
+            user={login.user}
+            currentWorld={login.world}
+            changeWorld={login.selectWorld}
+            ref={ref}
+            changeUser={login.changeUser}
+          />
+        }
       </LocaleContext.Consumer>
     }
   </LoginContext.Consumer>

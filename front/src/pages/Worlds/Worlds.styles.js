@@ -42,5 +42,9 @@ export default (theme) => ({
   newWorldCard: {
     display: 'flex',
     justifyContent: 'center'
+  },
+  loading: {
+    width: '100%',
+    marginTop: `${theme.spacing(8)}px`
   }
 });

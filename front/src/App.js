@@ -410,13 +410,17 @@ function App (props) {
 
         loginDispatch({ type: 'login', user: _user });
 
-        console.log('doLogin')
-
         changeLocale(_user.settings.locale);
         changeTheme(_user.settings.theme);
         history.push('/');
       })
-      .catch(console.error);
+      .catch(error => {
+        console.error(error);
+        setSnackbar({
+          open: true,
+          message: error.error
+        });
+      });
   }
 
   function doLogout () {
@@ -444,23 +448,17 @@ function App (props) {
     createWorldItems(loginContext.user.worlds);
   }, [ loginContext.user.worlds ]);
 
-  // TODO: Fix Game initial auto select
   useEffect(() => {
-    console.log('useEffect world');
+    selectGame('null');
+
     if (!loginContext.user.worlds || !isWorldSelected()) {
       createGameItems([]);
-      selectGame('null');
     } else {
       loginContext.user.worlds.forEach((world) => {
         if (world.id === loginContext.world) {
           getGames(world.id)
             .then(games => {
-              console.log(games)
               createGameItems(games);
-
-              if (!games || games.length === 0) {
-                selectGame('null');
-              }
             })
             .catch(console.error);
         }

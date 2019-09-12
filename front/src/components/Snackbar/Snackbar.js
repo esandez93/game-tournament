@@ -126,7 +126,7 @@ Snackbar.propTypes = {
 };
 Snackbar.defaultProps = {
   variant: 'info',
-  autoHideDuration: 3000,
+  autoHideDuration: 5000,
   classes: {}
 };
 
