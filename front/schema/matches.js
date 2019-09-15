@@ -1,7 +1,7 @@
 import { user } from './users';
 import { character } from './characters';
 
-/* TODO
+/* TODO:
  * Change to spread operator working with Babel
  */
 let teamCharacter = JSON.parse(JSON.stringify(character));

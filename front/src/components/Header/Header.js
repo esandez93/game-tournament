@@ -42,7 +42,7 @@ function Selectors (props) {
             <div className={clsx(classes.selectors)}>
               <Select
                 className={clsx(classes.selector)}
-                label={locale.translate('entities.world')}
+                label={locale.translate('World')}
                 items={worlds}
                 value={login.world}
                 onChange={(e) => selectWorld(e.target.value)}
@@ -52,7 +52,7 @@ function Selectors (props) {
 
               <Select
                 className={clsx(classes.selector)}
-                label={locale.translate('entities.game')}
+                label={locale.translate('Game')}
                 items={games}
                 value={login.game}
                 onChange={(e) => selectGame(e.target.value)}

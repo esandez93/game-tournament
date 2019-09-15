@@ -40,13 +40,12 @@ This steps will probably have some changes in the moment the real backend and DB
     * Duels
     * Events
     * Tournament organization
-    * Game creation (to allow this to work with other games)
     * Notifications ?
         + Ranking position lost (configure by position)
         + Message received
         + Message posted on own match or another match you commented on
         + Match created
-        
+
 - Pending Refactor:
     * Match Component
 

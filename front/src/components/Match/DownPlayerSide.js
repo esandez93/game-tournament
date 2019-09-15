@@ -93,11 +93,11 @@ function DownPlayerSide (props) {
         <MenuItem onClick={() => {
           closeMenu();
           setTimeout(() => clickCharacter(team[clickedCharacter]), 100);
-        }}>{clickedCharacter !== null && team[clickedCharacter] ? translate(team[clickedCharacter].alive ? 'dead' : 'alive' ) : null}</MenuItem>
+        }}>{clickedCharacter !== null && team[clickedCharacter] ? translate(team[clickedCharacter].alive ? 'Dead' : 'Alive' ) : null}</MenuItem>
         <MenuItem onClick={() => {
           closeMenu();
           deleteCharacter(clickedCharacter);
-        }}>{translate('delete')}</MenuItem>
+        }}>{translate('Delete')}</MenuItem>
       </Menu>
       {isCreating && team.length < 8 && (<Fragment>
         <IconButton

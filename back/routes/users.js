@@ -20,10 +20,18 @@ router.get('/', withAuth, (req, res) => {
 });
 
 router.get('/own', withAuth, (req, res) => {
-  utils.decryptToken(req.headers.cookie.replace('token=', ''))
-    .then(({ id }) => UserController.findById(id))
-    .then(user => res.status(200).json(user))
-    .catch(err => res.status(500).send(err));
+  if (req.headers.cookie) {
+    utils.decryptToken(req.headers.cookie.replace('token=', ''))
+      .then(({ id }) => {
+        return UserController.findById(id)
+      })
+      .then(user => {
+        return res.status(200).json(user)
+      })
+      .catch(err => res.status(500).send(err));
+  } else {
+    res.status(401).send('Expired token');
+  }
 });
 
 router.get('/:id', withAuth, (req, res) => {

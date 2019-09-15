@@ -84,14 +84,14 @@ function GameCard (props) {
       <div className={clsx(classes.cardFooter)}>
         {isAdmin
           ? <SwitchControl
-              label={enabled ? translate('controls.enabled') : translate('controls.disabled')}
+              label={enabled ? translate('Enabled') : translate('Disabled')}
               classLabel={clsx(enabled ? classes.enabledLabel : classes.disabledLabel, classes.switchLabel)}
               checked={enabled}
               onChange={() => toggleEnabled(game)}
             ></SwitchControl>
           : <div></div>
         }
-        <Button color="primary" onClick={() => history.push(`${location.pathname}/${game.id}`)}>{translate('details')}</Button>
+        <Button color="primary" onClick={() => history.push(`${location.pathname}/${game.id}`)}>{translate('Details')}</Button>
       </div>
     </Card>
   );
@@ -142,21 +142,21 @@ function Games (props) {
   const gameForm = [{
     type: 'input',
     inputType: 'text',
-    label: translate('game.name'),
+    label: translate('Name'),
     value: newGame.name,
     onChange: handleGameChange('name'),
     required: true
   }, {
     type: 'input',
     inputType: 'text',
-    label: translate('game.avatar'),
+    label: translate('Avatar'),
     value: newGame.avatar,
     onChange: handleGameChange('avatar')
   }, {
     type: 'select',
     multiple: true,
     dividers: true,
-    label: translate('games.characters'),
+    label: translate('Characters'),
     items: charactersItems,
     value: newGameCharacters,
     renderValue: chipRenderValue,
@@ -255,7 +255,7 @@ function Games (props) {
         <Route exact path={'*/games'} render={(props) => (
           <Fragment>
             <Card className={clsx(classes.card, classes.newGameCard)}>
-              <Button color="primary" onClick={() => history.push(`${location.pathname}/new`)}>{translate('games.newGame')}</Button>
+              <Button color="primary" onClick={() => history.push(`${location.pathname}/new`)}>{translate('New Game')}</Button>
             </Card>
 
             <div className={clsx(classes.games)}>
@@ -279,10 +279,10 @@ function Games (props) {
           <div className={clsx(classes.forms)}>
             {init && <Form
               className={clsx(classes.form)}
-              title={translate('games.newGame')}
+              title={translate('New Game')}
               fields={gameForm}
               onSubmit={clickCreateGame}
-              submitText={translate('forms.create')}
+              submitText={translate('Create')}
               isLoading={isLoading}
             />}
           </div>

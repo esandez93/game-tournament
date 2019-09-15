@@ -154,22 +154,22 @@ function App (props) {
   const menuItems = [
     {
       icon: HomeIcon,
-      text: t('sections.home'),
+      text: t('Home'),
       url: '/'
     }, {
       icon: ProfileIcon,
-      text: t('sections.profile'),
+      text: t('Profile'),
       url: '/profile',
       disabled: true
     }, {
       icon: WorldsIcon,
-      text: t('sections.worlds'),
+      text: t('World', { count: 2 }),
       url: '/worlds'
     }, {
       separator: true
     }, {
       icon: UsersIcon,
-      text: t('sections.users'),
+      text: t('User', { count: 2 }),
       url: '/users',
       hasError: () => !isWorldSelected(),
       onClick: () => {
@@ -178,7 +178,7 @@ function App (props) {
         if (!isWorldSelected()) {
           setSnackbar({
             open: true,
-            message: t('app.errors.noWorld')
+            message: t('No World selected')
           });
           nav = false;
         }
@@ -187,7 +187,7 @@ function App (props) {
       }
     }, {
       icon: GamesIcon,
-      text: t('sections.games'),
+      text: t('Game', { count: 2 }),
       url: '/games',
       hasError: () => !isWorldSelected(),
       onClick: () => {
@@ -196,7 +196,7 @@ function App (props) {
         if (!isWorldSelected()) {
           setSnackbar({
             open: true,
-            message: t('app.errors.noWorld')
+            message: t('No World selected')
           });
           nav = false;
         }
@@ -205,7 +205,7 @@ function App (props) {
       }
     }, {
       icon: RankingIcon,
-      text: t('sections.ranking'),
+      text: t('Ranking'),
       url: '/ranking',
       hasError: () => !isWorldSelected(),
       onClick: () => {
@@ -214,7 +214,7 @@ function App (props) {
         if (!isWorldSelected()) {
           setSnackbar({
             open: true,
-            message: t('app.errors.noWorld')
+            message: t('No World selected')
           });
           nav = false;
         }
@@ -223,7 +223,7 @@ function App (props) {
       }
     }, {
       icon: MatchesIcon,
-      text: t('sections.matches'),
+      text: t('Match', { count: 2}),
       url: '/matches',
       hasError: () => !isWorldSelected() || !isGameSelected(),
       onClick: () => {
@@ -232,13 +232,13 @@ function App (props) {
         if (!isWorldSelected()) {
           setSnackbar({
             open: true,
-            message: t('app.errors.noWorld')
+            message: t('No World selected')
           });
           nav = false;
         } else if (!isGameSelected()) {
           setSnackbar({
             open: true,
-            message: t('app.errors.noGame')
+            message: t('No Game selected')
           });
           nav = false;
         }
@@ -249,12 +249,14 @@ function App (props) {
       separator: true
     }, {
       icon: SettingsIcon,
-      text: t('sections.settings'),
+      text: t('Settings'),
       url: '/settings'
     }, {
       icon: PowerSettingsIcon,
-      text: t('sections.logout'),
-      onClick: doLogout
+      text: t('Logout'),
+      onClick: () => {
+        doLogout().then();
+      }
     }
   ];
 
@@ -341,7 +343,7 @@ function App (props) {
 
     let items = [{
       value: 'null',
-      text: <em>{t('app.selectGame')}</em>
+      text: <em>{t('Select Game')}</em>
     }];
 
     games.forEach((game) => {
@@ -367,7 +369,7 @@ function App (props) {
     if (found) {
       items.push({
         value: 'new',
-        text: <strong>{t('app.createNewGame')}</strong>
+        text: <strong>{t('Create new Game')}</strong>
       });
     }
 
@@ -379,7 +381,7 @@ function App (props) {
 
     let items = [{
       value: 'null',
-      text: <em>{t('app.selectWorld')}</em>
+      text: <em>{t('Select World')}</em>
     }];
 
     worlds.forEach((world) => {
@@ -393,47 +395,59 @@ function App (props) {
 
     items.push({
       value: 'new',
-      text: <strong>{t('app.createNewWorld')}</strong>
+      text: <strong>{t('Create new World')}</strong>
     });
 
     setWorlds([ ...items ]);
   }
 
   function doLogin ({ username, password }) {
-    login(username, password)
-      .then(user => {
-        const _user = {
-          ...user
-        };
+    return new Promise((resolve, reject) => {
+      login(username, password)
+        .then(user => {
+          const _user = {
+            ...user
+          };
 
-        initUserValues(user);
+          initUserValues(user);
 
-        loginDispatch({ type: 'login', user: _user });
+          loginDispatch({ type: 'login', user: _user });
 
-        changeLocale(_user.settings.locale);
-        changeTheme(_user.settings.theme);
-        history.push('/');
-      })
-      .catch(error => {
-        console.error(error);
-        setSnackbar({
-          open: true,
-          message: error.error
+          changeLocale(_user.settings.locale);
+          changeTheme(_user.settings.theme);
+          history.push('/');
+
+          resolve(user);
+        })
+        .catch(error => {
+          console.error(error);
+          setSnackbar({
+            open: true,
+            message: error.error
+          });
+          reject(error);
         });
-      });
+    });
   }
 
   function doLogout () {
-    logout()
-      .then((res) => {
-        /* localStorage.removeItem('world');
-        localStorage.removeItem('game'); */
+    return new Promise ((resolve, reject) => {
+      logout()
+        .then((res) => {
+          /* localStorage.removeItem('world');
+          localStorage.removeItem('game'); */
 
-        loginDispatch({ type: 'setLogged', logged: false });
+          loginDispatch({ type: 'setLogged', logged: false });
 
-        history.push('/login');
-      })
-      .catch(console.error);
+          history.push('/login');
+
+          resolve();
+        })
+        .catch((error) => {
+          reject(error);
+          console.error(error);
+        });
+    });
   }
 
   function isGameSelected () {
@@ -472,7 +486,7 @@ function App (props) {
 
     function setLogin (value) {
       if (value === false) {
-        doLogout();
+        doLogout().then();
       }
 
       if (![true, false].includes(loginContext.logged)) {
@@ -496,7 +510,7 @@ function App (props) {
 
     setRouted(_routed);
 
-    setInvalidTokenCallback(doLogout);
+    setInvalidTokenCallback(() => doLogout().then());
 
     getOwnUser()
       .then(user => {
@@ -542,7 +556,7 @@ function App (props) {
             <Header
               logged={loginContext.logged}
               toggleSideMenu={toggleSideMenu}
-              title={t(`sections.${appContext.page}`)}
+              title={appContext.page}
               worlds={worlds}
               selectWorld={selectWorld}
               games={games}

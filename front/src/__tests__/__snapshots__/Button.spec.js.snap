@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button should render without crashing 1`] = `
+<WithStyles(ForwardRef(Button))
+  className="Button"
+  color="default"
+  variant="contained"
+/>
+`;

@@ -189,7 +189,7 @@ function Settings (props) {
     if (userValues.password === '') {
       setSnackbar({
         open: true,
-        message: translate('settings.errors.noPassword')
+        message: translate('You must enter the password to confirm the changes')
       });
     } else {
       setIsLoading(true);
@@ -198,7 +198,7 @@ function Settings (props) {
           updateUser(user.id, _user)
             .then(usr => {
               if (!usr) {
-                throw new Error(translate('settings.errors.updateUser'));
+                throw new Error(translate('Unexpected error updating the data'));
               } else {
                 localStorage.setItem('locale', usr.settings.locale);
                 localStorage.setItem('theme', usr.settings.theme);
@@ -208,14 +208,14 @@ function Settings (props) {
             .catch(err => {
               setSnackbar({
                 open: true,
-                message: translate('settings.errors.updateUser')
+                message: translate('Unexpected error updating the data')
               });
             });
         })
         .catch(err => {
           setSnackbar({
             open: true,
-            message: translate('settings.errors.checkPassword')
+            message: translate('The password is wrong')
           });
         })
         .finally(() => {
@@ -245,7 +245,7 @@ function Settings (props) {
         setLastSavedTheme(theme);
 
         if (!usr) {
-          throw new Error(translate('settings.errors.updateUser'));
+          throw new Error(translate('Unexpected error updating the data'));
         } else {
           localStorage.setItem('locale', usr.settings.locale);
           localStorage.setItem('theme', usr.settings.theme);
@@ -255,7 +255,7 @@ function Settings (props) {
       .catch(err => {
         setSnackbar({
           open: true,
-          message: translate('settings.errors.updateUser')
+          message: translate('Unexpected error updating the data')
         });
       })
       .finally(() => {
@@ -266,49 +266,42 @@ function Settings (props) {
   const userForm = [{
     type: 'input',
     inputType: 'text',
-    label: translate('user.name'),
+    label: translate('Name'),
     value: userValues.name,
     onChange: handleUserChange('name'),
     required: true,
   }, {
     type: 'input',
     inputType: 'text',
-    label: translate('user.username'),
+    label: translate('Username'),
     value: userValues.username,
     onChange: handleUserChange('username'),
     required: true,
   }, {
     type: 'input',
     inputType: 'email',
-    label: translate('user.email'),
+    label: translate('Email'),
     value: userValues.email,
     onChange: handleUserChange('email'),
     required: true,
   }, {
     type: 'input',
     inputType: 'password',
-    label: translate('user.password'),
+    label: translate('Password'),
     value: userValues.password,
     onChange: handleUserChange('password'),
     required: true,
-  }/*, {
-    type: 'input',
-    inputType: 'password',
-    label: translate('user.repeatPassword'),
-    value: userValues.repeatPassword,
-    onChange: handleUserChange('repeatPassword'),
-    required: true,
-  }*/];
+  }];
 
   const settingsForm = [{
     type: 'select',
-    label: translate('settings.theme'),
+    label: translate('Theme'),
     items: themeItems,
     value: theme,
     onChange: handleThemeChange
   }, {
     type: 'select',
-    label: translate('settings.locale'),
+    label: translate('Locale'),
     items: localeItems,
     value: locale,
     onChange: handleLocaleChange
@@ -347,7 +340,7 @@ function Settings (props) {
             })}
             fields={userForm}
             onSubmit={saveUserSettings}
-            submitText={translate('forms.save')}
+            submitText={translate('Save')}
             isLoading={isLoading}
           />
         )} />
@@ -359,7 +352,7 @@ function Settings (props) {
             })}
             fields={settingsForm}
             onSubmit={saveAppSettings}
-            submitText={translate('forms.save')}
+            submitText={translate('Save')}
             isLoading={isLoading}
           />
         )} />

@@ -49,7 +49,6 @@ function SideMenu (props) {
     setCurrentSection(props.location.pathname.split('/')[1]);
   }, [ props.location.pathname ]);
 
-  // TODO: Disable some options if no World and/or Game selected ?
   return (
     <Drawer
       variant={size.width > breakpoints.m ? 'permanent' : 'temporary'}

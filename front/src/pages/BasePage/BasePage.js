@@ -40,10 +40,10 @@ function BasePage (props) {
   }))();
 
   useEffect(() => {
-    setTitle(translate(`sections.${cleanString(name).toLowerCase()}`));
+    setTitle(translate(name));
   } ,[]);
 
-  if (!logged && location.pathname !== '/login') {
+  if (!logged && location.pathname !== '/login' && location.pathname !== '/signup') {
     return (
       <div className={clsx(classes.loading)}>
         <Loading isLoading={!logged} />

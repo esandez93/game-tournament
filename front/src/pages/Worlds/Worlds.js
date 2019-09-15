@@ -81,21 +81,21 @@ function Worlds (props) {
   const worldForm = [{
     type: 'input',
     inputType: 'text',
-    label: translate('world.name'),
+    label: translate('Name'),
     value: newWorld.name,
     onChange: handleWorldChange('name'),
     required: true
   }, {
     type: 'input',
     inputType: 'text',
-    label: translate('world.avatar'),
+    label: translate('Avatar'),
     value: newWorld.avatar,
     onChange: handleWorldChange('avatar')
   }, {
     type: 'select',
     multiple: true,
     dividers: true,
-    label: translate('worlds.users'),
+    label: translate('User', { count: 2 }),
     items: usersItems,
     value: newWorldUsers,
     renderValue: chipRenderValue,
@@ -106,7 +106,7 @@ function Worlds (props) {
     type: 'select',
     multiple: true,
     dividers: true,
-    label: translate('worlds.admins'),
+    label: translate('Admin', { count: 2 }),
     items: usersItems,
     value: newWorldAdmins,
     renderValue: chipRenderValue,
@@ -214,7 +214,7 @@ function Worlds (props) {
         <Route exact path={'/worlds'} render={(props) => (
           <Fragment>
             <Card className={clsx(classes.card, classes.newWorldCard)}>
-              <Button color="primary" onClick={goNewWorld}>{translate('worlds.newWorld')}</Button>
+              <Button color="primary" onClick={goNewWorld}>{translate('New World')}</Button>
             </Card>
 
             <div className={clsx(classes.worlds)}>
@@ -222,7 +222,7 @@ function Worlds (props) {
                 <Card key={world.id} className={clsx(classes.card, classes.worldCard)}>
                   <Avatar src={world.avatar} name={world.name} />
                   <Typography>{world.name}</Typography>
-                  <Button color="primary" onClick={() => goDetail(world.id)}>{translate('details')}</Button>
+                  <Button color="primary" onClick={() => goDetail(world.id)}>{translate('Details')}</Button>
                 </Card>
               ))}
               <Loading className={clsx(classes.loading)} isLoading={isLoading} />
@@ -233,10 +233,10 @@ function Worlds (props) {
           <div className={clsx(classes.forms)}>
             {init && <Form
               className={clsx(classes.form)}
-              title={translate('worlds.newWorld')}
+              title={translate('New World')}
               fields={worldForm}
               onSubmit={clickCreateWorld}
-              submitText={translate('forms.create')}
+              submitText={translate('Create')}
               isLoading={isLoading}
             />}
           </div>

@@ -29,6 +29,9 @@ import { breakpoints } from '@/constants';
 const useStyles = makeStyles(styles);
 const useXsStyles = makeStyles(xsStyles);
 
+// TODO: On new Match creation, prevent errors doing some checks:
+//        - There are 2 or more players available
+//        - There are 1 or more characters available
 function Match (props) {
   const {
     className,
@@ -181,15 +184,15 @@ function Match (props) {
     const result = getResult();
 
     if (!state.player1.user.id) {
-      message = translate('match.errors.player1');
+      message = translate('Player 1 has not been selected');
     } else if (!state.player2.user.id) {
-      message = translate('match.errors.player2');
+      message = translate('Player 2 has not been selected');
     } else if (state.player1.team.length === 0) {
-      message = translate('match.errors.player1Team');
+      message = translate('Player 1 has not any characters');
     } else if (state.player2.team.length === 0) {
-      message = translate('match.errors.player1Team');
+      message = translate('Player 2 has not any characters');
     } else if (result === -1) {
-      message = translate('match.errors.noResult');
+      message = translate('Both Players have characters alive');
     }
 
     return message;
@@ -263,14 +266,14 @@ function Match (props) {
   return (<Fragment>
     {isCreating && (
       <div className={clsx(classes.newHeader)}>
-        <Typography className={clsx(classes.newHeaderText)}>{translate('matches.newMatch')}</Typography>
-        <IconButton className={clsx(classes.newHeaderIcon)} aria-label="Cancel match creation" onClick={clickCancel} >
+        <Typography className={clsx(classes.newHeaderText)}>{translate('New Match')}</Typography>
+        <IconButton className={clsx(classes.newHeaderIcon)} aria-label={translate('Cancel match creation')} onClick={clickCancel} >
           <CloseIcon />
         </IconButton>
       </div>
     )}
     <Wrapper className={clsx(className)} {...other}>
-      {isNew && <Button className={classes.newMatch} variant="contained" color="primary" onClick={handleNew}>{props.translate('matches.newMatch')}</Button>}
+      {isNew && <Button className={classes.newMatch} variant="contained" color="primary" onClick={handleNew}>{props.translate('New Match')}</Button>}
       {!isNew && isBigScreen() && (
         <Fragment>
           <div className={clsx(classes.upperSide)}>
@@ -432,7 +435,7 @@ function Match (props) {
               className={clsx(classes.createButton)}
               disabled={hasError()}
               onClick={clickCreateMatch}
-            >{translate('create')}</Button>
+            >{translate('Create')}</Button>
           </span>
         </Tooltip>
       */}
@@ -442,7 +445,7 @@ function Match (props) {
           variant="outlined"
           className={clsx(classes.createButton)}
           onClick={clickCreateMatch}
-        >{translate('create')}</Button>
+        >{translate('Create')}</Button>
         <Snackbar
           variant="error"
           direction="up"

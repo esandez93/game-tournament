@@ -81,14 +81,14 @@ function World (props) {
   const worldForm = [{
     type: 'input',
     inputType: 'text',
-    label: translate('world.name'),
+    label: translate('Name'),
     value: newWorld.name,
     onChange: handleWorldChange('name'),
     required: true
   }, {
     type: 'input',
     inputType: 'text',
-    label: translate('world.avatar'),
+    label: translate('Avatar'),
     value: newWorld.avatar,
     onChange: handleWorldChange('avatar')
   }];
@@ -195,7 +195,7 @@ function World (props) {
               className={clsx(classes.form)}
               fields={worldForm}
               onSubmit={clickEditWorld}
-              submitText={translate('forms.save')}
+              submitText={translate('Save')}
               isLoading={isLoading}
             />
           </div>

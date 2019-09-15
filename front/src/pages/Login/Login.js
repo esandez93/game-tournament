@@ -10,8 +10,7 @@ import { Typography } from '@material-ui/core';
 
 import { checkToken } from '@/api/auth';
 import {
-  Button,
-  Input
+  Form
 } from '@/components';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
@@ -33,22 +32,15 @@ function Login (props) {
   } = props;
 
   const [ checked, setChecked ] = useState(false);
-  useEffect(() => {
-    checkToken()
-      .then(() => {
-        props.history.push('/');
-      })
-      .catch(() => {
-        setChecked(true);
-      });
-  }, []);
 
+  const classes = useStyles();
   const size = useWindowSize();
+  const [ isLoading, setIsLoading ] = useState(false);
   const [ values, setValues ] = useState({
     username: '',
     password: ''
   });
-  const classes = useStyles();
+
   const moreClasses = makeStyles((theme) => ({
     form: {
       marginTop: size.width < breakpoints.m ? `${theme.spacing(4)}px` : `${theme.spacing(12)}px`
@@ -59,29 +51,55 @@ function Login (props) {
     setValues({ ...values, [name]: event.target.value });
   };
 
+  const loginForm = [{
+    type: 'input',
+    inputType: 'text',
+    label: translate('Username'),
+    value: values.username,
+    onChange: handleChange('username'),
+    required: true
+  }, {
+    type: 'input',
+    inputType: 'password',
+    label: translate('Password'),
+    value: values.password,
+    onChange: handleChange('password'),
+    required: true
+  }];
+
+  useEffect(() => {
+    checkToken()
+      .then(() => {
+        props.history.push('/');
+      })
+      .catch(() => {
+        setChecked(true);
+      });
+  }, []);
+
+  function clickLogin () {
+    setIsLoading(true);
+    login(values)
+      .then(() => {})
+      .catch(error => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
   return (
     <div className={clsx('Login', className)} {...other}>
       {checked && <div className={clsx(classes.root)}>
-        <form className={clsx(classes.form, moreClasses.form)} noValidate>
-          <Typography className={clsx(classes.title)}>Sign in</Typography>
-          <Input
-            id="username"
-            label={translate('user.username')}
-            value={values.username}
-            onChange={handleChange('username')}
-          />
-          <Input
-            id="password"
-            label={translate('user.password')}
-            value={values.password}
-            onChange={handleChange('password')}
-            type="password"
-          />
-
-          <Button className={classes.button} color="primary" variant="contained" onClick={() => login(values)}>
-            {translate('sections.login')}
-          </Button>
-        </form>
+        <Form
+          className={clsx(classes.form, moreClasses.form)}
+          title={<Typography className={clsx(classes.title)}>Sign in</Typography>}
+          fields={loginForm}
+          onSubmit={clickLogin}
+          submitText={translate('Login')}
+          isLoading={isLoading}
+        />
 
         <Typography className={clsx(classes.signup)}>
           <Trans i18nKey="login.signup">

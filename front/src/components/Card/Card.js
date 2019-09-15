@@ -70,7 +70,7 @@ function Card (props) {
             })}
             onClick={handleExpandClick}
             aria-expanded={expanded}
-            aria-label={expanded ? translate('card.collapse') : translate('card.expand')}
+            aria-label={expanded ? translate('Collapse') : translate('Expand')}
           >
             <ExpandMoreIcon />
           </IconButton>

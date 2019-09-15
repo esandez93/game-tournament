@@ -8,16 +8,15 @@ import MuiButton from '@material-ui/core/Button';
 class Button extends Component {
   render() {
     const {
-      theme,
       className,
       children,
-      ...props
+      ...other
     } = this.props;
 
     return (
       <MuiButton
         className={clsx('Button', className)}
-        {...props}
+        {...other}
       >
         { children }
       </MuiButton>
