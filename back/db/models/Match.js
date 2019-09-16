@@ -32,6 +32,14 @@ const schema = new mongoose.Schema({
   group: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Group'
+  },
+  creationDate: {
+    type: Date,
+    required: true
+  },
+  lastUpdate: {
+    type: Date,
+    required: true
   }
 });
 schema.index({ id: 1 });
@@ -49,7 +57,9 @@ function populate (data) {
     result: data.result,
     world: data.world,
     game: data.game,
-    group: data.group
+    group: data.group,
+    creationDate: data.creationDate,
+    lastUpdate: data.lastUpdate
   });
 }
 

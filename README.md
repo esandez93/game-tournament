@@ -32,7 +32,8 @@ This is only needed if the common packages are modified.
   - Review login and logout FE logic on invalid token (check User field in localStorage)
   - Do some sketch of the Home view (d3.js ?)
   - Notification (and permission?) on match created with your user (email, app ...?)
-  - Check Matches view on wide screens (>1980px ?)
+  - Check Matches view on wide screens (>1920px ?)
+  - Change locale system to use gettext standard and pluralisation
   - Admin views:
     - Create worlds
     - Create games

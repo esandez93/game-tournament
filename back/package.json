@@ -15,14 +15,18 @@
     "dotenv": "^8.0.0",
     "express": "^4.17.0",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
     "mongoose": "^5.5.10"
   },
   "scripts": {
-    "start": "set DEBUG=*,-express:*,-nodemon,-nodemon:*,-body-parser:* && nodemon index.js",
+    "start": "nodemon index.js",
     "start-production": "NODE_ENV=production node index.js"
   },
   "keywords": [],
   "author": "esandez",
   "license": "ISC",
-  "gitHead": "d64c5b0d98590fdbff862d0071dc95a96f5c9d66"
+  "gitHead": "d64c5b0d98590fdbff862d0071dc95a96f5c9d66",
+  "devDependencies": {
+    "debug": "^4.1.1"
+  }
 }

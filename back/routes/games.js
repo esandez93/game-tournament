@@ -1,11 +1,13 @@
 // Import dependencies
 const express = require('express');
+const moment = require('moment');
+const debug = require('debug')('games.routes');
 const withAuth = require('../middleware/withAuth');
 const router = express.Router();
 
 // const CharacterController = require('../../controllers/characters.js');
-const Game = require('../db/models/Game')
-const Character = require('../db/models/Character')
+const Game = require('../db/models/Game');
+const Character = require('../db/models/Character');
 
 router.get('/', withAuth, (req, res) => {
   Game.model.find().exec()
@@ -38,17 +40,40 @@ router.get('/:game/characters/:id', withAuth, (req, res) => {
   const {
     id,
     game
-  } = props;
+  } = req.params;
 
-  Character.model.findById({ id, game }).exec()
+  Character.model.find({ id, game }).exec()
     .then(character => res.status(200).json(character))
     .catch(err => res.status(500).send(err));
 });
 
 router.post('/:game/characters', withAuth, (req, res) => {
-  let character = Character.populate(req.body);
+  let character = Character.populate({
+    ...req.body,
+    game: req.params.game
+  });
+  let char = null;
+
+  character.creationDate = moment().utc();
+  character.lastUpdate = character.creationDate;
+
   character.save()
-    .then(char => res.status(200).json(char))
+    .then(newChar => {
+      char = newChar;
+
+      return Game.model.findById(req.params.game);
+    })
+    .then((game) => {
+      game.updateOne({
+        characters: game.characters ? [ ...game.characters, char.id ] : [ char.id ],
+        lastUpdate: moment().utc()
+      }).then((response) => {
+      }).catch((error) => {
+        console.error(error);
+      });
+
+      return res.status(200).json(char);
+    })
     .catch(err => res.status(500).json(err));
 });
 
@@ -61,14 +86,33 @@ router.post('/:game/characters/batch', withAuth, (req, res) => {
       ...char,
       game: req.params.game
     });
+    character.creationDate = moment().utc();
+    character.lastUpdate = character.creationDate;
+
+    characters.push(character);
 
     character.save()
       .then(characters.push)
       .catch(err => error = err);
   });
 
+  Game.model.findById(req.params.game)
+  .then((game) => {
+    let ids = [];
+    characters.forEach((character) => ids.push(character.id));
+
+    game.updateOne({
+      characters: game.characters ? [ ...game.characters, ...ids ] : [ ...ids ],
+      lastUpdate: moment().utc()
+    }).then((response) => {
+    }).catch((error) => {
+      console.error(error);
+    });
+  })
+  .then((error) => res.status(500).json(error));
+
   if (error) {
-    res.status(500).json(error)
+    res.status(500).json(error);
   } else {
     res.status(200).json(characters);
   }

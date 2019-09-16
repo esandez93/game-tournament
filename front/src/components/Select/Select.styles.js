@@ -9,6 +9,7 @@ export default (theme) => ({
     height: `${theme.spacing(4)}px`,
     width: `${theme.spacing(4)}px`,
     marginRight: `${theme.spacing(1)}px`,
+    borderRadius: `${theme.spacing(1) / 2}px`
   },
   itemAvatar: {
     marginRight: `${theme.spacing(2)}px`

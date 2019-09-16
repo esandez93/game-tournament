@@ -1,37 +1,64 @@
 const express = require('express');
+const debug = require('debug')('route.worlds');
 const withAuth = require('../middleware/withAuth');
 const router = express.Router();
 
-// const WorldController = require('../../controllers/worlds.js');
 const World = require('../db/models/World');
 const User = require('../db/models/User');
 const Game = require('../db/models/Game');
+
+const UserController = require('../db/controllers/user.ctrl');
+const WorldController = require('../db/controllers/world.ctrl');
 const MatchController = require('../db/controllers/match.ctrl');
 
-router.get('/', withAuth, (req, res) => {
-  World.model.find(req.query).exec()
+const utils = require('../utils');
+
+// WORLDS
+
+router.get('/', withAuth, (req, res, next) => {
+  WorldController.find(req.query, req.headers.cookie.replace('token=', ''))
     .then(worlds => res.status(200).json(worlds))
-    .catch(err => res.status(500).send(err));
+    .catch(next);
 });
 
-router.get('/:id', withAuth, (req, res) => {
-  World.model.findById(req.params.id).exec()
+router.get('/:id', withAuth, (req, res, next) => {
+  WorldController.findById(req.params.id, req.headers.cookie.replace('token=', ''))
     .then(world => res.status(200).json(world))
-    .catch(err => res.status(500).send(err));
+    .catch(next);
 });
 
-router.post('/', withAuth, (req, res) => {
-  let world = World.populate(req.body);
-  world.save()
-    .then(comp => res.status(200).json(comp))
+router.post('/', withAuth, (req, res, next) => {
+  WorldController.create(req.body, req.headers.cookie.replace('token=', ''))
+    .then(world => res.status(200).json(world))
+    .catch(next);
+});
+
+router.put('/:id', withAuth, (req, res) => {
+  WorldController.update(req.params.id, req.body, req.headers.cookie.replace('token=', ''))
+    .then(world => res.status(200).json(world))
     .catch(err => res.status(500).json(err));
+});
+
+router.delete('/:id', withAuth, (req, res, next) => {
+  WorldController.isAdmin(req.headers.cookie.replace('token=', ''), req.params.id)
+    .then(isAdmin => {
+      if (isAdmin) {
+        return WorldController.remove(req.params.id);
+      } else {
+        return res.status(401).json({
+          message: 'Only admins can delete a world'
+        });
+      }
+    })
+    .then(() => res.status(200))
+    .catch((err) => res.status(500).json(err));
 });
 
 
 // USERS
 
 router.get('/:world/users', withAuth, (req, res) => {
-  User.model.find({ worlds: req.params.world }).populate('world')
+  UserController.findByWorld(req.params.world)
     .then(users => res.status(200).json(users))
     .catch(err => res.status(500).send(err));
 });
@@ -42,20 +69,19 @@ router.get('/:world/users/:id', withAuth, (req, res) => {
     world
   } = req.params;
 
-  User.model.find({ id, world }).populate('world')
+  UserController.findByWorld(world, { _id: id })
     .then(user => res.status(200).json(user))
     .catch(err => res.status(500).send(err));
 });
 
-// TODO: DIFF if new user or just assigning a world. NOT WORKING NOW
-router.post('/:world/users', (req, res) => {
-  let user = User.populate({
-    ...req.body,
-    worlds: req.params.world
-  });
-
-  user.save()
-    .then(usr => res.status(200).json(usr))
+router.put('/:id/users', withAuth, (req, res) => {
+  WorldController.update(req.params.id, req.body, req.headers.cookie.replace('token=', ''))
+    .then(world => {
+      // TODO: Should this be async and send the response while updateing the users in background ?
+      WorldController.updateUsers(world)
+        .then(() => res.status(200).json(world))
+        .catch(err => res.status(500).json(err))
+    })
     .catch(err => res.status(500).json(err));
 });
 
@@ -82,7 +108,7 @@ router.get('/:world/matches/:id', withAuth, (req, res) => {
 });
 
 router.post('/:world/matches', withAuth, (req, res) => {
-  MatchController.save({
+  MatchController.create({
     ...req.body,
     world: req.params.world
   }).then(match => res.status(200).json(match))
@@ -93,8 +119,33 @@ router.post('/:world/matches', withAuth, (req, res) => {
 // GAMES
 
 router.get('/:world/games', withAuth, (req, res) => {
-  World.model.findById(req.params.world).populate('games')
-    .then(world => res.status(200).json(world.games))
+  let games = {
+    all: null,
+    enabled: null
+  };
+
+  WorldController.findById(req.params.world, req.headers.cookie.replace('token=', ''))
+    .then(world => {
+      games = {
+        all: world.games,
+        enabled: world.enabledGames
+      };
+
+      return WorldController.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world);
+    })
+    .then(isAdmin => {
+      if (isAdmin) {
+        res.status(200).json(games.all);
+      } else {
+        res.status(200).json(games.enabled);
+      }
+    })
+    .catch(err => res.status(500).send(err));
+});
+
+router.post('/:world/games', withAuth, (req, res) => {
+  WorldController.createGame(req.params.world, req.body)
+    .then(game => res.status(200).json(game))
     .catch(err => res.status(500).send(err));
 });
 
@@ -104,9 +155,9 @@ router.get('/:world/games/:id', withAuth, (req, res) => {
     id
   } = req.params;
 
-  World.model.findById(world).populate('games')
+  WorldController.findById(world, req.headers.cookie.replace('token=', ''))
     .then(world => {
-      let game = world.games.find((item) => item.id === id);
+      let game = world.games.find(item => item.id === id);
 
       if (game) {
         return res.status(200).json(game);
@@ -117,18 +168,32 @@ router.get('/:world/games/:id', withAuth, (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
-// TODO: REDO FROM 0. NOT WORKING
-router.post('/:world/games', withAuth, (req, res) => {
-  /* let game = Game.populate({
-    ...req.body,
-    world: req.params.world
-  });
+router.post('/:world/games/:id', withAuth, (req, res) => {
+  WorldController.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world)
+    .then(isAdmin => {
+      if (isAdmin) {
+        WorldController.enableGame(req.params.world, req.params.id, req.headers.cookie.replace('token=', ''))
+          .then(games => res.status(200).json(games))
+          .catch(err => res.status(500).send(err));
+      } else {
+        res.status(401).send({ message: 'Operation only allowed to the World\'s admins' });
+      }
+    })
+    .catch(err => res.status(500).send(err));
+});
 
-  Game.model.save({
-    ...req.body,
-    world: req.params.world
-  }).then(game => res.status(200).json(game))
-    .catch(err => res.status(500).send(err)); */
+router.delete('/:world/games/:id', withAuth, (req, res) => {
+  WorldController.isAdmin(req.headers.cookie.replace('token=', ''), req.params.world)
+    .then(isAdmin => {
+      if (isAdmin) {
+        WorldController.disableGame(req.params.world, req.params.id, req.headers.cookie.replace('token=', ''))
+          .then(games => res.status(200).json(games))
+          .catch(err => res.status(500).send(err));
+      } else {
+        res.status(401).send({ message: 'Operation only allowed to the World\'s admins' });
+      }
+    })
+    .catch(err => res.status(500).send(err));
 });
 
 
@@ -139,7 +204,7 @@ router.get('/:world/games/:id/ranking', withAuth, (req, res) => {
   } = req.params;
 
   // TODO: Create real Ranking find function
-  User.model.find({ worlds: world }).populate('world')
+  UserController.findByWorld(world)
     .then(user => res.status(200).json(user))
     .catch(err => res.status(500).send(err));
 });

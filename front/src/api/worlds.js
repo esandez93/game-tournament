@@ -1,5 +1,5 @@
 import { url } from './config';
-import { get, post} from '@/utils';
+import { get, post, put, remove } from '@/utils';
 
 const endpoint = 'worlds';
 
@@ -11,6 +11,14 @@ function getWorldById(id) {
   return get(`${url}/${endpoint}/${id}`);
 }
 
+function createWorld(world) {
+  return post(`${url}/${endpoint}`, world);
+}
+
+function updateWorld(id, world) {
+  return put(`${url}/${endpoint}/${id}`, world);
+}
+
 
 // GAMES
 function getGames(world, params) {
@@ -19,6 +27,18 @@ function getGames(world, params) {
 
 function getGameById(world, id) {
   return get(`${url}/${endpoint}/${world}/games/${id}`);
+}
+
+function createGame(world, body) {
+  return post(`${url}/${endpoint}/${world}/games`, body);
+}
+
+function enableGame(world, game) {
+  return post(`${url}/${endpoint}/${world}/games/${game}`);
+}
+
+function disableGame(world, game) {
+  return remove(`${url}/${endpoint}/${world}/games/${game}`);
 }
 
 function getRanking(world, game) {
@@ -53,10 +73,15 @@ function getUserById(world, id) {
 export {
   getWorlds,
   getWorldById,
+  createWorld,
+  updateWorld,
 
   getGames,
   getGameById,
   getRanking,
+  createGame,
+  enableGame,
+  disableGame,
 
   getMatches,
   getMatchById,

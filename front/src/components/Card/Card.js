@@ -5,13 +5,15 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import { makeStyles } from '@material-ui/core/styles';
-import MuiCard from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Collapse from '@material-ui/core/Collapse';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  Card as MuiCard,
+  CardHeader,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Collapse,
+  IconButton
+} from '@material-ui/core';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
@@ -22,6 +24,7 @@ const useStyles = makeStyles(styles);
 function Card (props) {
   const {
     className,
+    contentClass,
     header,
     media,
     children,
@@ -51,10 +54,10 @@ function Card (props) {
         image={media.src}
         title={media.title}
       />}
-      <CardContent>
+      <CardContent className={clsx(contentClass)}>
         {children}
       </CardContent>
-      <CardActions disableSpacing>
+      {actions && actions.length > 0 && <CardActions disableSpacing>
         {actions.map((action, index) => (
           <IconButton key={index} aria-label={action.title} onClick={action.onClick}>
             {action.icon}
@@ -67,12 +70,12 @@ function Card (props) {
             })}
             onClick={handleExpandClick}
             aria-expanded={expanded}
-            aria-label={expanded ? translate('card.collapse') : translate('card.expand')}
+            aria-label={expanded ? translate('Collapse') : translate('Expand')}
           >
             <ExpandMoreIcon />
           </IconButton>
         }
-      </CardActions>
+      </CardActions>}
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
 

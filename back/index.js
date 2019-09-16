@@ -6,10 +6,12 @@ const PORT = process.env.PORT || 3020;
 const app = express();
 
 const modules = [
-  './error-handler',
   './middleware',
   './routes',
-  './server'
+  './server',
+
+  // The error handler is always the last
+  './error-handler'
 ]
 
 modules.forEach((mod) => {

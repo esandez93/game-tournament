@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const Match = require('../models/Match');
 const User = require('../models/User');
 const utils = require('../utils');
@@ -19,9 +21,11 @@ function findById (id, world, game) {
     .populate(populatePlayer(2));
 }
 
-function save (body) {
+function create (body) {
   return new Promise((resolve, reject) => {
     let match = Match.populate(body);
+    match.creationDate = moment().utc();
+    match.lastUpdate = match.creationDate;
     match.save()
       .then(newMatch => {
         findById(newMatch.id)
@@ -35,5 +39,5 @@ function save (body) {
 module.exports = {
   find,
   findById,
-  save
+  create
 }

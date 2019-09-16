@@ -8,6 +8,10 @@ const schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Game'
   }],
+  enabledGames: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Game'
+  }],
   users: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -15,7 +19,15 @@ const schema = new mongoose.Schema({
   admins: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  creationDate: {
+    type: Date,
+    required: true
+  },
+  lastUpdate: {
+    type: Date,
+    required: true
+  }
 });
 schema.index({ id: 1 });
 
@@ -28,7 +40,11 @@ function populate (data) {
     name: data.name,
     avatar: data.avatar,
     games: data.games,
-    admins: data.admins
+    enabledGames: data.enabledGames,
+    users: data.users,
+    admins: data.admins,
+    creationDate: data.creationDate,
+    lastUpdate: data.lastUpdate
   });
 }
 

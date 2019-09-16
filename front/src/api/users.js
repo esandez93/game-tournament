@@ -7,6 +7,10 @@ const endpoint = 'users';
   return get(`${url}/${endpoint}`);
 } */
 
+function getOwnUser() {
+  return get(`${url}/${endpoint}/own`);
+}
+
 function getUserById(id) {
   return get(`${url}/${endpoint}/${id}`);
 }
@@ -15,9 +19,8 @@ function getUserRelationships(id) {
   return get(`${url}/${endpoint}/${id}/relationships`);
 }
 
-// TODO: Change to PUT
 function updateUser(id, user) {
-  return post(`${url}/${endpoint}/${id}`, user);
+  return put(`${url}/${endpoint}/${id}`, user);
 }
 
 function register(user) {
@@ -32,6 +35,7 @@ function checkPassword(id, password) {
 
 export {
   checkPassword,
+  getOwnUser,
   // getUsers,
   getUserById,
   getUserRelationships,

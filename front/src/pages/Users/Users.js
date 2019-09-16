@@ -9,7 +9,8 @@ import PersonIcon from '@material-ui/icons/Person';
 
 import {
   Avatar,
-  Card
+  Card,
+  Loading
 } from '@/components';
 import { getUsers } from '@/api/worlds';
 import {
@@ -21,18 +22,29 @@ const useStyles = makeStyles(styles);
 
 function Users (props) {
   const {
-    world
+    className,
+    world,
+    users: worldUsers,
+    match
   } = props;
 
   const classes = useStyles();
-  const [ users, setUsers ] = useState([]);
+  const [ users, setUsers ] = useState(worldUsers || []);
+  const [ isLoading, setIsLoading ] = useState(true);
 
   useEffect(() => {
-    getUsers(world).then(
-      (data) => setUsers(data),
-      (error) => console.error(error)
-    );
-  }, []);
+    const id = world || match.params.id;
+
+    getUsers(id)
+      .then(setUsers)
+      .catch(error => {
+        setUsers([]);
+        console.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [ world ]);
 
   function getCardHeader(user) {
     return {
@@ -45,19 +57,21 @@ function Users (props) {
     };
   }
 
+  // TODO: Check if BasePage's styles can be overwritten easily from outside
+  // TODO: Create user detail page and enter from here
   return (
-    <div className={clsx('Users', props.className)}>
-      {users.map((user) => (
+    <div className={clsx('Users', className)}>
+      {users.map(user => (
         <Card
           className={clsx(classes.card)}
           key={user.id}
           header={getCardHeader(user)}
         ></Card>
       ))}
+      <Loading isLoading={isLoading} />
     </div>
   );
 }
-
 
 export default React.forwardRef((props, ref) => (
   <LoginContext.Consumer>

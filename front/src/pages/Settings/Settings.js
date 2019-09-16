@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './Settings.styles';
 
 import clsx from 'clsx';
+import {
+  Switch,
+  Route
+} from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -43,11 +47,23 @@ function Settings (props) {
     changeLocale,
     currentLocale,
     staticContext,
+    history,
+    match,
     ...other
   } = props;
 
   const size = useWindowSize();
   const classes = useStyles();
+
+  const tabs = [{
+    label: 'User Info'
+  }, {
+    label: 'App Settings'
+  }];
+  const paths = {
+    user: 0,
+    app: 1
+  };
 
   const [ userValues, setUserValues ] = useState({
     name: user.name,
@@ -61,7 +77,8 @@ function Settings (props) {
   const [ lastSavedTheme, setLastSavedTheme ] = useState(currentTheme);
   const [ lastSavedLocale, setLastSavedLocale ] = useState(currentLocale);
   const [ errors, setErrors ] = useState([]);
-  const [ tab, setTab ] = useState(0);
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ tab, setTab ] = useState(match.params && match.params.tab ? paths[match.params.tab] : 0);
   const [ snackbar, setSnackbar ] = useState({
     open: false,
     message: null
@@ -69,18 +86,15 @@ function Settings (props) {
   const lastSavedThemeRef = useRef();
   const lastSavedLocaleRef = useRef();
 
-  const tabs = [{
-    label: 'User Info'
-  }, {
-    label: 'App Settings'
-  }];
-
   const moreClasses = makeStyles((theme) => ({
     root: {
-      paddingTop: size.width < breakpoints.m ? theme.spacing(15) : theme.spacing(12)
+      paddingTop: size.width > breakpoints.m ? theme.spacing(8) : theme.spacing(15)
     },
     tabs: {
-      top: size.width > 600 ? theme.spacing(8) : theme.spacing(7)
+      // The hardcoded 600 is because MUI AppBar has a breakpoint at 600px
+      // where it has 8px more of height
+      top: size.width > breakpoints.m ? theme.spacing(0) :
+        size.width < 600 ? theme.spacing(7) : theme.spacing(8)
     },
     forms: {
       flexDirection: size.width >= breakpoints.l ? 'row' : 'column',
@@ -108,9 +122,15 @@ function Settings (props) {
     lastSavedThemeRef.current = lastSavedTheme;
   }, [ lastSavedLocale, lastSavedTheme ]);
 
-  useEffect(() => () => {
-    changeTheme(lastSavedThemeRef.current);
-    changeLocale(lastSavedLocaleRef.current);
+  useEffect(() => {
+    if (!match.params.tab) {
+      history.push('/settings/user');
+    }
+
+    return () => {
+      changeTheme(lastSavedThemeRef.current);
+      changeLocale(lastSavedLocaleRef.current);
+    }
   }, []);
 
   const handleUserChange = name => event => {
@@ -126,6 +146,19 @@ function Settings (props) {
   };
   const handleTabChange = (event, selected) => {
     setTab(selected);
+
+    let page = null;
+    switch (selected) {
+      default:
+      case 0:
+        page = 'user';
+        break;
+      case 1:
+        page = 'app';
+        break;
+    }
+
+    history.push(`/settings/${page}`);
   };
 
   const themeItems = Object.keys(themes).map((key) => ({
@@ -141,122 +174,134 @@ function Settings (props) {
     return errors.includes(field);
   }
 
-  function saveSettings () {
-    const _user = {
+  function saveUserSettings () {
+    let _user = {
       ...user,
       name: userValues.name,
       username: userValues.username,
       email: userValues.email,
+      worlds: []
+    };
+    user.worlds.forEach(world => {
+      _user.worlds.push(world.id);
+    });
+
+    if (userValues.password === '') {
+      setSnackbar({
+        open: true,
+        message: translate('You must enter the password to confirm the changes')
+      });
+    } else {
+      setIsLoading(true);
+      checkPassword(user.id, userValues.password)
+        .then(() => {
+          updateUser(user.id, _user)
+            .then(usr => {
+              if (!usr) {
+                throw new Error(translate('Unexpected error updating the data'));
+              } else {
+                localStorage.setItem('locale', usr.settings.locale);
+                localStorage.setItem('theme', usr.settings.theme);
+                changeUser(usr);
+              }
+            })
+            .catch(err => {
+              setSnackbar({
+                open: true,
+                message: translate('Unexpected error updating the data')
+              });
+            });
+        })
+        .catch(err => {
+          setSnackbar({
+            open: true,
+            message: translate('The password is wrong')
+          });
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }
+
+  function saveAppSettings () {
+    setIsLoading(true);
+
+    const _user = {
+      ...user,
       settings: {
         theme,
         locale
-      }
+      },
+      worlds: []
     };
+    user.worlds.forEach(world => {
+      _user.worlds.push(world.id);
+    });
 
-    if (tab === 0) {
-      if (userValues.password === '') {
+    updateUser(user.id, _user)
+      .then(usr => {
+        setLastSavedLocale(locale);
+        setLastSavedTheme(theme);
+
+        if (!usr) {
+          throw new Error(translate('Unexpected error updating the data'));
+        } else {
+          localStorage.setItem('locale', usr.settings.locale);
+          localStorage.setItem('theme', usr.settings.theme);
+          changeUser(usr);
+        }
+      })
+      .catch(err => {
         setSnackbar({
           open: true,
-          message: translate('settings.errors.noPassword')
+          message: translate('Unexpected error updating the data')
         });
-      } else {
-        checkPassword(user.id, userValues.password)
-          .then(() => {
-            updateUser(user.id, _user)
-              .then((usr) => {
-                if (!usr) {
-                  console.log('!usr')
-                  throw new Error(translate('settings.errors.updateUser'));
-                } else {
-                  localStorage.setItem('user', JSON.stringify(usr));
-                  changeUser(usr);
-                }
-              })
-              .catch((err) => {
-                console.log('err2', err)
-                setSnackbar({
-                  open: true,
-                  message: translate('settings.errors.updateUser')
-                });
-              });
-          })
-          .catch((err) => {
-            console.log('err1', err)
-            setSnackbar({
-              open: true,
-              message: translate('settings.errors.checkPassword')
-            });
-          })
-      }
-    } else if (tab === 1) {
-      updateUser(user.id, _user)
-        .then((usr) => {
-          setLastSavedLocale(locale);
-          setLastSavedTheme(theme);
-
-          if (!usr) {
-            throw new Error(translate('settings.errors.updateUser'));
-          } else {
-            localStorage.setItem('user', JSON.stringify(usr));
-            changeUser(usr);
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-          setSnackbar({
-            open: true,
-            message: translate('settings.errors.updateUser')
-          });
-        });
-    }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   const userForm = [{
     type: 'input',
     inputType: 'text',
-    label: translate('user.name'),
+    label: translate('Name'),
     value: userValues.name,
     onChange: handleUserChange('name'),
     required: true,
   }, {
     type: 'input',
     inputType: 'text',
-    label: translate('user.username'),
+    label: translate('Username'),
     value: userValues.username,
     onChange: handleUserChange('username'),
     required: true,
   }, {
     type: 'input',
     inputType: 'email',
-    label: translate('user.email'),
+    label: translate('Email'),
     value: userValues.email,
     onChange: handleUserChange('email'),
     required: true,
   }, {
     type: 'input',
     inputType: 'password',
-    label: translate('user.password'),
+    label: translate('Password'),
     value: userValues.password,
     onChange: handleUserChange('password'),
     required: true,
-  }/*, {
-    type: 'input',
-    inputType: 'password',
-    label: translate('user.repeatPassword'),
-    value: userValues.repeatPassword,
-    onChange: handleUserChange('repeatPassword'),
-    required: true,
-  }*/];
+  }];
 
   const settingsForm = [{
     type: 'select',
-    label: translate('settings.theme'),
+    label: translate('Theme'),
     items: themeItems,
     value: theme,
     onChange: handleThemeChange
   }, {
     type: 'select',
-    label: translate('settings.locale'),
+    label: translate('Locale'),
     items: localeItems,
     value: locale,
     onChange: handleLocaleChange
@@ -287,25 +332,31 @@ function Settings (props) {
           color={'secondary'}
         />
 
-        <Form
-          className={clsx(classes.form, {
-            [ moreClasses.form]: size.width < breakpoints.l,
-            hidden: tab !== 0
-          })}
-          fields={userForm}
-          onSubmit={saveSettings}
-          submitText={translate('forms.save')}
-        />
+      <Switch>
+        <Route exact path={'/settings/user'} render={(props) => (
+          <Form
+            className={clsx(classes.form, {
+              [ moreClasses.form]: size.width < breakpoints.l
+            })}
+            fields={userForm}
+            onSubmit={saveUserSettings}
+            submitText={translate('Save')}
+            isLoading={isLoading}
+          />
+        )} />
 
-        <Form
-          className={clsx(classes.form, {
-            [ moreClasses.form]: size.width < breakpoints.l,
-            hidden: tab !== 1
-          })}
-          fields={settingsForm}
-          onSubmit={saveSettings}
-          submitText={translate('forms.save')}
-        />
+        <Route exact path={'/settings/app'} render={(props) => (
+          <Form
+            className={clsx(classes.form, {
+              [ moreClasses.form]: size.width < breakpoints.l
+            })}
+            fields={settingsForm}
+            onSubmit={saveAppSettings}
+            submitText={translate('Save')}
+            isLoading={isLoading}
+          />
+        )} />
+      </Switch>
       </div>
     </div>
   );

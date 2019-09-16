@@ -21,7 +21,7 @@ router.get('/:id', withAuth, (req, res) => {
 });
 
 router.post('/', withAuth, (req, res) => {
-  MatchController.save(req.body)
+  MatchController.create(req.body)
     .then(match => res.status(200).json(match))
     .catch(err => res.status(500).send(err));
 });

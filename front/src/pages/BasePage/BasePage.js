@@ -1,59 +1,19 @@
-import React, { Fragment } from 'react';
+import React, { useEffect } from 'react';
 import styles from './BasePage.styles';
 
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 
 import {
-  LoginContext,
+  AppContext,
   LocaleContext,
-  WorkaroundContext
+  LoginContext
 } from '@/context';
-import { cleanString } from '@/utils';
+import { Loading } from '@/components';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
-
-function Header (props) {
-  const {
-    className,
-    classes,
-    title,
-    toggleSideMenu,
-    logged,
-    ...other
-  } = props;
-
-  const size = useWindowSize();
-
-  return size.width > breakpoints.m ? (
-    <div className={clsx('Header', className, classes.header)} {...other}>
-      {title !== 'Login' && <Typography variant="h4">{title}</Typography>}
-    </div>
-  ) : (
-    <AppBar position="fixed" className={clsx('Header', className, classes.appBar)} {...other}>
-      <Toolbar>
-        {logged && <IconButton
-          color="inherit"
-          aria-label="Open drawer"
-          edge="start"
-          onClick={toggleSideMenu}
-          className={classes.menuButton}
-        >
-          <MenuIcon />
-        </IconButton>}
-        <Typography variant="h6" noWrap>
-          {title}
-        </Typography>
-      </Toolbar>
-    </AppBar>
-  );
-}
+import { cleanString } from '@/utils';
 
 const useStyles = makeStyles(styles);
 
@@ -61,7 +21,12 @@ function BasePage (props) {
   const {
     component: Component,
     name,
-    toggleSideMenu,
+    setTitle,
+    translate,
+    logged,
+    WorldSelector,
+    GameSelector,
+    location,
     ...other
   } = props;
 
@@ -74,27 +39,33 @@ function BasePage (props) {
     }
   }))();
 
-  return (
-    <LoginContext.Consumer>
-      {(login) =>
-        <WorkaroundContext.Consumer>
-          {({ toggleSideMenu }) =>
-            <LocaleContext.Consumer>
-              {(locale) => (
-                <Fragment>
-                  <div className={classes.root}>
-                    <Header classes={classes} logged={login.logged} toggleSideMenu={toggleSideMenu} title={locale.translate(`sections.${cleanString(props.name.toLowerCase())}`)} />
-                    <Component className={clsx('Page', moreClasses.page)} {...other} />
-                  </div>
-                </Fragment>
-                )
-              }
-            </LocaleContext.Consumer>
-          }
-        </WorkaroundContext.Consumer>
-      }
-    </LoginContext.Consumer>
-  );
+  useEffect(() => {
+    setTitle(translate(name));
+  } ,[]);
+
+  if (!logged && location.pathname !== '/login' && location.pathname !== '/signup') {
+    return (
+      <div className={clsx(classes.loading)}>
+        <Loading isLoading={!logged} />
+      </div>
+    );
+  } else {
+    return <Component className={clsx('Page', moreClasses.page)} location={location} {...other} />;
+  }
 }
 
-export default BasePage;
+export default React.forwardRef((props, ref) => (
+  <AppContext.Consumer>
+    {(app) =>
+      <LoginContext.Consumer>
+        {(login) =>
+          <LocaleContext.Consumer>
+            {(locale) =>
+              <BasePage {...props} setTitle={app.setTitle} translate={locale.translate} logged={login.logged} ref={ref} />
+            }
+          </LocaleContext.Consumer>
+        }
+      </LoginContext.Consumer>
+    }
+  </AppContext.Consumer>
+));

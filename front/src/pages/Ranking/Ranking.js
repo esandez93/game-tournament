@@ -38,13 +38,15 @@ function Ranking (props) {
   } = props;
 
   const classes = useStyles();
-  const [ranking, setRanking] = useState([]);
+  const [ ranking, setRanking ] = useState([]);
 
   useEffect(() => {
-    getRanking(world, game).then(
-      (data) => setRanking(data),
-      (error) => console.error(error)
-    );
+    getRanking(world, game)
+      .then(setRanking)
+      .catch(error => {
+        setRanking([]);
+        console.error(error);
+      });
   }, []);
 
   return (

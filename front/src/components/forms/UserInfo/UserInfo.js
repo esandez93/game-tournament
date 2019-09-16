@@ -1,13 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from '../forms.styles';
 
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 
 import {
-  Input
+  Form
 } from '@/components';
 import {
   LocaleContext
@@ -15,61 +14,98 @@ import {
 
 const useStyles = makeStyles(styles);
 
-function Settings(props) {
+function UserInfo(props) {
   const {
     className,
     translate,
-    fields,
-    handleUserChange,
+    values,
+    handleChange,
     setErrors,
     hasError,
-    values,
+    isLoading,
     ...other
   } = props;
 
   const classes = useStyles();
 
-  function getInputType (field) {
-    switch (field) {
-      case 'email': return 'email';
-      case 'password':
-      case 'repeatPassword': return 'password';
-      default: return 'text';
+  const [ userValues, setUserValues ] = useState({
+    name: values.name || '',
+    username: values.username || '',
+    email: values.email || '',
+    password: '',
+    repeatPassword: ''
+  });
+
+  const handleUserChange = name => event => {
+    if (handleChange) {
+      handleChange(name)(event);
     }
-  }
+
+    setUserValues({ ...userValues, [name]: event.target.value });
+  };
+
+  const userForm = [{
+    type: 'input',
+    inputType: 'text',
+    label: translate('Name'),
+    value: userValues.name,
+    onChange: handleUserChange('name'),
+    required: true,
+  }, {
+    type: 'input',
+    inputType: 'text',
+    label: translate('Username'),
+    value: userValues.username,
+    onChange: handleUserChange('username'),
+    required: true,
+  }, {
+    type: 'input',
+    inputType: 'email',
+    label: translate('Email'),
+    value: userValues.email,
+    onChange: handleUserChange('email'),
+    required: true,
+  }, {
+    type: 'input',
+    inputType: 'password',
+    label: translate('Password'),
+    value: userValues.password,
+    onChange: handleUserChange('password'),
+    required: true,
+  }, {
+    type: 'input',
+    inputType: 'password',
+    label: translate('Repeat Password'),
+    value: userValues.repeatPassword,
+    onChange: handleUserChange('repeatPassword'),
+    required: true,
+  }];
 
   // TODO: Avatar uploading or src at least
   return (
-    <form className={clsx('UserInfo', className, classes.form)} noValidate {...other}>
-      <Typography className={clsx(classes.formTitle)} variant="h5">{translate('signup.userInfo')}</Typography>
-      {fields.map((field) => (
-        <Input
-          key={field}
-          id={field}
-          label={translate(`user.${field}`)}
-          value={values[field]}
-          onChange={handleUserChange(field)}
-          type={getInputType(field)}
-          required
-          error={hasError(field)}
-          inputProps={field === 'password' ? {
-            autoComplete: "new-password"
-          } : {}}
-        />
-      ))}
-    </form>
+    <Form
+      className={clsx(classes.form)}
+      title={translate('User Info')}
+      fields={userForm}
+      isLoading={isLoading}
+    />
   );
 }
 
-Settings.propTypes = {
+UserInfo.propTypes = {
+  isLoading: PropTypes.bool,
+  values: PropTypes.object,
+  handleChange: PropTypes.func
 };
-Settings.defaultProps = {
+UserInfo.defaultProps = {
+  isLoading: false,
+  values: {}
 };
 
 export default React.forwardRef((props, ref) => (
   <LocaleContext.Consumer>
     {(locale) =>
-      <Settings {...props}
+      <UserInfo {...props}
         translate={locale.translate}
         ref={ref}
       />

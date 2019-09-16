@@ -1,9 +1,15 @@
+const debug = require('debug')('users.routes');
+
 const express = require('express');
 const withAuth = require('../middleware/withAuth');
 const router = express.Router();
 
-// const UserController = require('../../controllers/users.js');
+const UserController = require('../db/controllers/user.ctrl');
 const User = require('../db/models/User');
+
+const utils = require('../utils');
+
+// TODO: Change routes to use UserController
 
 router.get('/', withAuth, (req, res) => {
   User.model.find({}).populate({
@@ -11,6 +17,21 @@ router.get('/', withAuth, (req, res) => {
     populate: { path: 'games' }
   }).then(users => res.status(200).json(users))
     .catch(err => res.status(500).send(err));
+});
+
+router.get('/own', withAuth, (req, res) => {
+  if (req.headers.cookie) {
+    utils.decryptToken(req.headers.cookie.replace('token=', ''))
+      .then(({ id }) => {
+        return UserController.findById(id)
+      })
+      .then(user => {
+        return res.status(200).json(user)
+      })
+      .catch(err => res.status(500).send(err));
+  } else {
+    res.status(401).send('Expired token');
+  }
 });
 
 router.get('/:id', withAuth, (req, res) => {
@@ -45,6 +66,7 @@ router.get('/:id/relationships', withAuth, (req, res) => {
     .then(user => {
       let users = [];
       let usr = { ...user.toJSON() };
+      let ids = [ usr.id ];
 
       if (!usr.friends) {
         usr.friends = [];
@@ -56,15 +78,17 @@ router.get('/:id/relationships', withAuth, (req, res) => {
       }
 
       usr.friends.forEach((friend) => {
-        if (!users.includes(friend)) {
+        if (!ids.includes(friend.id)) {
           users.push(friend);
+          ids.push(friend.id);
         }
       });
 
-      usr.worlds.forEach((world) => {
-        world.users.forEach((worldUser) => {
-          if (!users.includes(worldUser)) {
+      usr.worlds.forEach((world, wIndex) => {
+        world.users.forEach((worldUser, uIndex) => {
+          if (!ids.includes(worldUser.id)) {
             users.push(worldUser);
+            ids.push(worldUser.id);
           }
         });
       });
@@ -82,16 +106,16 @@ router.post('/', (req, res) => {
 });
 
 // TODO: Change to PUT
-router.post('/:id', (req, res) => {
+router.put('/:id', (req, res) => {
   const { id } = req.params;
 
-  User.model.update({ _id: id }, { ...req.body })
-    .then((res) =>
-      User.model.findById(id).populate({
+  User.model.updateOne({ _id: id }, { ...req.body })
+    .then((res) => {
+      return User.model.findById(id).populate({
         path: 'worlds',
         populate: { path: 'games' }
-      })
-    )
+      });
+    })
     .then((usr) => res.status(200).json(usr))
     .catch(err => res.status(500).json(err));
 });

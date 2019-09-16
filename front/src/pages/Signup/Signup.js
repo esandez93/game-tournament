@@ -4,8 +4,6 @@ import styles from './Signup.styles';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 
-import * as themes from '@/themes';
-import * as locales from '@/locale';
 import { useWindowSize } from '@/hooks';
 import { breakpoints } from '@/constants';
 import { checkToken } from '@/api/auth';
@@ -30,6 +28,7 @@ function Signup (props) {
     className,
     translate,
     login,
+    logout,
     changeTheme,
     currentTheme,
     changeLocale,
@@ -39,36 +38,15 @@ function Signup (props) {
   } = props;
 
   const classes = useStyles();
-  const [ checked, setChecked ] = useState(false);
-  useEffect(() => {
-    checkToken()
-      .then(() => {
-        props.history.push('/');
-      })
-      .catch(() => {
-        setChecked(true);
-      });
-  }, []);
+  const [ isLoading, setIsLoading ] = useState(false);
 
   const size = useWindowSize();
-  const [ userValues, setUserValues ] = useState({
-    name: '',
-    username: '',
-    email: '',
-    password: '',
-    repeatPassword: ''
+  const [ userValues, setUserValues ] = useState({});
+  const [ settingsValues, setSettingsValues ] = useState({
+    theme: currentTheme,
+    locale: currentLocale
   });
-  const [ theme, setTheme ] = useState(currentTheme);
-  const [ locale, setLocale ] = useState(currentLocale);
   const [ errors, setErrors ] = useState([]);
-
-  const userForm = [
-    'name',
-    'username',
-    'email',
-    'password',
-    'repeatPassword'
-  ];
 
   const moreClasses = makeStyles((theme) => ({
     forms: {
@@ -95,21 +73,16 @@ function Signup (props) {
   const handleUserChange = name => event => {
     setUserValues({ ...userValues, [name]: event.target.value });
   };
-  const handleThemeChange = event => {
-    setTheme(event.target.value);
-    changeTheme(event.target.value);
-  };
-  const handleLocaleChange = event => {
-    setLocale(event.target.value);
-    changeLocale(event.target.value);
+  const handleSettingsChange = name => event => {
+    setSettingsValues({ ...settingsValues, [name]: event.target.value });
   };
 
   // TODO: Improve validation in real time integrated in TextField
   // Also add email and extra checks
   function clickSignup () {
-    setErrors([]);
+    // setErrors([]);
     const _errors = [];
-    userForm.forEach((key) => {
+    Object.keys(userValues).forEach((key) => {
       if (userValues[key] === '') {
         _errors.push(key);
       }
@@ -121,29 +94,26 @@ function Signup (props) {
     }
 
     if (errors.length === 0) {
+      setIsLoading(true);
+
       register({
         ...userValues,
         settings: {
-          theme,
-          locale
+          ...settingsValues
         }
-      }).then((user) => {
-        login({
+      }).then(user => {
+        return login({
           username: userValues.username,
           password: userValues.password
-        })
-      }).catch(console.error);
+        });
+      }).then(() => {
+      }).catch(error => {
+        console.error(error);
+      }).finally(() => {
+        setIsLoading(false);
+      });
     }
   }
-
-  const themeItems = Object.keys(themes).map((key) => ({
-    text: key,
-    value: key
-  }));
-  const localeItems = Object.keys(locales).map((key) => ({
-    text: key,
-    value: key
-  }));
 
   function hasError (field) {
     return errors.includes(field);
@@ -151,36 +121,32 @@ function Signup (props) {
 
   return (
     <div className={clsx('Signup', className)} {...other}>
-      {checked && <div className={clsx(classes.root)}>
+      <div className={clsx(classes.root)}>
         <div className={clsx(classes.forms, moreClasses.forms)}>
           <UserInfo
             className={{
-              [moreClasses.form]: size.width < breakpoints.l
+              [ moreClasses.form ]: size.width < breakpoints.l
             }}
-            handleUserChange={handleUserChange}
+            handleChange={handleUserChange}
             setErrors={setErrors}
             hasError={hasError}
-            fields={userForm}
             values={userValues}
+            isLoading={isLoading}
           />
 
           <Settings
             className={{
               [ moreClasses.form]: size.width < breakpoints.l
             }}
-            themeItems={themeItems}
-            theme={theme}
-            handleThemeChange={handleThemeChange}
-            localeItems={localeItems}
-            locale={locale}
-            handleLocaleChange={handleLocaleChange}
+            handleChange={handleSettingsChange}
+            isLoading={isLoading}
           />
         </div>
 
         <Button className={clsx(moreClasses.button)} color="primary" variant="contained" onClick={clickSignup}>
-          {translate('signup.signup')}
+          {translate('Signup')}
         </Button>
-      </div>}
+      </div>
     </div>
   );
 }
@@ -194,6 +160,7 @@ export default React.forwardRef((props, ref) => (
             {(theme) => <Signup {...props}
               translate={locale.translate}
               login={login.login}
+              logout={login.logout}
               changeTheme={theme.changeTheme}
               currentTheme={theme.name}
               changeLocale={locale.changeLocale}

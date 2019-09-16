@@ -16,5 +16,8 @@ export default (theme) => ({
     height: `${theme.spacing(7)}px`,
     width: `${theme.spacing(7)}px`,
     fontSize: '1.5rem'
+  },
+  square: {
+    borderRadius: `${theme.spacing(1) / 2}px`
   }
 });

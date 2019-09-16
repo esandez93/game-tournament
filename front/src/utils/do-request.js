@@ -15,19 +15,30 @@ function hasError (code) {
   return code >= 400 && code <= 599;
 }
 
+function getOptions (options) {
+  return {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers
+    },
+    credentials: 'include',
+  }
+}
+
 function resolveRequest (promise) {
   return new Promise((resolve, reject) => {
     promise
       .then(res => {
         if(hasError(res.status)) {
-          res.json().then(({ error }) => {
-            if (res.status === 401 && error.includes('token') && invalidTokenCallback) {
+          res.json().then(error => {
+            if (res.status === 401 && error.error.includes('token') && invalidTokenCallback) {
               invalidTokenCallback();
             }
 
             reject({
               code: res.status,
-              message: `${res.status} ${res.statusText}: ${error}`
+              ...error
             });
           });
         } else {
@@ -38,12 +49,10 @@ function resolveRequest (promise) {
   });
 }
 
-function get (url, params = {}, options = { method: 'GET' }) {
+function get (url, params = {}, options = {}) {
   const _options = {
-    ...options,
-    method: 'GET',
-    headers: { ...options.headers },
-    credentials: 'include'
+    ...getOptions(options),
+    method: 'GET'
   };
 
   let query = '';
@@ -62,12 +71,7 @@ function get (url, params = {}, options = { method: 'GET' }) {
 
 function post (url, body = {}, options = {}) {
   const _options = {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers
-    },
-    credentials: 'include',
+    ...getOptions(options),
     method: 'POST',
     body: JSON.stringify(body)
   };
@@ -77,14 +81,19 @@ function post (url, body = {}, options = {}) {
 
 function put (url, body = {}, options = {}) {
   const _options = {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers
-    },
-    credentials: 'include',
+    ...getOptions(options),
     method: 'PUT',
-    body
+    body: JSON.stringify(body)
+  };
+
+  return resolveRequest(fetch(url, _options));
+}
+
+function remove (url, body = {}, options = {}) {
+  const _options = {
+    ...getOptions(options),
+    method: 'DELETE',
+    body: JSON.stringify(body)
   };
 
   return resolveRequest(fetch(url, _options));
@@ -94,5 +103,6 @@ export {
   setInvalidTokenCallback,
   get,
   post,
-  put
+  put,
+  remove
 };
