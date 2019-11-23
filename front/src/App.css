@@ -1,0 +1,18 @@
+.App {
+  display: flex;
+  min-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.App .Page {
+  flex: 1;
+}
+
+.App a {
+  text-decoration: none;
+  color: inherit;
+}
+.App a:hover {
+  text-decoration: underline;
+}

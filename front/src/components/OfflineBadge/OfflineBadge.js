@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './OfflineBadge.scss';
 
 // import PropTypes from 'prop-types';
 import clsx from 'clsx';

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './ThemeTest.scss';
 
 import clsx from 'clsx';
 

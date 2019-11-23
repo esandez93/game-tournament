@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './SideMenu.scss';
 import styles from './SideMenu.styles';
 
 // import PropTypes from 'prop-types';

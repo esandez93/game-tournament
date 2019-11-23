@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import './ContextMenu.scss';
 import styles from './ContextMenu.styles';
 
 import clsx from 'clsx';

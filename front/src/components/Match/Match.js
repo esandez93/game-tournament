@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import './Match.scss';
 import styles from './Match.styles';
 import xsStyles from './Match.xsStyles';
 

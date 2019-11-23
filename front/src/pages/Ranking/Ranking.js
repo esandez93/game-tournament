@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import './Ranking.scss';
 import styles from './Ranking.styles';
 
 import clsx from 'clsx';

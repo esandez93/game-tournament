@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './LoadableLoading.scss';
 
 import PropTypes from 'prop-types';
 

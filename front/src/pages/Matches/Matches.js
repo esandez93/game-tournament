@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import './Matches.scss';
+import './Matches.css';
 import styles from './Matches.styles';
 
 import clsx from 'clsx';

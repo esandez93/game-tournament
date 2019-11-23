@@ -12,9 +12,16 @@ const withAuth = (req, res, next) => {
   } else {
     jwt.verify(token, process.env.AUTH_SECRET, (err, decoded) => {
       if (err) {
+        const options = {
+          httpOnly: true,
+          expires: new Date(),
+          overwrite: true,
+        };
+
+        res.cookie('token', '', options);
         res.status(401).send({ error: 'Unauthorized: Invalid token' });
       } else {
-        req.email = decoded.email;
+        // req.email = decoded.email;
         next();
       }
     });

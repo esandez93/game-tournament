@@ -1,5 +1,4 @@
 import React from 'react';
-import './Avatar.scss';
 import styles from './Avatar.styles';
 
 import PropTypes from 'prop-types';

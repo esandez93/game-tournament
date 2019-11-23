@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useReducer } from 'react';
-import './App.scss';
+import './App.css';
 import styles from './App.styles';
 
 import {
@@ -56,8 +56,6 @@ import { getOwnUser } from '@/api/users';
 import { getGames } from '@/api/worlds';
 import { setInvalidTokenCallback } from '@/utils';
 
-// const DEV_MODE = process.env.NODE_ENV === 'development';
-
 const useStyles = makeStyles(styles);
 
 function MultiProvider (props) {
@@ -109,8 +107,12 @@ function App (props) {
     history
   } = props;
 
-  const storageTheme = localStorage.getItem('theme') || 'defaultDark';
-  const storageLocale = localStorage.getItem('locale') || 'en';
+  const storageTheme = localStorage.getItem('theme') && themeExists(localStorage.getItem('theme'))
+    ? localStorage.getItem('theme')
+    : 'defaultDark';
+  const storageLocale = localStorage.getItem('locale') && localeExists(localStorage.getItem('locale'))
+    ? localStorage.getItem('locale')
+    : 'en';
 
   const size = useWindowSize();
   const classes = useStyles();

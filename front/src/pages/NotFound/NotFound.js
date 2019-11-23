@@ -1,5 +1,5 @@
 import React from 'react';
-import './NotFound.scss';
+import './NotFound.css';
 
 import clsx from 'clsx';
 

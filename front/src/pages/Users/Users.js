@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './Users.scss';
 import styles from './Users.styles';
 
 import clsx from 'clsx';
